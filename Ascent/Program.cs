@@ -1,27 +1,101 @@
+using Ascent.Models;
+using Ascent.Services;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+var environment = builder.Environment;
+var configuration = builder.Configuration;
+var services = builder.Services;
+
+// In production, this app will sit behind a Nginx reverse proxy with HTTPS
+if (!environment.IsDevelopment())
+    builder.WebHost.UseUrls("http://localhost:5002");
+
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+
+// Configure Services
+
+services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB (default 30MB)
+});
+
+services.AddControllersWithViews();
+
+services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+})
+.AddCookie(opt =>
+{
+    opt.AccessDeniedPath = "/Home/AccessDenied";
+    opt.Cookie.MaxAge = TimeSpan.FromDays(90);
+})
+.AddOpenIdConnect("oidc", options =>
+{
+    configuration.Bind("OIDC", options);
+    options.ResponseType = "code";
+    options.Scope.Add("email"); // only openid and profile scopes are requested by default
+    options.Scope.Add("ascent-webapp");
+
+    options.Events = new OpenIdConnectEvents
+    {
+        OnRemoteFailure = context =>
+        {
+            context.Response.Redirect("/");
+            context.HandleResponse();
+            return Task.FromResult(0);
+        }
+    };
+});
+
+services.AddAuthorization(options =>
+{
+    options.AddPolicy(Constants.Policy.CanRead, policy => policy.RequireClaim(Constants.ReadClaim));
+    options.AddPolicy(Constants.Policy.CanWrite, policy => policy.RequireClaim(Constants.WriteClaim));
+    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireClaim(Constants.ReadClaim).Build();
+});
+
+services.AddRouting(options => options.LowercaseUrls = true);
+
+services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
+// Build App
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Configure Middleware Pipeline
+
+if (!environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.UseSerilogRequestLogging();
+
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Run App
 
 app.Run();

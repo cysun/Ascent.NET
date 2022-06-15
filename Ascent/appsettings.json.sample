@@ -1,9 +1,41 @@
 {
-  "Logging": {
-    "LogLevel": {
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=ascent;Username=cysun;Password=abcd"
+  },
+  "OIDC": {
+    "Authority": "https://identity.cysun.org",
+    "ClientId": "ascent-webapp",
+    "ClientSecret": "********"
+  },
+  "Files": {
+    "Directory": "D:/Temp/Ascent/files",
+    "AttachmentTypes": [ ".xls", ".xlsx", ".zip" ],
+    "TextTypes": [ ".txt", ".java" ]
+  },
+  "Serilog": {
+    "Using": [
+      "Serilog.Sinks.File"
+    ],
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "D:/Temp/Ascent/logs/log.txt",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": null
+        }
+      }
+    ],
+    "MinimumLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "Enrich": [
+      "FromLogContext"
+    ]
   },
   "AllowedHosts": "*"
 }
