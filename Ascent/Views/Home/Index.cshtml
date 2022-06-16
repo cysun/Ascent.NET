@@ -1,8 +1,19 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="p-5 bg-light rounded-3">
+    <div>
+        <p class="fs-5">
+            Ascent is a web application that faciliates program assessment.
+        </p>
+        <p>
+            Ascent uses <a href="https://identity.cysun.org/">Alice Identity Service</a> (AIS) to authenticate users. To access
+            Ascent, you must have an AIS account with proper authorization.
+        </p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a class="btn btn-warning btn-lg" role="button" asp-controller="Account" asp-action="Logout">Logout</a>
+        }
+        else
+        {
+            <a class="btn btn-primary btn-lg me-3" role="button" asp-controller="Account" asp-action="Login">Login</a>
+        }
+    </div>
 </div>
