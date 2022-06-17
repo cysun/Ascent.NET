@@ -21,16 +21,16 @@ public class FilesSettings
     public HashSet<string> TextTypes { get; set; }
 }
 
-public class FilesService
+public class FileService
 {
     private readonly AppDbContext _db;
 
     private readonly IMapper _mapper;
-    private readonly ILogger<FilesService> _logger;
+    private readonly ILogger<FileService> _logger;
 
     private readonly FilesSettings _settings;
 
-    public FilesService(AppDbContext db, IMapper mapper, ILogger<FilesService> logger, IOptions<FilesSettings> settings)
+    public FileService(AppDbContext db, IMapper mapper, ILogger<FileService> logger, IOptions<FilesSettings> settings)
     {
         _db = db;
         _mapper = mapper;

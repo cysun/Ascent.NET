@@ -1,0 +1,33 @@
+@model List<Person>
+@{
+    ViewData["Title"] = "People";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active me-auto">People</li>
+    </ol>
+</nav>
+
+<form method="get" class="d-inline-flex mb-3">
+    <input name="searchText" class="form-control me-2">
+    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+</form>
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr><th>CIN</th><th>Name</th><th class="d-none d-md-table-cell">Email</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var person in Model)
+            {
+                <tr>
+                    <td>@person.CampusId</td>
+                    <td>@person.FullName</td>
+                    <td class="d-none d-md-table-cell">@person.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

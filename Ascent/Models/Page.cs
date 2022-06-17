@@ -20,5 +20,5 @@ public class Page
 
     public int ViewCount { get; set; }
 
-    public bool Deleted { get; set; }
+    public bool IsDeleted { get; set; }
 }
