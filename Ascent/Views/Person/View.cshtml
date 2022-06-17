@@ -1,0 +1,71 @@
+@model Person
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "View Person";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">People</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.FullName</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
+        {
+            <li>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-6">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.CampusId</span>
+            <label>CIN</label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.BgTerm?.ShortName</span>
+            <label>BG Term</label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.MgTerm?.ShortName</span>
+            <label>GG Term</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.FirstName</span>
+            <label>First Name</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.LastName</span>
+            <label>Last Name</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.PersonalEmail</span>
+            <label>Personal Email</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.SchoolEmail</span>
+            <label>School Email</label>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" style="pointer-events: none;"
+                   @(Model.IsInstructor ? "checked" : "") />
+            <label class="form-check-label">Instructor</label>
+        </div>
+    </div>
+</div>

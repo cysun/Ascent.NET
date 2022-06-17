@@ -74,6 +74,8 @@ services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
+services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
+
 services.AddScoped<PersonService>();
 
 // Build App
@@ -84,11 +86,12 @@ var app = builder.Build();
 
 if (!environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Exception");
 }
 
 app.UseSerilogRequestLogging();
 
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();

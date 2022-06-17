@@ -14,3 +14,9 @@ SELECT id, cin, first_name, middle_name, last_name, username,
             AND lower(primary_email) NOT LIKE '%localhost' THEN secondary_email
     END
 FROM csns2.users where enabled = 't' and char_length(cin) >= 4;
+
+UPDATE "Persons" p SET
+    "BgTerm_Code" = (SELECT term FROM csns2.academic_standings a WHERE
+        a.student_id = p."Id" AND a.standing_id = 23009 AND a.department_id = 200),
+    "MgTerm_Code" = (SELECT term FROM csns2.academic_standings a WHERE
+        a.student_id = p."Id" AND a.standing_id = 23019 AND a.department_id = 200);

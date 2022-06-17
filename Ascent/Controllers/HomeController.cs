@@ -1,30 +1,50 @@
-using System.Diagnostics;
-using Ascent.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ascent.Controllers
+namespace Ascent.Controllers;
+
+public class HomeController : Controller
 {
+    private readonly ILogger<HomeController> _logger;
 
-    public class HomeController : Controller
+    public HomeController(ILogger<HomeController> logger)
     {
-        private readonly ILogger<HomeController> _logger;
+        _logger = logger;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+    [AllowAnonymous]
+    public IActionResult Index()
+    {
+        return View();
+    }
 
-        [AllowAnonymous]
-        public IActionResult Index()
-        {
-            return View();
-        }
+    [AllowAnonymous]
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+    // Displays a page for non-OK results (e.g. NotFound()) returned by controller.
+    public IActionResult Error(int id)
+    {
+        ViewBag.Code = id;
+        switch (id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            case 404:
+                return View("404");
+            default:
+                return View();
         }
+    }
+
+    // Logs unhandled exceptions and displays an error page.
+    public IActionResult Exception()
+    {
+        var feature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+        _logger.LogWarning("Exception {exception} caused by user {user}: \n{stackTrace}",
+            feature?.Error?.Message, User.Identity.Name, feature?.Error?.StackTrace);
+
+        return View();
     }
 }

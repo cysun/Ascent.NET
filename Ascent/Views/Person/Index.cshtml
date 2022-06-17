@@ -9,25 +9,55 @@
 </nav>
 
 <form method="get" class="d-inline-flex mb-3">
-    <input name="searchText" class="form-control me-2">
+    <input id="search" name="searchText" class="form-control me-2">
     <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
 </form>
 
 @if (Model != null)
 {
-    <table class="table">
+    <table class="table table-striped">
         <thead>
-            <tr><th>CIN</th><th>Name</th><th class="d-none d-md-table-cell">Email</th></tr>
+            <tr>
+                <th>CIN</th>
+                <th>Name</th>
+                <th class="d-none d-md-table-cell">Email</th>
+                <th class="d-none d-lg-table-cell">BG Term</th>
+                <th class="d-none d-lg-table-cell">GG Term</th>
+            </tr>
         </thead>
         <tbody>
             @foreach (var person in Model)
             {
                 <tr>
                     <td>@person.CampusId</td>
-                    <td>@person.FullName</td>
+                    <td><a asp-action="View" asp-route-id="@person.Id">@person.FullName</a></td>
                     <td class="d-none d-md-table-cell">@person.Email</td>
+                    <td class="d-none d-lg-table-cell">@person.BgTerm?.ShortName</td>
+                    <td class="d-none d-lg-table-cell">@person.MgTerm?.ShortName</td>
                 </tr>
             }
         </tbody>
     </table>
+}
+
+@section Scripts{
+    <script src="js/autocomplete.js"></script>
+    <script>
+        $(function() {
+            const field = document.getElementById("search");
+            const ac = new Autocomplete(field, {
+                onInput: function() {
+                    $.ajax({
+                        url: "person/autocomplete",
+                        data: { searchText: $("#search").val() },
+                        success: results => ac.setData(results.map(r =>
+                            ({ label: r.campusId + " " + r.fullName, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    window.location.href = `person/view/${value}`;
+                }
+            })
+        });
+    </script>
 }
