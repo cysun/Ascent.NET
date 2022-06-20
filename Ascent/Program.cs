@@ -77,6 +77,7 @@ services.Configure<ForwardedHeadersOptions>(options =>
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 
 services.AddScoped<PersonService>();
+services.AddScoped<CourseService>();
 
 // Build App
 

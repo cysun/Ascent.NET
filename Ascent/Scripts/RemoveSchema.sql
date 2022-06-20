@@ -1,5 +1,6 @@
 DROP FUNCTION search_persons_by_pattern(varchar, integer);
 
+DROP TABLE "Courses";
 DROP TABLE "Persons";
 DROP TABLE "FileHistories";
 DROP TABLE "Pages";

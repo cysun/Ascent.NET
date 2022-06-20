@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Courses";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active me-auto">Courses</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Undergraduate Courses</div>
+            <div class="card-body">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr><th>Code</th><th>Title</th><th>Units</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var course in ViewBag.UndergraduateCourses)
+                        {
+                            <tr>
+                                <td>@course.Code</td>
+                                <td>@course.Title</td>
+                                <td>@course.Units</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Graduate Courses</div>
+            <div class="card-body">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr><th>Code</th><th>Title</th><th>Units</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var course in ViewBag.GraduateCourses)
+                        {
+                            <tr>
+                                <td>@course.Code</td>
+                                <td>@course.Title</td>
+                                <td>@course.Units</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

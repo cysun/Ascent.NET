@@ -20,3 +20,11 @@ UPDATE "Persons" p SET
         a.student_id = p."Id" AND a.standing_id = 23009 AND a.department_id = 200),
     "MgTerm_Code" = (SELECT term FROM csns2.academic_standings a WHERE
         a.student_id = p."Id" AND a.standing_id = 23019 AND a.department_id = 200);
+
+
+INSERT INTO "Courses" ("Id", "Subject", "Number", "Title", "MinUnits", "MaxUnits", "CatalogDescription", "IsObsolete")
+SELECT id, substring(code from 1 for 2), substring(code from 3), name, units, units, catalog_description,
+    obsolete OR unit_factor < 1
+FROM csns2.courses WHERE department_id = 200;
+
+DELETE FROM "Courses" WHERE "Number" IN ('2000P', '2000S', '2000T', '600F', '600S', '9000');
