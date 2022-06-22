@@ -19,53 +19,110 @@
 </nav>
 
 <div class="row">
-    <div class="col-6">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.CampusId</span>
-            <label>CIN</label>
-        </div>
-    </div>
-    <div class="col-3">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.BgTerm?.ShortName</span>
-            <label>BG Term</label>
-        </div>
-    </div>
-    <div class="col-3">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.MgTerm?.ShortName</span>
-            <label>GG Term</label>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Basic Info</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.CampusId</span>
+                            <label>CIN</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.BgTerm?.ShortName</span>
+                            <label>BG<span class="d-none d-lg-inline"> Term</span></label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.MgTerm?.ShortName</span>
+                            <label>GG<span class="d-none d-lg-inline"> Term</span></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.FirstName</span>
+                            <label>First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.LastName</span>
+                            <label>Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.PersonalEmail</span>
+                            <label>Personal Email</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating mb-3">
+                            <span class="form-control">@Model.SchoolEmail</span>
+                            <label>School Email</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" style="pointer-events: none;"
+                                   @(Model.IsInstructor ? "checked" : "") />
+                            <label class="form-check-label">Instructor</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.FirstName</span>
-            <label>First Name</label>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.LastName</span>
-            <label>Last Name</label>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.PersonalEmail</span>
-            <label>Personal Email</label>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <span class="form-control">@Model.SchoolEmail</span>
-            <label>School Email</label>
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" style="pointer-events: none;"
-                   @(Model.IsInstructor ? "checked" : "") />
-            <label class="form-check-label">Instructor</label>
+        <div class="card h-100">
+            <div class="card-header">Course Work</div>
+            <div class="card-body">
+                @if (ViewBag.Enrollments.Count > 0)
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Course</th>
+                                <th class="d-none d-xl-table-cell">Instructor</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrollment in ViewBag.Enrollments)
+                            {
+                                <tr>
+                                    <td>@enrollment.Section.Term.Name</td>
+                                    <td>@enrollment.Section.Course.Code</td>
+                                    <td class="d-none d-xl-table-cell">@enrollment.Section.Instructor.FullName</td>
+                                    <td>@enrollment.GradeSymbol</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
         </div>
     </div>
 </div>
+
+@section StyleSheets{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css" />
+}
+    @section Scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+    <script>
+        $(function() {
+            $("table").DataTable({
+                paging: false,
+                info: false,
+                searching: false,
+                order: []
+            });
+        })
+    </script>
+}

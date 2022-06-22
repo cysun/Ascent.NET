@@ -50,8 +50,10 @@
         <input id="file" name="uploadedFile" type="file" class="form-control">
         <label class="input-group-text" for="file">ABET Syllabus</label>
     </div>
-    <a class="btn btn-secondary me-2" asp-action="View" asp-route-id="@ViewBag.Course.Id">Cancel</a>
-    <button type="submit" class="btn btn-primary">Save</button>
+    <a class="btn btn-outline-secondary me-2" asp-action="View" asp-route-id="@ViewBag.Course.Id">
+        <i class="bi bi-x-lg"></i>
+    </a>
+    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-check-lg"></i></button>
 </form>
 
 @section Scripts  {

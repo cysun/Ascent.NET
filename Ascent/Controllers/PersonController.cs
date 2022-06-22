@@ -10,13 +10,16 @@ namespace Ascent.Controllers
     public class PersonController : Controller
     {
         private readonly PersonService _personService;
+        private readonly EnrollmentService _enrollmentService;
 
         private readonly IMapper _mapper;
         private readonly ILogger<PersonController> _logger;
 
-        public PersonController(PersonService personService, IMapper mapper, ILogger<PersonController> logger)
+        public PersonController(PersonService personService, EnrollmentService enrollmentSerivce,
+            IMapper mapper, ILogger<PersonController> logger)
         {
             _personService = personService;
+            _enrollmentService = enrollmentSerivce;
             _mapper = mapper;
             _logger = logger;
         }
@@ -31,7 +34,29 @@ namespace Ascent.Controllers
             var person = _personService.GetPerson(id);
             if (person == null) return NotFound();
 
+            ViewBag.Enrollments = _enrollmentService.GetEnrollmentsByPerson(id);
+
             return View(person);
+        }
+
+        [HttpGet]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Add()
+        {
+            return View(new PersonInputModel());
+        }
+
+        [HttpPost]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Add(PersonInputModel input)
+        {
+            if (!ModelState.IsValid) return View(input);
+
+            var person = _mapper.Map<Person>(input);
+            _personService.AddPerson(person);
+            _logger.LogInformation("{user} added person {person}", User.Identity.Name, person.Id);
+
+            return RedirectToAction("View", new { id = person.Id });
         }
 
         [HttpGet]
@@ -50,6 +75,8 @@ namespace Ascent.Controllers
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Edit(int id, PersonInputModel input)
         {
+            if (!ModelState.IsValid) return View(input);
+
             var person = _personService.GetPerson(id);
             if (person == null) return NotFound();
 
@@ -105,6 +132,7 @@ namespace Ascent.Models
         [Display(Name = "GG Term")]
         public string MgTerm { get; set; }
 
+        [Display(Name = "Instructor")]
         public bool IsInstructor { get; set; }
     }
 }

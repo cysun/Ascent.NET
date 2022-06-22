@@ -1,0 +1,69 @@
+@model PersonInputModel
+@{
+    ViewData["Title"] = "Add Person";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">People</a></li>
+        <li class="breadcrumb-item active me-auto">New Person</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="row">
+        <div class="col-6">
+            <div class="form-floating mb-3">
+                <input asp-for="CampusId" class="form-control" required />
+                <label asp-for="CampusId"></label>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-floating mb-3">
+                <input asp-for="BgTerm" class="form-control" />
+                <label asp-for="BgTerm"></label>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-floating mb-3">
+                <input asp-for="MgTerm" class="form-control" />
+                <label asp-for="MgTerm"></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="FirstName" class="form-control" required />
+                <label asp-for="FirstName"></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="LastName" class="form-control" required />
+                <label asp-for="LastName"></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="PersonalEmail" class="form-control" />
+                <label asp-for="PersonalEmail"></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="SchoolEmail" class="form-control" />
+                <label asp-for="SchoolEmail"></label>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-check mb-3">
+                <input asp-for="IsInstructor" class="form-check-input">
+                <label asp-for="IsInstructor" class="form-check-label"></label>
+            </div>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-outline-secondary me-2" asp-action="Index">
+                <i class="bi bi-x-lg"></i>
+            </a>
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-check-lg"></i></button>
+        </div>
+    </div>
+</form>

@@ -9,6 +9,9 @@ public class AppDbContext : DbContext
 
     public DbSet<Person> Persons { get; set; }
     public DbSet<Course> Courses { get; set; }
+    public DbSet<Section> Sections { get; set; }
+    public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<Grade> Grades { get; set; }
     public DbSet<Page> Pages { get; set; }
     public DbSet<Models.File> Files { get; set; }
     public DbSet<FileHistory> FileHistories { get; set; }
@@ -20,6 +23,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Person>().Property(p => p.IsDeleted).HasDefaultValue(false);
         modelBuilder.Entity<Person>().Property(p => p.IsInstructor).HasDefaultValue(false);
         modelBuilder.Entity<Course>().HasAlternateKey(c => new { c.Subject, c.Number });
+        modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
+        modelBuilder.Entity<Enrollment>().HasQueryFilter(e => !e.Student.IsDeleted);
         modelBuilder.Entity<Page>().HasQueryFilter(n => !n.IsDeleted);
         modelBuilder.Entity<FileHistory>().HasKey(h => new { h.FileId, h.Version });
     }

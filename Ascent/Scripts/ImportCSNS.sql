@@ -28,3 +28,20 @@ SELECT id, substring(code from 1 for 2), substring(code from 3), name, units, un
 FROM csns2.courses WHERE department_id = 200;
 
 DELETE FROM "Courses" WHERE "Number" IN ('2000P', '2000S', '2000T', '600F', '600S', '9000');
+
+INSERT INTO "Grades" ("Symbol", "Value", "Description")
+SELECT symbol, value, description FROM csns2.grades;
+
+INSERT INTO "Sections" ("Id", "Term_Code", "CourseId", "Number", "InstructorId")
+SELECT s.id, s.term, s.course_id, s.number,
+    CASE
+        WHEN i.instructor_id = 6631409 THEN 7149406
+        ELSE i.instructor_id
+    END
+FROM csns2.sections s INNER JOIN csns2.section_instructors i ON s.id = i.section_id
+WHERE s.deleted = 'f' AND s.course_id IS NOT NULL AND s.course_id IN (SELECT "Id" FROM "Courses") AND i.instructor_order = 0;
+
+INSERT INTO "Enrollments" ("Id", "SectionId", "StudentId", "GradeSymbol")
+SELECT e.id, e.section_id, e.student_id, g.symbol
+FROM csns2.enrollments e INNER JOIN csns2.grades g ON e.grade_id = g.id
+WHERE e.section_id IN (SELECT "Id" FROM "Sections") AND e.student_id IN (SELECT "Id" FROM "Persons");

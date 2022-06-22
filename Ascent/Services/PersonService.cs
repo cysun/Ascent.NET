@@ -24,5 +24,11 @@ public class PersonService
             $"{prefix}%".ToLower(), maxResults).AsNoTracking().ToList();
     }
 
+    public void AddPerson(Person person)
+    {
+        _db.Persons.Add(person);
+        _db.SaveChanges();
+    }
+
     public void SaveChanges() => _db.SaveChanges();
 }
