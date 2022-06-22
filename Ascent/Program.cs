@@ -76,6 +76,8 @@ services.Configure<ForwardedHeadersOptions>(options =>
 
 services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 
+services.Configure<FilesSettings>(configuration.GetSection("Files"));
+services.AddScoped<FileService>();
 services.AddScoped<PersonService>();
 services.AddScoped<CourseService>();
 

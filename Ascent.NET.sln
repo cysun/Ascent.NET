@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ascent", "Ascent\Ascent.csproj", "{FDE9F114-370B-4027-B363-0937A9D4A050}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ascent", "Ascent\Ascent.csproj", "{FDE9F114-370B-4027-B363-0937A9D4A050}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EED8E9EA-25F6-4484-A23E-FCA20E5B4B12}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		LICENSE.txt = LICENSE.txt
-		README.txt = README.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

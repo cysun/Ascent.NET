@@ -1,0 +1,99 @@
+@model Course
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "View Course";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Courses</a></li>
+        <li class="breadcrumb-item active me-auto">
+            @Model.Code
+            @if (Model.IsObsolete)
+            {
+                <span class="badge rounded-pill bg-warning ms-2">Obsolete</span>
+            }
+        </li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-4 col-md-3 col-lg-2">
+        <select class="form-select h-100" size="8">
+            @foreach (var course in ViewBag.Courses)
+            {
+                if (course.Id == Model.Id)
+                {
+                    <option value="@course.Id" selected>@course.Code</option>
+                }
+                else
+                {
+                    <option value="@course.Id">@course.Code</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col">
+        <div class="row">
+            <div class="col-6 col-md-3">
+                <div class="form-floating mb-3">
+                    <div class="form-control">@Model.Subject</div>
+                    <label>Subject</label>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="form-floating mb-3">
+                    <div class="form-control">@Model.Number</div>
+                    <label>Number</label>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="form-floating mb-3">
+                    <div class="form-control">@Model.MinUnits</div>
+                    <label>Min Units</label>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="form-floating mb-3">
+                    <div class="form-control">@Model.MaxUnits</div>
+                    <label>Max Units</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-floating mb-3">
+            <div class="form-control" style="height: auto;">@Model.Title</div>
+            <label>Title</label>
+        </div>
+        <div class="form-floating">
+            <div class="form-control" style="height: auto;">@Model.CatalogDescription</div>
+            <label>Catalog Description</label>
+        </div>
+        @if (Model.AbetDescriptionId != null)
+        {
+            <div class="btn-group mt-3" role="group">
+                <label class="btn btn-secondary">ABET Syllabus</label>
+                <a asp-controller="File" asp-action="View" asp-route-id="@Model.AbetDescriptionId"
+               class="btn btn-outline-primary">View</a>
+                <a asp-controller="File" asp-action="Download" asp-route-id="@Model.AbetDescriptionId"
+               class="btn btn-outline-primary">Download</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $("select").change(function() {
+                window.location.href = `../view/${$(this).val()}`;
+            });
+        });
+    </script>
+}

@@ -1,9 +1,14 @@
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "Courses";
 }
 <nav>
     <ol class="breadcrumb">
         <li class="breadcrumb-item active me-auto">Courses</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li><a asp-action="Add" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg"></i></a></li>
+        }
     </ol>
 </nav>
 
@@ -17,11 +22,11 @@
                         <tr><th>Code</th><th>Title</th><th>Units</th></tr>
                     </thead>
                     <tbody>
-                        @foreach(var course in ViewBag.UndergraduateCourses)
+                        @foreach (var course in ViewBag.UndergraduateCourses)
                         {
                             <tr>
                                 <td>@course.Code</td>
-                                <td>@course.Title</td>
+                                <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
                                 <td>@course.Units</td>
                             </tr>
                         }
@@ -30,7 +35,7 @@
             </div>
         </div>
     </div>
-        <div class="col-lg-6">
+    <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">Graduate Courses</div>
             <div class="card-body">
@@ -39,11 +44,11 @@
                         <tr><th>Code</th><th>Title</th><th>Units</th></tr>
                     </thead>
                     <tbody>
-                        @foreach(var course in ViewBag.GraduateCourses)
+                        @foreach (var course in ViewBag.GraduateCourses)
                         {
                             <tr>
                                 <td>@course.Code</td>
-                                <td>@course.Title</td>
+                                <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
                                 <td>@course.Units</td>
                             </tr>
                         }

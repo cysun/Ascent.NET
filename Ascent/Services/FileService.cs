@@ -84,6 +84,32 @@ public class FileService
         return folder;
     }
 
+    public Models.File GetFolder(string path, bool createFolder = true, bool isSystem = true)
+    {
+        string[] names = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        Models.File parent = null;
+        foreach (var name in names)
+        {
+            var folder = GetFile(parent?.Id, name);
+            if (folder == null)
+            {
+                if (!createFolder) return null;
+                folder = new Models.File()
+                {
+                    Name = name,
+                    IsFolder = true,
+                    ParentId = parent?.Id,
+                    IsSystem = isSystem
+                };
+                _db.Files.Add(folder);
+                _db.SaveChanges();
+                _logger.LogInformation("New folder created: {folder}", folder.Id);
+            }
+            parent = folder;
+        }
+        return parent;
+    }
+
     public List<Models.File> GetAncestors(Models.File file)
     {
         var ancestors = new List<Models.File>();
@@ -111,9 +137,12 @@ public class FileService
         return _db.Files.Where(f => f.ParentId == parentId && f.Name == name).FirstOrDefault();
     }
 
-    public Models.File UploadFile(int? parentId, IFormFile uploadedFile)
+    public Models.File UploadFile(int? parentId, IFormFile uploadedFile, string fileName = null)
     {
         string name = Path.GetFileName(uploadedFile.FileName);
+        if (fileName != null)
+            name = fileName + Path.GetExtension(name);
+
         var file = GetFile(parentId, name);
         if (file == null)
         {

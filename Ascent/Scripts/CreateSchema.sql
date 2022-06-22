@@ -17,7 +17,7 @@ CREATE TABLE "Files" (
     "IsFolder" boolean NOT NULL,
     "ParentId" integer NULL,
     "AccessCount" integer NOT NULL,
-    "IsFavorite" boolean NOT NULL,
+    "IsSystem" boolean NOT NULL,
     "IsPublic" boolean NOT NULL,
     CONSTRAINT "PK_Files" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Files_Files_ParentId" FOREIGN KEY ("ParentId") REFERENCES "Files" ("Id")
@@ -85,7 +85,7 @@ CREATE INDEX "IX_Files_ParentId" ON "Files" ("ParentId");
 CREATE UNIQUE INDEX "IX_Persons_CampusId" ON "Persons" ("CampusId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220620225447_InitialSchema', '6.0.6');
+VALUES ('20220621235021_InitialSchema', '6.0.6');
 
 COMMIT;
 

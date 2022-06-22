@@ -19,6 +19,12 @@ namespace Ascent.Services
 
         public List<Course> GetCourses() => _db.Courses.Where(c => !c.IsObsolete).OrderBy(c => c.Number).AsNoTracking().ToList();
 
+        public void AddCourse(Course course)
+        {
+            _db.Courses.Add(course);
+            _db.SaveChanges();
+        }
+
         public void SaveChanges() => _db.SaveChanges();
     }
 }

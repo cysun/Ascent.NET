@@ -10,8 +10,13 @@ public class MapperProfile : Profile
     {
         CreateMap<Term, string>().ConvertUsing(source => source != null ? source.ShortName : null);
         CreateMap<string, Term>().ConvertUsing(new StringToTermConverter());
+
         CreateMap<PersonInputModel, Person>();
         CreateMap<Person, PersonInputModel>();
+        CreateMap<CourseInputModel, Course>();
+        CreateMap<Course, CourseInputModel>();
+
+        CreateMap<Models.File, FileHistory>().ForMember(dest => dest.FileId, opt => opt.MapFrom(src => src.Id));
     }
 }
 

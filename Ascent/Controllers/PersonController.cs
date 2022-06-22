@@ -41,7 +41,7 @@ namespace Ascent.Controllers
             var person = _personService.GetPerson(id);
             if (person == null) return NotFound();
 
-            ViewBag.Person = person; ;
+            ViewBag.Person = person;
 
             return View(_mapper.Map<PersonInputModel>(person));
         }
