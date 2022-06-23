@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Import";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Import</li>
+    </ol>
+</nav>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header">Grades</div>
+            <div class="card-body" ?>
+                <p class="card-text">
+                    Grades for each class section can be downloaded from GET at Curriculum Management -&gt;
+                    Grading -&gt; Grade Roster. Select a term and enter "CS" for subject area in the search form.
+                    For each section in the results, go to the Grade Roster tab and select Download to Excel.
+                </p>
+                <a class="btn btn-primary" asp-action="Grades">Import</a>
+            </div>
+        </div>
+    </div>
+</div>

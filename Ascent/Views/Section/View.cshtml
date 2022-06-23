@@ -1,0 +1,86 @@
+@model Section
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "View Section";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index" asp-route-termCode="@Model.Term.Code">Sections</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.Course.Code, @Model.Term.Name</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li><button id="delete" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash-fill"></i></button></li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="d-none d-md-block col-md-3">
+        <div class="card">
+            <div class="card-header">@Model.Term.Name</div>
+            <div class="card-body">
+                <select class="form-select" size="12">
+                    @foreach (var s in ViewBag.Sections)
+                    {
+                        if (s.Id == Model.Id)
+                        {
+                            <option value="@s.Id" selected>@s.Course.Code</option>
+                        }
+                        else
+                        {
+                            <option value="@s.Id">@s.Course.Code</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>@Model.Course.Code</span>
+                <span>@Model.Instructor.FullName</span>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped border-top">
+                    <thead>
+                        <tr><th>Student</th><th>Grade</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var enrollment in ViewBag.Enrollments)
+                        {
+                            <tr>
+                                <td>@enrollment.Student.FullName</td>
+                                <td>@enrollment.GradeSymbol</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section StyleSheets{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css" />
+}
+    @section Scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+    <script>
+        $(function() {
+            $("select").change(function() {
+                window.location.href = `../view/${$(this).val()}`;
+            });
+            $("#delete").click(function() {
+                if (confirm("Do you want to delete this section?"))
+                    window.location.href = "../delete/@Model.Id";
+            });
+            $("table").DataTable({
+                paging: false,
+                info: false,
+                searching: false,
+                order: []
+            });
+        });
+    </script>
+}

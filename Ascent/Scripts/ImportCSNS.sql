@@ -32,8 +32,8 @@ DELETE FROM "Courses" WHERE "Number" IN ('2000P', '2000S', '2000T', '600F', '600
 INSERT INTO "Grades" ("Symbol", "Value", "Description")
 SELECT symbol, value, description FROM csns2.grades;
 
-INSERT INTO "Sections" ("Id", "Term_Code", "CourseId", "Number", "InstructorId")
-SELECT s.id, s.term, s.course_id, s.number,
+INSERT INTO "Sections" ("Id", "Term_Code", "CourseId", "InstructorId")
+SELECT s.id, s.term, s.course_id,
     CASE
         WHEN i.instructor_id = 6631409 THEN 7149406
         ELSE i.instructor_id
@@ -45,3 +45,5 @@ INSERT INTO "Enrollments" ("Id", "SectionId", "StudentId", "GradeSymbol")
 SELECT e.id, e.section_id, e.student_id, g.symbol
 FROM csns2.enrollments e INNER JOIN csns2.grades g ON e.grade_id = g.id
 WHERE e.section_id IN (SELECT "Id" FROM "Sections") AND e.student_id IN (SELECT "Id" FROM "Persons");
+
+DELETE FROM "Sections" s WHERE NOT EXISTS (SELECT * FROM "Enrollments" WHERE "SectionId" = s."Id");

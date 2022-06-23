@@ -21,7 +21,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Person>().HasQueryFilter(n => !n.IsDeleted);
         modelBuilder.Entity<Person>().HasIndex(p => p.CampusId).IsUnique();
         modelBuilder.Entity<Person>().Property(p => p.IsDeleted).HasDefaultValue(false);
-        modelBuilder.Entity<Person>().Property(p => p.IsInstructor).HasDefaultValue(false);
         modelBuilder.Entity<Course>().HasAlternateKey(c => new { c.Subject, c.Number });
         modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
         modelBuilder.Entity<Enrollment>().HasQueryFilter(e => !e.Student.IsDeleted);

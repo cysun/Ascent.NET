@@ -48,11 +48,17 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-controller="Person" asp-action="Index">People</a></li>
                                     <li><a class="dropdown-item" asp-controller="Course" asp-action="Index">Courses</a></li>
-                                    <li><a class="dropdown-item" href="#">Sections</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Section" asp-action="Index">Sections</a></li>
                                     <li><a class="dropdown-item" href="#">Pages</a></li>
                                     <li><a class="dropdown-item" href="#">Files</a></li>
                                 </ul>
                             </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Import" asp-action="Index">Import</a>
+                                </li>
+                            }
                         }
                         @if (User.Identity.IsAuthenticated)
                         {

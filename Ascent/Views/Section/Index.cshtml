@@ -1,0 +1,54 @@
+@model List<Section>
+@{
+    ViewData["Title"] = "Sections";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Sections</li>
+    </ol>
+</nav>
+
+<form method="get" class="d-inline-flex mb-3">
+    <select name="termCode" class="form-select">
+        @foreach (var term in ViewBag.Terms)
+        {
+            if (term.Code == ViewBag.SelectedTerm?.Code)
+            {
+                <option value="@term.Code" selected>@term.Name</option>
+            }
+            else
+            {
+                <option value="@term.Code">@term.Name</option>
+            }
+        }
+    </select>
+</form>
+
+@if (Model != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Code</th><th>Name</th><th class="d-none d-md-table-cell">Instructor</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.Course.Code</td>
+                    <td><a asp-action="View" asp-route-id="@s.Id">@s.Course.Title</a></td>
+                    <td class="d-none d-md-table-cell">@s.Instructor.FullName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts{
+    <script>
+        $(function() {
+            $("select").change(function() {
+                $("form").submit();
+            });
+        })
+    </script>
+}

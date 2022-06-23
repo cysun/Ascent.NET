@@ -80,6 +80,7 @@ services.Configure<FilesSettings>(configuration.GetSection("Files"));
 services.AddScoped<FileService>();
 services.AddScoped<PersonService>();
 services.AddScoped<CourseService>();
+services.AddScoped<SectionService>();
 services.AddScoped<EnrollmentService>();
 
 // Build App

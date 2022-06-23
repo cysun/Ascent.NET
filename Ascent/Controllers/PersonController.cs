@@ -131,8 +131,5 @@ namespace Ascent.Models
 
         [Display(Name = "GG Term")]
         public string MgTerm { get; set; }
-
-        [Display(Name = "Instructor")]
-        public bool IsInstructor { get; set; }
     }
 }
