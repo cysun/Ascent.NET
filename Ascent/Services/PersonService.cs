@@ -17,6 +17,9 @@ public class PersonService
 
     public Person GetPerson(int id) => _db.Persons.Find(id);
 
+    public Person GetPersonByCampusId(string campusId) => _db.Persons
+        .Where(p => p.CampusId == campusId).FirstOrDefault();
+
     // maxResults=null for unlimited results
     public List<Person> SearchPersonsByPrefix(string prefix, int? maxResults = 100)
     {

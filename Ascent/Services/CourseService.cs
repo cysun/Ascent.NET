@@ -17,7 +17,15 @@ public class CourseService
 
     public Course GetCourse(int id) => _db.Courses.Find(id);
 
-    public List<Course> GetCourses() => _db.Courses.Where(c => !c.IsObsolete).OrderBy(c => c.Number).AsNoTracking().ToList();
+    public List<Course> GetCourses() => _db.Courses.AsNoTracking()
+        .Where(c => !c.IsObsolete)
+        .OrderBy(c => c.Number)
+        .ToList();
+
+    public List<Course> SearchCoursesByPrefix(string prefix) => _db.Courses.AsNoTracking()
+        .Where(c => c.Number.StartsWith(prefix))
+        .OrderBy(c => c.Number)
+        .ToList();
 
     public void AddCourse(Course course)
     {

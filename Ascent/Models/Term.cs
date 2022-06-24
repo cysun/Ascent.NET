@@ -143,4 +143,54 @@ public class Term
                 break;
         }
     }
+
+    public Term Previous()
+    {
+        int yearCode = Code / 10;
+        int termSuffix = Code % 10;
+
+        switch (termSuffix)
+        {
+            case 9:
+                termSuffix = 6;
+                break;
+            case 6:
+                termSuffix = 3;
+                break;
+            case 3:
+                termSuffix = 1;
+                break;
+            default:
+                termSuffix = 9;
+                --yearCode;
+                break;
+        }
+
+        return new Term(yearCode * 10 + termSuffix);
+    }
+
+    public Term next()
+    {
+        int yearCode = Code / 10;
+        int termSuffix = Code % 10;
+
+        switch (termSuffix)
+        {
+            case 1:
+                termSuffix = 3;
+                break;
+            case 3:
+                termSuffix = 6;
+                break;
+            case 6:
+                termSuffix = 9;
+                break;
+            default:
+                termSuffix = 1;
+                ++yearCode;
+                break;
+        }
+
+        return new Term(yearCode * 10 + termSuffix);
+    }
 }

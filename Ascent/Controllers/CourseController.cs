@@ -112,6 +112,11 @@ namespace Ascent.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public List<Course> Autocomplete(string prefix)
+        {
+            return _courseService.SearchCoursesByPrefix(prefix);
+        }
     }
 }
 

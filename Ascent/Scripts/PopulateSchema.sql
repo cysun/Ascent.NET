@@ -18,3 +18,5 @@ RETURNS SETOF "Persons" AS $$
         ORDER BY "FirstName", "LastName" asc
         LIMIT $2;
 $$ LANGUAGE sql;
+
+CREATE INDEX ON "Courses" ("Number" varchar_pattern_ops);

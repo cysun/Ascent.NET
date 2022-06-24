@@ -36,6 +36,7 @@ public class Person
     public bool IsDeleted { get; set; }
 
     public string FullName => $"{FirstName} {LastName}";
+    public string FullName2 => $"{LastName}, {FirstName}";
 
     public string Email => PersonalEmail ?? SchoolEmail;
 }

@@ -28,6 +28,12 @@ public class SectionService
         .OrderBy(s => s.Course.Number)
         .ToList();
 
+    public void AddSection(Section section)
+    {
+        _db.Sections.Add(section);
+        _db.SaveChanges();
+    }
+
     public void DeleteSection(Section section)
     {
         _db.Sections.Remove(section);

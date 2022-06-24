@@ -12,6 +12,12 @@ public class EnrollmentService
         _db = db;
     }
 
+    public void AddEnrollment(Enrollment enrollment)
+    {
+        _db.Enrollments.Add(enrollment);
+        _db.SaveChanges();
+    }
+
     public List<Enrollment> GetEnrollmentsByPerson(int personId) =>
         _db.Enrollments.AsNoTracking().Where(e => e.StudentId == personId)
         .Include(e => e.Section).ThenInclude(s => s.Course)
@@ -21,6 +27,6 @@ public class EnrollmentService
     public List<Enrollment> GetEnrollmentsBySection(int sectionId) =>
         _db.Enrollments.AsNoTracking().Where(e => e.SectionId == sectionId)
         .Include(e => e.Student)
-        .AsEnumerable().OrderBy(e => e.Student.FullName)
+        .OrderBy(e => e.Student.LastName).ThenBy(e => e.Student.FirstName)
         .ToList();
 }
