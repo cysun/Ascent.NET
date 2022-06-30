@@ -48,12 +48,14 @@ namespace Ascent.Controllers
 
 
         [HttpGet]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Create()
         {
             return View(new PageInputModel());
         }
 
         [HttpPost]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Create(PageInputModel input)
         {
             if (!ModelState.IsValid) return View(input);
@@ -65,6 +67,7 @@ namespace Ascent.Controllers
             return RedirectToAction("Edit", new { id = page.Id });
         }
 
+        [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Edit(int id)
         {
             var page = _pageService.GetPage(id);
@@ -76,6 +79,7 @@ namespace Ascent.Controllers
         }
 
         [HttpPut("page/{id}/{field}")]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult SetField(int id, [Required] string field, string value)
         {
             var page = _pageService.GetPage(id);
@@ -104,6 +108,7 @@ namespace Ascent.Controllers
             return Ok();
         }
 
+        [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Delete(int id)
         {
             var page = _pageService.GetPage(id);
@@ -113,6 +118,51 @@ namespace Ascent.Controllers
             _logger.LogInformation("{user} deleted page {page}", User.Identity.Name, id);
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Revisions(int id, int? version)
+        {
+            var page = _pageService.GetPage(id);
+            if (page == null) return NotFound();
+
+            ViewBag.Page = page;
+            ViewBag.Version = version ?? page.Version;
+            ViewBag.Revisions = _pageService.GetPageRevisions(id);
+
+            return View(version == null || version == page.Version ? _mapper.Map<PageRevision>(page)
+                : _pageService.GetPageRevision(id, (int)version));
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult SaveRevision(int id)
+        {
+            var page = _pageService.GetPage(id);
+            if (page == null) return NotFound();
+
+            var revision = _mapper.Map<PageRevision>(page);
+            page.Version++;
+            _pageService.AddPageRevision(revision);
+            _logger.LogInformation("{user} created revision {version} of page {page}",
+                User.Identity.Name, revision.Version, id);
+
+            return RedirectToAction("Revisions", new { id = id, version = revision.Version });
+        }
+
+        public IActionResult RevertToRevision(int id, int version)
+        {
+            var revision = _pageService.GetPageRevision(id, version);
+            if (revision == null) return NotFound();
+
+            var page = _pageService.GetPage(id);
+            page.Subject = revision.Subject;
+            page.Content = revision.Content;
+            page.TimeUpdated = DateTime.UtcNow;
+            page.TimeViewed = DateTime.UtcNow;
+
+            _pageService.SaveChanges();
+            _logger.LogInformation("{user} reverted page {page} to revision {version}", User.Identity.Name, id, version);
+
+            return RedirectToAction("Revisions", new { id = id });
         }
     }
 }

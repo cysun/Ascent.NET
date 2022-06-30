@@ -34,11 +34,30 @@ public class PageService
 
     public void DeletePage(Page page)
     {
-        if (_db.PageHistories.Where(h => h.PageId == page.Id).Count() == 0
+        if (_db.PageRevisions.Where(h => h.PageId == page.Id).Count() == 0
             && (page.Content == null || page.Content.Length < 200))
             _db.Pages.Remove(page);
         else
             page.IsDeleted = true;
+        _db.SaveChanges();
+    }
+
+    public PageRevision GetPageRevision(int pageId, int version) => _db.PageRevisions
+        .Where(r => r.PageId == pageId && r.Version == version).SingleOrDefault();
+
+    public List<PageRevisionDto> GetPageRevisions(int pageId) => _db.PageRevisions.Where(r => r.PageId == pageId)
+        .Select(r => new PageRevisionDto()
+        {
+            PageId = r.PageId,
+            Version = r.Version,
+            Subject = r.Subject,
+            TimeCreated = r.TimeCreated
+        })
+        .AsNoTracking().OrderByDescending(o => o.TimeCreated).ToList();
+
+    public void AddPageRevision(PageRevision revision)
+    {
+        _db.PageRevisions.Add(revision);
         _db.SaveChanges();
     }
 

@@ -10,7 +10,7 @@
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
             <li>
-                <a asp-action="History" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm me-2" title="Page Revisions">
+                <a asp-action="Revisions" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm me-2" title="Page Revisions">
                     <i class="bi bi-bookshelf"></i>
                 </a>
             </li>
