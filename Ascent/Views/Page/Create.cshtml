@@ -1,0 +1,18 @@
+@model PageInputModel
+@{
+    ViewData["Title"] = "New Page";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Pages</a></li>
+        <li class="breadcrumb-item active">New Page</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="mb-3">
+        <input asp-for="Subject" class="form-control" placeholder="Subject" required>
+    </div>
+    <a class="btn btn-secondary me-2" asp-action="Index">Cancel</i></a>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

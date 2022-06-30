@@ -12,13 +12,24 @@ public class Page
 
     public string Content { get; set; }
 
-    public DateTime Created { get; set; } = DateTime.UtcNow;
-    public DateTime Updated { get; set; } = DateTime.UtcNow;
+    public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
+    public DateTime TimeUpdated { get; set; } = DateTime.UtcNow;
+    public DateTime TimeViewed { get; set; } = DateTime.UtcNow;
 
-    public DateTime? Published { get; set; }
-    public bool IsPublic => Published != null && Published < DateTime.UtcNow;
-
-    public int ViewCount { get; set; }
-
+    public bool IsPublic { get; set; }
     public bool IsDeleted { get; set; }
+}
+
+public class PageHistory
+{
+    public int PageId { get; set; }
+    public Page Page { get; set; }
+
+    [Required]
+    [MaxLength(80)]
+    public string Subject { get; set; }
+
+    public string Content { get; set; }
+
+    public DateTime TimeCreated { get; set; } // time when the revision is created
 }

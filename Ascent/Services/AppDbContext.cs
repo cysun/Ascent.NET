@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Enrollment> Enrollments { get; set; }
     public DbSet<Grade> Grades { get; set; }
     public DbSet<Page> Pages { get; set; }
+    public DbSet<PageHistory> PageHistories { get; set; }
     public DbSet<Models.File> Files { get; set; }
     public DbSet<FileHistory> FileHistories { get; set; }
 
@@ -25,6 +26,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
         modelBuilder.Entity<Enrollment>().HasQueryFilter(e => !e.Student.IsDeleted);
         modelBuilder.Entity<Page>().HasQueryFilter(n => !n.IsDeleted);
+        modelBuilder.Entity<PageHistory>().HasKey(h => new { h.PageId, h.TimeCreated });
+        modelBuilder.Entity<PageHistory>().HasQueryFilter(h => !h.Page.IsDeleted);
         modelBuilder.Entity<FileHistory>().HasKey(h => new { h.FileId, h.Version });
     }
 }

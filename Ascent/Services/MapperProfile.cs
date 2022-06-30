@@ -15,6 +15,8 @@ public class MapperProfile : Profile
         CreateMap<Person, PersonInputModel>();
         CreateMap<CourseInputModel, Course>();
         CreateMap<Course, CourseInputModel>();
+        CreateMap<PageInputModel, Page>();
+        CreateMap<Page, PageInputModel>();
 
         CreateMap<Models.File, FileHistory>().ForMember(dest => dest.FileId, opt => opt.MapFrom(src => src.Id));
     }

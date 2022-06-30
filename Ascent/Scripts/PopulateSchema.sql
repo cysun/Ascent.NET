@@ -7,7 +7,7 @@ CREATE INDEX ON "Persons" (lower("SchoolEmail") varchar_pattern_ops);
 CREATE INDEX ON "Persons" (lower("PersonalEmail") varchar_pattern_ops);
 
 -- The first argument is the pattern, e.g. 'John%', and the second argument is the max number of results.
-CREATE OR REPLACE FUNCTION search_persons_by_pattern(varchar, integer default null)
+CREATE OR REPLACE FUNCTION "SearchPersons"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Persons" AS $$
     SELECT * FROM "Persons" WHERE "CampusId" LIKE $1
         OR lower("FirstName") LIKE $1
@@ -20,3 +20,29 @@ RETURNS SETOF "Persons" AS $$
 $$ LANGUAGE sql;
 
 CREATE INDEX ON "Courses" ("Number" varchar_pattern_ops);
+
+-- FTS on Pages
+
+ALTER TABLE "Pages" ADD COLUMN tsv tsvector;
+
+CREATE INDEX "PagesTsIndex" ON "Pages" USING GIN(tsv);
+
+CREATE OR REPLACE FUNCTION "PagesTsTriggerFunction"() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.tsv := setweight(to_tsvector(coalesce(NEW."Subject",'')), 'A') ||
+               setweight(to_tsvector(coalesce(NEW."Content",'')), 'D');
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "PagesTsTrigger"
+    BEFORE INSERT OR UPDATE ON "Pages"
+    FOR EACH ROW EXECUTE PROCEDURE "PagesTsTriggerFunction"();
+
+CREATE OR REPLACE FUNCTION "SearchPages"(varchar, integer DEFAULT NULL)
+RETURNS SETOF "Pages" AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM "Pages" WHERE plainto_tsquery($1) @@ tsv LIMIT $2;
+    RETURN;
+ END
+$$ LANGUAGE plpgsql;
