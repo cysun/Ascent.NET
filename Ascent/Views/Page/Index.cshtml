@@ -9,7 +9,7 @@
         <li class="breadcrumb-item active me-auto">Pages</li>
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
-            <li><a asp-action="Create" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg"></i></a></li>
+            <li><a asp-action="Create" class="btn btn-outline-primary btn-sm" title="Add Page"><i class="bi bi-plus-lg"></i></a></li>
         }
     </ol>
 </nav>

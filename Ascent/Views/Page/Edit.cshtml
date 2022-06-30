@@ -7,7 +7,11 @@
         <li class="breadcrumb-item"><a asp-action="Index">Pages</a></li>
         <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@ViewBag.Page.Id">@Model.Subject</a></li>
         <li class="breadcrumb-item active me-auto">Edit</li>
-        <li><button id="delete" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash-fill"></i></button></li>
+        <li>
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Page">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </li>
     </ol>
 </nav>
 
