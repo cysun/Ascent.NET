@@ -150,17 +150,28 @@
             $("#clearBtn").click(function() {
                 $("#newFolder").val("");
             });
+            var fileIcons = ["bi-folder-fill", "bi-folder", "bi-file-earmark-fill", "bi-file-earmark"];
+            var toggleIcons = function(element, icon1, icon2) {
+                if (element.hasClass(icon1)) {
+                    element.removeClass(icon1);
+                    element.addClass(icon2);
+                }
+                else if (element.hasClass(icon2)) {
+                    element.removeClass(icon2);
+                    element.addClass(icon1);
+                }
+            }
             $(".file,.folder").click(function() {
                 var fileId = $(this).attr("data-file-id");
-                var value = $(this).hasClass("fas") ? "True" : "False";
+                var value = $(this).hasClass(fileIcons[0]) || $(this).hasClass(fileIcons[2]) ? "True" : "False";
                 $.ajax({
-                    url: `@Context.Request.PathBase/files/${fileId}/IsPublic`,
+                    url: `file/${fileId}/IsPublic`,
                     method: "put",
                     data: { value },
                     context: $(this),
                     success: function() {
-                        this.toggleClass("far");
-                        this.toggleClass("fas");
+                        toggleIcons(this, fileIcons[0], fileIcons[1]);
+                        toggleIcons(this, fileIcons[2], fileIcons[3]);
                     }
                 });
             });

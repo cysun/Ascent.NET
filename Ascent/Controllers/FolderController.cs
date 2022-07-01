@@ -41,6 +41,7 @@ namespace Ascent.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Create(string name, int? parentId)
         {
             if (string.IsNullOrWhiteSpace(name))

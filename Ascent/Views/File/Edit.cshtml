@@ -1,0 +1,139 @@
+@model FileInputModel
+@{
+    ViewData["Title"] = $"Edit File";
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="File" asp-action="Index">Files</a></li>
+        @foreach (var ancestor in ViewBag.Ancestors)
+        {
+            <li class="breadcrumb-item">
+                <a asp-controller="Folder" asp-action="View" asp-route-id="@ancestor.Id">@ancestor.Name</a>
+            </li>
+        }
+        @if (@ViewBag.File.IsFolder)
+        {
+            <li class="breadcrumb-item">
+                <a asp-controller="Folder" asp-action="View" asp-route-id="@ViewBag.File.Id">@Model.Name</a>
+            </li>
+            <li class="breadcrumb-item active me-auto">Edit</li>
+        }
+        else
+        {
+            <li class="breadcrumb-item active me-auto">@Model.Name</li>
+        }
+        <li>
+            <button id="move" class="btn btn-outline-primary btn-sm me-2" title="Move File/Folder"
+                    data-bs-toggle="modal" data-bs-target="#moveModal">
+                <i class="bi bi-folder-symlink-fill"></i>
+            </button>
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete File/Folder">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="form-floating mb-3">
+        <input asp-for="Name" class="form-control" required>
+        <label asp-for="Name"></label>
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="IsPublic" class="form-check-input" />
+        <label asp-for="IsPublic" class="form-check-label"></label>
+    </div>
+    @if (ViewBag.File.ParentId != null)
+    {
+        <a asp-controller="Folder" asp-action="View" asp-route-id="@ViewBag.File.ParentId"
+       class="btn btn-secondary">Cancel</a>
+    }
+    else
+    {
+        <a asp-controller="File" asp-action="Index" class="btn btn-secondary">Cancel</a>
+    }
+    <button type="submit" class="btn btn-primary ms-2">Save</button>
+</form>
+
+<div id="moveModal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Move to <span id="currentFolder"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="folders" data-id="" class="list-group list-group-flush">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="doMove" type="button" class="btn btn-primary">Move</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var paths = []; // current path from root
+        var children; // children of the current folder
+        function getChildFolders() {
+            $.ajax({
+                url: "../../Folder/GetChildFolders",
+                data: paths[0].id ? { parentId: paths[0].id } : {},
+                success: function(results) {
+                    $("#currentFolder").text(paths[0].name);
+                    children = results.filter(r => r.id != @ViewBag.File.Id);
+                    if (paths.length > 1)
+                        children.unshift({
+                            id: paths[1].id,
+                            name: ".."
+                        });
+                    var items = children.map(child => {
+                        var item = $(`<li class="child list-group-item" data-id="${child.id}">${child.name}</li>`);
+                        item.click(function() {
+                            $(".child").removeClass("active");
+                            $(this).addClass("active");
+                        });
+                        item.dblclick(function() {
+                            if ($(this).text() == "..")
+                                paths.shift();
+                            else
+                                paths.unshift(children.find(c => c.id == $(this).attr("data-id")));
+                            getChildFolders();
+                        });
+                        return item;
+                    });
+                    $("#folders").empty().append(items);
+                }
+            });
+        }
+        $(function() {
+            $("#delete").click(function() {
+                if (confirm("Are you sure you want to delete this file?"))
+                    window.location.href = "../delete/@ViewBag.File.Id";
+            });
+            $("#moveModal").on("shown.bs.modal", function() {
+                paths.unshift({
+                    id: null,
+                    name: "/"
+                });
+                getChildFolders();
+            });
+            $("#moveModal").on("hide.bs.modal", function() {
+                paths = [];
+                $("#folders").empty();
+            });
+            $("#doMove").click(function() {
+                var fileId = @ViewBag.File.Id;
+                var url = `../move/${fileId}`;
+                var selected = $("li.child.active");
+                var parentId = selected.length == 1 ? selected.attr("data-id") : paths[0].id;
+                if (parentId) url += `?parentId=${parentId}`;
+                window.location.href = url;
+            });
+        });
+    </script>
+}

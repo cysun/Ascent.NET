@@ -98,12 +98,14 @@ namespace Ascent.Controllers
                     break;
                 default:
                     _logger.LogWarning("Unrecognized field: {field}", field);
-                    break;
+                    return BadRequest();
             }
 
             page.TimeUpdated = DateTime.UtcNow;
             page.TimeViewed = DateTime.UtcNow;
             _pageService.SaveChanges();
+            _logger.LogInformation("{user} set page {page} field {field} to {value}", User.Identity.Name,
+                page.Id, field, value);
 
             return Ok();
         }

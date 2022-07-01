@@ -18,7 +18,10 @@ public class MapperProfile : Profile
         CreateMap<PageInputModel, Page>();
         CreateMap<Page, PageInputModel>();
 
+        CreateMap<Models.File, FileInputModel>();
+        CreateMap<FileInputModel, Models.File>();
         CreateMap<Models.File, FileRevision>().ForMember(dest => dest.FileId, opt => opt.MapFrom(src => src.Id));
+
         CreateMap<Page, PageRevision>().ForMember(dest => dest.PageId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.TimeCreated, opt => opt.Ignore());
     }
