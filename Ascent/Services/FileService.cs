@@ -48,18 +48,11 @@ public class FileService
         return _settings.TextTypes.Contains(Path.GetExtension(fileName).ToLower());
     }
 
-    public List<Models.File> GetRecentFiles(bool publicOnly = false)
-    {
-        return _db.Files.Where(f => DateTime.UtcNow.AddDays(-21) < f.Created && (f.IsPublic || f.IsPublic == publicOnly))
-            .OrderByDescending(f => f.Updated)
-            .ToList();
-    }
-
     public List<Models.File> GetFiles()
     {
         return _db.Files.Where(f => f.ParentId == null)
             .OrderByDescending(f => f.IsFolder).ThenBy(f => f.Name)
-            .ToList();
+            .AsNoTracking().ToList();
     }
 
     public Models.File GetFile(int id)
@@ -84,7 +77,7 @@ public class FileService
         return folder;
     }
 
-    public Models.File GetFolder(string path, bool createFolder = true, bool isSystem = true)
+    public Models.File GetFolder(string path, bool createFolder = true)
     {
         string[] names = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         Models.File parent = null;
@@ -98,8 +91,7 @@ public class FileService
                 {
                     Name = name,
                     IsFolder = true,
-                    ParentId = parent?.Id,
-                    IsSystem = isSystem
+                    ParentId = parent?.Id
                 };
                 _db.Files.Add(folder);
                 _db.SaveChanges();
@@ -129,7 +121,7 @@ public class FileService
     {
         return _db.Files.Where(f => f.ParentId == parentId && (f.IsFolder || !folderOnly))
             .OrderByDescending(f => f.IsFolder).ThenBy(f => f.Name)
-            .ToList();
+            .AsNoTracking().ToList();
     }
 
     public Models.File GetFile(int? parentId, string name)
@@ -159,26 +151,26 @@ public class FileService
                 file.IsPublic = parent.IsPublic;
             }
             _db.Files.Add(file);
-            _logger.LogDebug($"Uploading new file: {name}");
+            _logger.LogDebug("New file uploaded: {file}", name);
         }
         else
         {
-            _db.FileHistories.Add(_mapper.Map<Models.FileHistory>(file));
+            _db.FileRevisions.Add(_mapper.Map<Models.FileRevision>(file));
             file.ContentType = uploadedFile.ContentType;
             file.Size = uploadedFile.Length;
-            file.Updated = file.Created = DateTime.UtcNow;
+            file.TimeCreated = DateTime.UtcNow;
             file.Version++;
-            _logger.LogDebug($"Updating existing file: {name}");
+            _logger.LogDebug("Existing file updated: {file}", name);
         }
         _db.SaveChanges();
-        _logger.LogInformation($"File {name} added to database");
+        _logger.LogInformation("File saved to database: {file}", name);
 
         string diskFile = Path.Combine(_settings.Directory, $"{file.Id}-{file.Version}");
         using (var fileStream = new FileStream(diskFile, FileMode.Create))
         {
             uploadedFile.CopyTo(fileStream);
         }
-        _logger.LogInformation($"File {name} saved to disk");
+        _logger.LogInformation("File saved to disk: {file}", name);
 
         return file;
     }
@@ -190,14 +182,14 @@ public class FileService
 
     public void AddFolder(Models.File folder) => _db.Files.Add(folder);
 
-    public List<Models.File> SearchFiles(string term, bool publicOnly = false)
+    // maxResults=null for unlimited results
+    public List<Models.File> SearchFiles(string searchText, int? maxResults = 20)
     {
-        if (string.IsNullOrWhiteSpace(term)) return new List<Models.File>();
+        if (string.IsNullOrWhiteSpace(searchText)) return new List<Models.File>();
 
-        return _db.Files.FromSqlRaw("SELECT * FROM \"SearchFiles\"({0})", term)
-            .Where(f => f.IsPublic || !publicOnly)
+        return _db.Files.FromSqlRaw("SELECT * FROM \"SearchFiles\"({0}, {1})", searchText, maxResults)
             .OrderByDescending(f => f.IsFolder).ThenBy(f => f.Name)
-            .ToList();
+            .AsNoTracking().ToList();
     }
 
     public int DeleteFile(int id)
@@ -208,7 +200,7 @@ public class FileService
             for (int i = 1; i < file.Version; ++i)
             {
                 File.Delete(GetDiskFile(id, i));
-                _db.FileHistories.Remove(new Models.FileHistory
+                _db.FileRevisions.Remove(new Models.FileRevision
                 {
                     FileId = id,
                     Version = i

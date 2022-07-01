@@ -15,7 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Page> Pages { get; set; }
     public DbSet<PageRevision> PageRevisions { get; set; }
     public DbSet<Models.File> Files { get; set; }
-    public DbSet<FileHistory> FileHistories { get; set; }
+    public DbSet<FileRevision> FileRevisions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,6 +28,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Page>().HasQueryFilter(n => !n.IsDeleted);
         modelBuilder.Entity<PageRevision>().HasKey(r => new { r.PageId, r.Version });
         modelBuilder.Entity<PageRevision>().HasQueryFilter(r => !r.Page.IsDeleted);
-        modelBuilder.Entity<FileHistory>().HasKey(h => new { h.FileId, h.Version });
+        modelBuilder.Entity<FileRevision>().HasKey(r => new { r.FileId, r.Version });
     }
 }

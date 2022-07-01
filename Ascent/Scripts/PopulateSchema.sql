@@ -46,3 +46,34 @@ BEGIN
     RETURN;
  END
 $$ LANGUAGE plpgsql;
+
+-- Start File Id from 1000000 --
+
+ALTER SEQUENCE "Files_Id_seq" RESTART WITH 1000000;
+
+-- FTS on File Names --
+
+ALTER TABLE "Files" ADD COLUMN tsv tsvector;
+
+CREATE INDEX "FilesTsIndex" ON "Files" USING GIN(tsv);
+
+CREATE OR REPLACE FUNCTION "FilesTsTriggerFunction"() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.tsv := to_tsvector(NEW."Name");
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "FilesTsTrigger"
+    BEFORE INSERT OR UPDATE ON "Files"
+    FOR EACH ROW EXECUTE PROCEDURE "FilesTsTriggerFunction"();
+
+-- Search Files by FTS --
+
+CREATE OR REPLACE FUNCTION "SearchFiles"(varchar, integer DEFAULT NULL)
+RETURNS SETOF "Files" AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM "Files" WHERE plainto_tsquery($1) @@ tsv LIMIT $2;
+    RETURN;
+ END
+$$ LANGUAGE plpgsql;

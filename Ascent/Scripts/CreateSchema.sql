@@ -12,12 +12,9 @@ CREATE TABLE "Files" (
     "Version" integer NOT NULL,
     "ContentType" character varying(255) NULL,
     "Size" bigint NOT NULL,
-    "Created" timestamp with time zone NOT NULL,
-    "Updated" timestamp with time zone NOT NULL,
-    "IsFolder" boolean NOT NULL,
+    "TimeCreated" timestamp with time zone NOT NULL,
     "ParentId" integer NULL,
-    "AccessCount" integer NOT NULL,
-    "IsSystem" boolean NOT NULL,
+    "IsFolder" boolean NOT NULL,
     "IsPublic" boolean NOT NULL,
     CONSTRAINT "PK_Files" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Files_Files_ParentId" FOREIGN KEY ("ParentId") REFERENCES "Files" ("Id")
@@ -73,16 +70,15 @@ CREATE TABLE "Courses" (
     CONSTRAINT "FK_Courses_Files_AbetDescriptionId" FOREIGN KEY ("AbetDescriptionId") REFERENCES "Files" ("Id")
 );
 
-CREATE TABLE "FileHistories" (
+CREATE TABLE "FileRevisions" (
     "FileId" integer NOT NULL,
     "Version" integer NOT NULL,
     "Name" character varying(1000) NOT NULL,
     "ContentType" character varying(255) NULL,
     "Size" bigint NOT NULL,
-    "Created" timestamp with time zone NOT NULL,
-    "Updated" timestamp with time zone NOT NULL,
-    CONSTRAINT "PK_FileHistories" PRIMARY KEY ("FileId", "Version"),
-    CONSTRAINT "FK_FileHistories_Files_FileId" FOREIGN KEY ("FileId") REFERENCES "Files" ("Id") ON DELETE CASCADE
+    "TimeCreated" timestamp with time zone NOT NULL,
+    CONSTRAINT "PK_FileRevisions" PRIMARY KEY ("FileId", "Version"),
+    CONSTRAINT "FK_FileRevisions_Files_FileId" FOREIGN KEY ("FileId") REFERENCES "Files" ("Id") ON DELETE CASCADE
 );
 
 CREATE TABLE "PageRevisions" (
@@ -132,7 +128,7 @@ CREATE INDEX "IX_Sections_CourseId" ON "Sections" ("CourseId");
 CREATE INDEX "IX_Sections_InstructorId" ON "Sections" ("InstructorId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220630171635_InitialSchema', '6.0.6');
+VALUES ('20220630233402_InitialSchema', '6.0.6');
 
 COMMIT;
 

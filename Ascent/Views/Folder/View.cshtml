@@ -1,0 +1,184 @@
+@inject IAuthorizationService AuthorizationService
+@model File
+@{
+    ViewData["Title"] = $"Folder - /{Model.Name}";
+}
+
+<nav>
+    <ol class="breadcrumb">
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
+        {
+            <li class="breadcrumb-item"><a asp-controller="File" asp-action="Index">Files</a></li>
+            @foreach (var ancestor in ViewBag.Ancestors)
+            {
+                <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@ancestor.Id">@ancestor.Name</a></li>
+            }
+        }
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
+
+@if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+{
+    <div class="btn-toolbar mb-3">
+        <button id="uploadToggle" type="button" class="btn btn-outline-primary me-3">
+            <i class="bi bi-upload"></i>
+        </button>
+        <button id="newFolderToggle" type="button" class="btn btn-outline-primary me-2">
+            <i class="bi bi-folder-plus"></i>
+        </button>
+        <div id="newFolderForm" class="input-group">
+            <input id="newFolder" type="text" class="form-control" style="width: 20em;">
+            <div class="input-group-append">
+                <div class="input-group-text" id="clearBtn"><i class="bi bi-x-lg"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <form id="uploadForm" asp-controller="File" asp-action="Upload" class="dropzone"
+      method="post" enctype="multipart/form-data">
+        <input type="hidden" name="parentId" value="@Model.Id" />
+    </form>
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th class="d-none d-lg-table-cell">Size</th>
+            <th class="d-none d-lg-table-cell">Created</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var file in Model.Children)
+        {
+            string icon;
+            if (file.IsFolder)
+                icon = file.IsPublic ? "bi-folder" : "bi-folder-fill";
+            else
+                icon = file.IsPublic ? "bi-file-earmark" : "bi-file-earmark-fill";
+            <tr>
+                @if (file.IsFolder)
+                {
+
+                    <td>
+                        <i class="folder bi @icon me-2" style="color: orange;" data-file-id="@file.Id"></i>
+                        <a asp-action="View" asp-route-id="@file.Id">@file.Name</a>
+                    </td>
+                    <td class="d-none d-lg-table-cell"></td>
+                }
+                else
+                {
+                    <td>
+                        <i class="file bi @icon me-2" style="color: orange;" data-file-id="@file.Id"></i>
+                        <a asp-controller="File" asp-action="View" asp-route-id="@file.Id">@file.Name</a>
+                        @if (file.Version > 1)
+                        {
+                            <span class="badge badge-info ms-2">v@(file.Version)</span>
+                        }
+                    </td>
+                    <td class="d-none d-lg-table-cell">@file.Size</td>
+                }
+                <td class="d-none d-lg-table-cell">@file.TimeCreated.ToString("g")</td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                    {
+                        <a asp-controller="File" asp-action="Edit" asp-route-id="@file.Id"
+                   class="btn btn-outline-primary btn-sm d-none d-md-inline"><i class="bi bi-pencil-fill"></i></a>
+                    }
+                    @if (!file.IsFolder)
+                    {
+                        <a asp-controller="File" asp-action="Download" asp-route-id="@file.Id"
+                   class="btn btn-outline-primary btn-sm ms-2">
+                            <i class="bi bi-download"></i>
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section StyleSheets{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css"
+      integrity="sha512-jU/7UFiaW5UBGODEopEqnbIAHOI8fO6T99m7Tsmqs2gkdujByJfkCbbfPSN4Wlqlb9TGnsuC0YgUgWkRBK7B9A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+    @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"
+        integrity="sha512-oQq8uth41D+gIH/NJvSJvVB85MFk1eWpMK6glnkg6I7EdMqC1XVkW7RxLheXwmFdG03qScCM7gKS/Cx3FYt7Tg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        Dropzone.options.uploadForm = {
+            uploadMultiple: true,
+            // uploadMultiple is true, Dropzone add [] to paramName. For some reason ASP.NET Core does not
+            // bind it to a collection like for other parameter types. The paramName functio trick is from
+            // https://stackoverflow.com/questions/58815724/how-to-integrate-dropzone-js-with-asp-net-core-mvc
+            paramName: () => "uploadedFiles",
+            parallelUploads: 10,
+            timeout: 180000, // default timeout is 30s (30000ms) which is not enough for uploading large files
+            queuecomplete: function() {
+                location.reload();
+            }
+        };
+        $(function() {
+            $("#uploadForm").hide();
+            $("#newFolderForm").hide();
+            $("#uploadToggle").click(function() {
+                $("#uploadForm").toggle();
+            });
+            $("#newFolderToggle").click(function() {
+                $("#newFolderForm").toggle();
+                if ($("#newFolderForm").is(":visible"))
+                    $("#newFolder").focus();
+            });
+            $("#newFolder").keyup(function(event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                var name = $(this).val();
+                if (keycode == "13" && name) {
+                    $.ajax({
+                        url: "../create",
+                        method: "post",
+                        data: {
+                            name,
+                            parentId: @Model.Id
+                        },
+                        success: function() {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+            $("#clearBtn").click(function() {
+                $("#newFolder").val("");
+            });
+            $(".file,.folder").click(function() {
+                var fileId = $(this).attr("data-file-id");
+                var value = $(this).hasClass("fas") ? "True" : "False";
+                $.ajax({
+                    url: `@Context.Request.PathBase/files/${fileId}/IsPublic`,
+                    method: "put",
+                    data: { value },
+                    context: $(this),
+                    success: function() {
+                        this.toggleClass("far");
+                        this.toggleClass("fas");
+                    }
+                });
+            });
+            $("#lock").click(function() {
+                var value = $("#isPublic").hasClass("fa-lock") ? "True" : "False";
+                $.ajax({
+                    url: `@Context.Request.PathBase/files/${@Model.Id}/IsPublic`,
+                    method: "put",
+                    data: { value },
+                    success: function() {
+                        $("#isPublic").toggleClass("fa-lock");
+                        $("#isPublic").toggleClass("fa-lock-open");
+                    }
+                });
+            });
+        });
+    </script>
+}

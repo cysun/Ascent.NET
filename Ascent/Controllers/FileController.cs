@@ -1,5 +1,6 @@
 using Ascent.Models;
 using Ascent.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,15 +12,37 @@ namespace Ascent.Controllers
 
         private readonly IAuthorizationService _authorizationService;
 
-        public FileController(FileService fileService, IAuthorizationService authorizationService)
+        private readonly IMapper _mapper;
+        private readonly ILogger<FileController> _logger;
+
+        public FileController(FileService fileService, IAuthorizationService authorizationService,
+            IMapper mapper, ILogger<FileController> logger)
         {
             _fileService = fileService;
             _authorizationService = authorizationService;
+            _mapper = mapper;
+            _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchText)
         {
-            return View();
+            List<Models.File> files;
+
+            if (string.IsNullOrWhiteSpace(searchText))
+                files = _fileService.GetFiles();
+            else
+                files = _fileService.SearchFiles(searchText);
+
+            return View(files);
+        }
+
+        [HttpPost]
+        public IActionResult Upload(int? parentId, IFormFile[] uploadedFiles)
+        {
+            foreach (var uploadedFile in uploadedFiles)
+                _fileService.UploadFile(parentId, uploadedFile);
+
+            return Ok();
         }
 
         [AllowAnonymous]

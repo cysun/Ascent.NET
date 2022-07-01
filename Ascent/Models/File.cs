@@ -17,23 +17,18 @@ public class File
 
     public long Size { get; set; }
 
-    public DateTime Created { get; set; } = DateTime.UtcNow;
-    public DateTime Updated { get; set; } = DateTime.UtcNow;
-
-    public bool IsFolder { get; set; }
+    public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
 
     public int? ParentId { get; set; }
     public File Parent { get; set; }
 
     public List<File> Children { get; set; }
 
-    public int AccessCount { get; set; }
-
-    public bool IsSystem { get; set; }
+    public bool IsFolder { get; set; }
     public bool IsPublic { get; set; }
 }
 
-public class FileHistory
+public class FileRevision
 {
     public int FileId { get; set; }
     public File File { get; set; }
@@ -49,6 +44,5 @@ public class FileHistory
 
     public long Size { get; set; }
 
-    public DateTime Created { get; set; }
-    public DateTime Updated { get; set; }
+    public DateTime TimeCreated { get; set; }
 }
