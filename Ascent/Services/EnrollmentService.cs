@@ -7,10 +7,7 @@ public class EnrollmentService
 {
     private readonly AppDbContext _db;
 
-    public EnrollmentService(AppDbContext db)
-    {
-        _db = db;
-    }
+    public EnrollmentService(AppDbContext db) { _db = db; }
 
     public void AddEnrollment(Enrollment enrollment)
     {

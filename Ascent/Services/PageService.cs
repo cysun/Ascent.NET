@@ -7,10 +7,7 @@ public class PageService
 {
     private readonly AppDbContext _db;
 
-    public PageService(AppDbContext db)
-    {
-        _db = db;
-    }
+    public PageService(AppDbContext db) { _db = db; }
 
     public Page GetPage(int id) => _db.Pages.Find(id);
 
@@ -45,7 +42,8 @@ public class PageService
     public PageRevision GetPageRevision(int pageId, int version) => _db.PageRevisions
         .Where(r => r.PageId == pageId && r.Version == version).SingleOrDefault();
 
-    public List<PageRevisionDto> GetPageRevisions(int pageId) => _db.PageRevisions.Where(r => r.PageId == pageId)
+    public List<PageRevisionDto> GetPageRevisions(int pageId) => _db.PageRevisions.AsNoTracking()
+        .Where(r => r.PageId == pageId)
         .Select(r => new PageRevisionDto()
         {
             PageId = r.PageId,
@@ -53,7 +51,7 @@ public class PageService
             Subject = r.Subject,
             TimeCreated = r.TimeCreated
         })
-        .AsNoTracking().OrderByDescending(o => o.TimeCreated).ToList();
+        .OrderByDescending(o => o.TimeCreated).ToList();
 
     public void AddPageRevision(PageRevision revision)
     {

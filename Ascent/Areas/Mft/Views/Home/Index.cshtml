@@ -1,0 +1,55 @@
+@model List<File>
+@{
+    ViewData["Title"] = "MFT";
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">MFT</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Individual Scores</div>
+            <div class="card-body d-flex align-items-start flex-column">
+                <p class="card-text mb-2 mb-lg-auto">The MFT score of each student. The score range is 120-200.</p>
+                <a asp-area="Mft" asp-controller="Score" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">Assessment Indicators</div>
+            <div class="card-body d-flex align-items-start flex-column">
+                <p class="card-text">MFT for Computer Science covers three general areas:</p>
+                <ol>
+                    <li>Programming and Software Engineering</li>
+                    <li>Discrete Structures and Algorithms</li>
+                    <li>Systems: Architecture/Operating Systems/Networking/Database</li>
+                </ol>
+                <p class="card-text mb-2">
+                    For each area, MFT provides an <em>assessment indicator</em>,
+                    which is the mean percentage of the correctly answered questions in that area
+                    for a cohort.
+                </p>
+                <a asp-area="Mft" asp-controller="Indicator" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">National Distributions</div>
+            <div class="card-body d-flex align-items-start flex-column">
+                <p class="card-text mb-2 mb-lg-auto">
+                    The distributions of individual student scores, institutional
+                    mean scores, and institutional assessment indicator mean scores over all
+                    the domestic institutions that took MFT for Computer Science during a certain
+                    time period.
+                </p>
+                <a asp-area="Mft" asp-action="Distribution" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+</div>

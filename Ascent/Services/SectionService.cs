@@ -7,10 +7,7 @@ public class SectionService
 {
     private readonly AppDbContext _db;
 
-    public SectionService(AppDbContext db)
-    {
-        _db = db;
-    }
+    public SectionService(AppDbContext db) { _db = db; }
 
     public List<Term> GetTerms() => _db.Sections.AsNoTracking()
         .Select(s => s.Term.Code)

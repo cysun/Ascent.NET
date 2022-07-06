@@ -27,7 +27,11 @@ services.Configure<KestrelServerOptions>(options =>
     options.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB (default 30MB)
 });
 
-services.AddControllersWithViews();
+// ASP.NET Core does not yet support model binding for DataOnly or TimeOnly. It's
+// supposed to be added in .NET 7 (https://github.com/dotnet/aspnetcore/issues/34591).
+// The DateOnlyTimeOnly.AspNet package (https://github.com/maxkoshevoi/DateOnlyTimeOnly.AspNet)
+// is currently used for this purpose.
+services.AddControllersWithViews(options => options.UseDateOnlyTimeOnlyStringConverters());
 
 services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
@@ -83,12 +87,15 @@ services.AddScoped<PersonService>();
 services.AddScoped<CourseService>();
 services.AddScoped<SectionService>();
 services.AddScoped<EnrollmentService>();
+services.AddScoped<MftService>();
 
 // Build App
 
 var app = builder.Build();
 
 // Configure Middleware Pipeline
+
+app.UseForwardedHeaders();
 
 if (!environment.IsDevelopment())
 {
@@ -102,6 +109,10 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

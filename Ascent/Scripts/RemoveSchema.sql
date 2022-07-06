@@ -1,3 +1,8 @@
+DROP TABLE "MftDistributions";
+DROP TABLE "MftDistributionTypes";
+DROP TABLE "MftIndicators";
+DROP TABLE "MftScores";
+
 DROP TRIGGER "FilesTsTrigger" ON "Files";
 DROP FUNCTION "FilesTsTriggerFunction"();
 DROP FUNCTION "SearchFiles"(varchar, integer);

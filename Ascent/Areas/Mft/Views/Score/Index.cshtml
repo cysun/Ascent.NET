@@ -1,0 +1,67 @@
+@inject IAuthorizationService AuthorizationService
+@model List<MftScore>
+@{
+    ViewData["Title"] = "MFT Scores";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item active me-auto">Individual Scores</li>
+        <li class="btn btn-outline-primary btn-sm" title="Charts">
+            <i class="bi bi-bar-chart-line-fill"></i>
+        </li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Percentile" class="btn btn-outline-primary btn-sm ms-2" title="Calculate Percentiles">
+                    <i class="bi bi-percent"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm ms-2" title="Add Scores">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">Scores</div>
+            <div class="card-body">
+                <select id="date" class="form-select" asp-items="@ViewBag.Dates"></select>
+                @if (Model.Count > 0)
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>CIN</th><th>Name</th><th>Score</th><th>Percentile</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var score in Model)
+                            {
+                                <tr>
+                                    <td>@score.StudentId</td>
+                                    <td>@score.LastName, @score.FirstName</td>
+                                    <td>@score.Score</td>
+                                    <td>@score.Percentile</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $("#date").change(function() {
+                window.location.href = `score?date=${$(this).val()}`;
+            });
+        });
+    </script>
+}

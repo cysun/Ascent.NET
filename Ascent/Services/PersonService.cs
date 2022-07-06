@@ -7,13 +7,7 @@ public class PersonService
 {
     private readonly AppDbContext _db;
 
-    private readonly ILogger<PersonService> _logger;
-
-    public PersonService(AppDbContext db, ILogger<PersonService> logger)
-    {
-        _db = db;
-        _logger = logger;
-    }
+    public PersonService(AppDbContext db) { _db = db; }
 
     public Person GetPerson(int id) => _db.Persons.Find(id);
 

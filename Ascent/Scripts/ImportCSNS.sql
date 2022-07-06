@@ -47,3 +47,13 @@ FROM csns2.enrollments e INNER JOIN csns2.grades g ON e.grade_id = g.id
 WHERE e.section_id IN (SELECT "Id" FROM "Sections") AND e.student_id IN (SELECT "Id" FROM "Persons");
 
 DELETE FROM "Sections" s WHERE NOT EXISTS (SELECT * FROM "Enrollments" WHERE "SectionId" = s."Id");
+
+INSERT INTO "MftScores" ("Id", "Date", "StudentId", "FirstName", "LastName", "Score")
+SELECT m.id, m.date, u.cin, u.first_name, u.last_name, m.value
+FROM csns2.mft_scores m INNER JOIN csns2.users u ON m.user_id = u.id;
+
+INSERT INTO "MftIndicators" ("Id", "Date", "NumOfStudents", "Scores")
+SELECt id, date(date), num_of_students, array[ai1, ai2, ai3] FROM csns2.mft_indicators;
+
+INSERT INTO "MftDistributionTypes" ("Key", "Name", "Min", "Max", "ValueLabel")
+SELECT alias, name, min, max, value_label FROM csns2.mft_distribution_types;

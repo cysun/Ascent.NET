@@ -7,13 +7,7 @@ public class CourseService
 {
     private readonly AppDbContext _db;
 
-    private readonly ILogger<CourseService> _logger;
-
-    public CourseService(AppDbContext db, ILogger<CourseService> logger)
-    {
-        _db = db;
-        _logger = logger;
-    }
+    public CourseService(AppDbContext db) { _db = db; }
 
     public Course GetCourse(int id) => _db.Courses.Find(id);
 
