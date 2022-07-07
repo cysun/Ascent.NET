@@ -71,11 +71,11 @@ namespace Ascent.Areas.Mft.Controllers
             if (_mftService.GetDistribution(input.Year, input.TypeAlias) != null)
                 return BadRequest();
 
-            var distribution = _mapper.Map<MftDistribution>(input);
+            var distribution = _mapper.Map<MftDistribution>(input, opts => opts.Items["type"] = input.TypeAlias);
             _mftService.AddDistribution(distribution);
             _logger.LogInformation("{user} added mft distribution {distribution}", User.Identity.Name, distribution.Id);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("View", new { id = distribution.Id });
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]

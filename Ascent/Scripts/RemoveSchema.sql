@@ -1,6 +1,7 @@
 DROP TABLE "MftDistributions";
 DROP TABLE "MftDistributionTypes";
 DROP TABLE "MftIndicators";
+DROP TABLE "MftScoreStats";
 DROP TABLE "MftScores";
 
 DROP TRIGGER "FilesTsTrigger" ON "Files";

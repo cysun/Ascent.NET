@@ -1,5 +1,5 @@
 @inject IAuthorizationService AuthorizationService
-@model List<MftScore>
+@model List<MftScoreStat>
 @{
     ViewData["Title"] = "MFT - Individual Scores";
 }
@@ -26,42 +26,50 @@
     </ol>
 </nav>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">Scores</div>
-            <div class="card-body">
-                <select id="date" class="form-select" asp-items="@ViewBag.Dates"></select>
-                @if (Model.Count > 0)
-                {
-                    <table class="table table-striped">
-                        <thead>
-                            <tr><th>CIN</th><th>Name</th><th>Score</th><th>Percentile</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var score in Model)
+@if (Model.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <thead>
+                    <tr><th>Year</th><th>Students</th><th>Mean</th><th>Median</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model)
+                    {
+                        <tr class="@(stat.Year == ViewBag.Year ? "table-success" : "")">
+                            @if (stat.Year == ViewBag.Year)
                             {
-                                <tr>
-                                    <td>@score.StudentId</td>
-                                    <td>@score.LastName, @score.FirstName</td>
-                                    <td>@score.Score</td>
-                                    <td>@score.Percentile</td>
-                                </tr>
+                                <td>@stat.Year</td>
                             }
-                        </tbody>
-                    </table>
-                }
-            </div>
+                            else
+                            {
+                                <td><a asp-action="Index" asp-route-year="@stat.Year">@stat.Year</a></td>
+                            }
+                            <td>@stat.Count</td>
+                            <td>@stat.Mean (@stat.MeanPercentile)</td>
+                            <td>@stat.Median (@stat.MedianPercentile)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <thead>
+                    <tr><th class="d-none d-lg-table-cell">CIN</th><th>Name</th><th>Score</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var score in ViewBag.Scores)
+                    {
+                        <tr>
+                            <td class="d-none d-lg-table-cell">@score.StudentId</td>
+                            <td>@score.FirstName @score.LastName</td>
+                            <td>@score.Score (@score.Percentile)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
-
-@section Scripts{
-    <script>
-        $(function() {
-            $("#date").change(function() {
-                window.location.href = `score?date=${$(this).val()}`;
-            });
-        });
-    </script>
 }

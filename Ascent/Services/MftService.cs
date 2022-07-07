@@ -11,19 +11,18 @@ public class MftService
 
     // Scores
 
-    public List<MftScore> GetScores(DateOnly date) => _db.MftScores.AsNoTracking()
-        .Where(s => s.Date == date).OrderByDescending(s => s.Score).ToList();
+    public List<MftScore> GetScores(int year) => _db.MftScores.Where(s => s.Year == year)
+        .OrderByDescending(s => s.Score).ThenBy(s => s.FirstName).ThenBy(s => s.LastName).ToList();
 
-    public List<DateOnly> GetScoreDates() => _db.MftScores.AsNoTracking()
-        .Select(s => s.Date).Distinct().OrderByDescending(d => d).ToList();
+    // Score Stats
 
-    public List<int> GetScoreYears() => _db.MftScores.AsNoTracking()
-        .Select(s => s.Date.Year).Distinct().OrderByDescending(y => y).ToList();
+    public List<MftScoreStat> GetScoreStats() => _db.MftScoreStats.AsNoTracking()
+        .OrderByDescending(s => s.Year).ToList();
 
     // Indicators
 
-    public List<MftIndicator> GetIndicators() => _db.MftIndicators.AsNoTracking()
-        .OrderByDescending(i => i.Date).ToList();
+    public List<MftIndicator> GetIndicators() => _db.MftIndicators
+        .OrderByDescending(i => i.Year).ToList();
 
     // Distribution Types
 

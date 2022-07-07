@@ -53,7 +53,18 @@ public class StringToRanksConverter : ITypeConverter<string, List<(int, int)>>
             foreach (var line in lines)
             {
                 var tokens = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                destination.Add(ValueTuple.Create(int.Parse(tokens[0]), int.Parse(tokens[1])));
+                switch (context.Items["type"])
+                {
+                    case "AI2":
+                        destination.Add(ValueTuple.Create(int.Parse(tokens[0]), int.Parse(tokens[2])));
+                        break;
+                    case "AI3":
+                        destination.Add(ValueTuple.Create(int.Parse(tokens[0]), int.Parse(tokens[3])));
+                        break;
+                    default:
+                        destination.Add(ValueTuple.Create(int.Parse(tokens[0]), int.Parse(tokens[1])));
+                        break;
+                }
             }
         }
 

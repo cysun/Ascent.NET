@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Models.File> Files { get; set; }
     public DbSet<FileRevision> FileRevisions { get; set; }
     public DbSet<MftScore> MftScores { get; set; }
+    public DbSet<MftScoreStat> MftScoreStats { get; set; }
     public DbSet<MftIndicator> MftIndicators { get; set; }
     public DbSet<MftDistributionType> MftDistributionTypes { get; set; }
     public DbSet<MftDistribution> MftDistributions { get; set; }
@@ -35,6 +36,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PageRevision>().HasKey(r => new { r.PageId, r.Version });
         modelBuilder.Entity<PageRevision>().HasQueryFilter(r => !r.Page.IsDeleted);
         modelBuilder.Entity<FileRevision>().HasKey(r => new { r.FileId, r.Version });
+        modelBuilder.Entity<MftScore>().HasAlternateKey(s => new { s.Year, s.StudentId });
         modelBuilder.Entity<MftIndicator>().Property(i => i.Percentiles).HasDefaultValueSql("'{null, null, null}'");
         modelBuilder.Entity<MftDistributionType>().HasAlternateKey(t => t.Alias);
         modelBuilder.Entity<MftDistribution>().HasAlternateKey(d => new { d.Year, d.TypeAlias });

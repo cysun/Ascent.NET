@@ -4,8 +4,8 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Home">MFT</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Distrubtion">National Distributions</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Distribution" asp-action="Index">National Distributions</a></li>
         <li class="breadcrumb-item active">New Distribution</li>
     </ol>
 </nav>
@@ -55,13 +55,12 @@
             </div>
         </div>
         <div class="col-12 mb-3">
-            <textarea asp-for="Ranks" class="form-control" rows="6"></textarea>
+            <textarea asp-for="Ranks" class="form-control" rows="10"></textarea>
             <div class="form-text">
                 Download <em>Annual Comparative Data Guide</em> from MFT (it's under the "Reports" menu). Copy the numbers
-                in the distribution table and paste them here so that each line has two numbers: score and percent below.
-                Now that a) you'll need to edit the data a little bit, e.g. changing "185 - 199 99" to "185 99", and b) for
-                the assessment indicators, you can paste the data into Visual Studio Code first, then use VSC's column
-                selection function to select the correct columns.
+                in the distribution table and paste them here. You'll need to edit the data a little bit, e.g. changing
+                "185 - 199 99" to "185 99", and remove the extra text if the table spans two pages. Note that for the score
+                tables, each line here should contains 2 numbers; for the indicator table, each line has 4 numbers.
             </div>
         </div>
         <div class="col-12">

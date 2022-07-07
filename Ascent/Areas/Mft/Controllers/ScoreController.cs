@@ -1,7 +1,5 @@
-using Ascent.Models;
 using Ascent.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ascent.Areas.Mft.Controllers
 {
@@ -15,20 +13,17 @@ namespace Ascent.Areas.Mft.Controllers
             _mftService = mftService;
         }
 
-        public IActionResult Index(DateOnly? date)
+        public IActionResult Index(int? year)
         {
-            var dates = _mftService.GetScoreDates();
-            if (dates.Count == 0) return View(new List<MftScore>());
+            var stats = _mftService.GetScoreStats();
 
-            ViewBag.SelectedDate = date ?? dates[0];
-            ViewBag.Dates = dates.Select(d => new SelectListItem()
+            if (stats.Count > 0)
             {
-                Text = d.ToString(),
-                Value = d.ToString("O"),
-                Selected = d == ViewBag.SelectedDate
-            });
+                ViewBag.Year = year ?? stats[0].Year;
+                ViewBag.Scores = _mftService.GetScores(ViewBag.Year);
+            }
 
-            return View(_mftService.GetScores(ViewBag.SelectedDate));
+            return View(stats);
         }
     }
 }

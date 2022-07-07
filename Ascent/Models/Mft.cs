@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ascent.Models
 {
@@ -6,7 +7,7 @@ namespace Ascent.Models
     {
         public int Id { get; set; }
 
-        public DateOnly Date { get; set; }
+        public int Year { get; set; }
 
         [Required, MaxLength(100)]
         public string StudentId { get; set; }
@@ -22,11 +23,27 @@ namespace Ascent.Models
         public int? Percentile { get; set; }
     }
 
+    public class MftScoreStat
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Year { get; set; }
+
+        public int Count { get; set; }
+
+        // For the purpose of calculating percentile, we only need int
+        public int Mean { get; set; }
+        public int Median { get; set; }
+
+        public int? MeanPercentile { get; set; }
+        public int? MedianPercentile { get; set; }
+    }
+
     public class MftIndicator
     {
         public int Id { get; set; }
 
-        public DateOnly Date { get; set; }
+        public int Year { get; set; }
 
         public int NumOfStudents { get; set; }
 
@@ -71,5 +88,13 @@ namespace Ascent.Models
         public double StdDev { get; set; }
 
         public List<(int, int)> Ranks { get; set; } = new List<(int, int)>();
+
+        public int getPercentile(int value)
+        {
+            foreach (var rank in Ranks)
+                if (value >= rank.Item1) return rank.Item2;
+
+            return 0;
+        }
     }
 }

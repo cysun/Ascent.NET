@@ -48,12 +48,17 @@ WHERE e.section_id IN (SELECT "Id" FROM "Sections") AND e.student_id IN (SELECT 
 
 DELETE FROM "Sections" s WHERE NOT EXISTS (SELECT * FROM "Enrollments" WHERE "SectionId" = s."Id");
 
-INSERT INTO "MftScores" ("Id", "Date", "StudentId", "FirstName", "LastName", "Score")
-SELECT m.id, m.date, u.cin, u.first_name, u.last_name, m.value
+INSERT INTO "MftScores" ("Id", "Year", "StudentId", "FirstName", "LastName", "Score")
+SELECT m.id, extract(year from m.date), u.cin, u.first_name, u.last_name, m.value
 FROM csns2.mft_scores m INNER JOIN csns2.users u ON m.user_id = u.id;
 
-INSERT INTO "MftIndicators" ("Id", "Date", "NumOfStudents", "Scores")
-SELECt id, date(date), num_of_students, array[ai1, ai2, ai3] FROM csns2.mft_indicators;
+INSERT INTO "MftIndicators" ("Id", "Year", "NumOfStudents", "Scores")
+SELECT id, extract(year from date), num_of_students, array[ai1, ai2, ai3] FROM csns2.mft_indicators
+WHERE extract(year from date) >= 2008;
 
 INSERT INTO "MftDistributionTypes" ("Id", "Alias", "Name", "Min", "Max", "ValueLabel")
 SELECT id, alias, name, min, max, value_label FROM csns2.mft_distribution_types;
+
+INSERT INTO "MftScoreStats" ("Year", "Count", "Mean", "Median")
+SELECT "Year", count("Id"), ceil(avg("Score")), ceil(percentile_cont(0.5) WITHIN GROUP(ORDER BY "Score"))
+FROM "MftScores" GROUP BY "Year";
