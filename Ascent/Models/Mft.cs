@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ascent.Models
 {
@@ -38,8 +37,10 @@ namespace Ascent.Models
 
     public class MftDistributionType
     {
-        [Key, MaxLength(15)]
-        public string Key { get; set; }
+        public int Id { get; set; }
+
+        [MaxLength(15)]
+        public string Alias { get; set; }
 
         [MaxLength(255)]
         public string Name { get; set; }
@@ -57,8 +58,7 @@ namespace Ascent.Models
 
         public int Year { get; set; }
 
-        public string TypeKey { get; set; }
-        [ForeignKey("TypeKey")]
+        public string TypeAlias { get; set; }
         public MftDistributionType Type { get; set; }
 
         public DateOnly FromDate { get; set; }
@@ -70,6 +70,6 @@ namespace Ascent.Models
         public double Median { get; set; }
         public double StdDev { get; set; }
 
-        public SortedDictionary<int, int> Ranks { get; set; }
+        public List<(int, int)> Ranks { get; set; } = new List<(int, int)>();
     }
 }

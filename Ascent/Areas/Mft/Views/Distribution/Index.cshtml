@@ -1,0 +1,60 @@
+@inject IAuthorizationService AuthorizationService
+@model List<MftDistribution>
+@{
+    ViewData["Title"] = "MFT - National Distributions";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item active me-auto">National Distributions</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm ms-2" title="Add Distribution">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-auto mb-2">
+        @if (ViewBag.Years != null)
+        {
+            <select id="year" class="form-select" asp-items="@ViewBag.Years"></select>
+        }
+    </div>
+    <div class="col-12">
+        @if (Model.Count > 0)
+        {
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="d-none d-md-table-cell">Time Period</th>
+                        <th class="d-none d-lg-table-cell">Samples</th>
+                        <th class="d-none d-lg-table-cell">Mean</th>
+                        <th class="d-none d-lg-table-cell">Median</th>
+                        <th class="d-none d-lg-table-cell">Std Dev</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var distribution in Model)
+                    {
+                        <tr>
+                            <td><a asp-action="View" asp-route-id="@distribution.Id">@distribution.Type.Name</a></td>
+                            <td class="d-none d-md-table-cell">
+                                @distribution.FromDate.ToString("d") - @distribution.ToDate.ToString("d")
+                            </td>
+                            <td class="d-none d-lg-table-cell">@distribution.NumOfSamples.ToString("n0")</td>
+                            <td class="d-none d-lg-table-cell">@distribution.Mean</td>
+                            <td class="d-none d-lg-table-cell">@distribution.Median</td>
+                            <td class="d-none d-lg-table-cell">@distribution.StdDev</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

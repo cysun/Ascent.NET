@@ -1,0 +1,68 @@
+@inject IAuthorizationService AuthorizationService
+@model List<MftIndicator>
+@{
+    ViewData["Title"] = "MFT - Assessment Indicators";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item active me-auto">Assessment Indicators</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Percentile" class="btn btn-outline-primary btn-sm ms-2" title="Calculate Percentiles">
+                    <i class="bi bi-percent"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm ms-2" title="Edit Indicators">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-12">
+        <p>MFT provides <em>assessment indicators</em> for three general areas:</p>
+        <ol>
+            <li>AI-1: Programming and Software Engineering</li>
+            <li>AI-2: Discrete Structures and Algorithms</li>
+            <li>AI-3: Systems: Architecture/Operating Systems/Networking/Database</li>
+        </ol>
+        <p>
+            Here each indicator in the table shows two numbers. The first number is the average percentage of the
+            questions in the area that were answered correctly by the students. The second number is the national
+            percentile the institution is in based on the first number.
+        </p>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">Indicators</div>
+            <div class="card-body">
+                @if (Model.Count > 0)
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>Date</th><th>Students</th><th>AI-1</th><th>AI-2</th><th>AI-3</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var indicator in Model)
+                            {
+                                <tr>
+                                    <td>@indicator.Date</td>
+                                    <td>@indicator.NumOfStudents</td>
+                                    @for (int i = 0; i < 3; ++i)
+                                    {
+                                        <td>@indicator.Scores[i] (@indicator.Percentiles[i])</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

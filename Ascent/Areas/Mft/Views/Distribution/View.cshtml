@@ -1,0 +1,86 @@
+@inject IAuthorizationService AuthorizationService
+@model MftDistribution
+@{
+    ViewData["Title"] = "MFT - View Distributions";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Distribution" asp-action="Index">National Distributions</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.TypeAlias, @Model.Year</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Distribution">
+                    <i class="bi bi-trash-fill"></i>
+                </button>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="form-floating mb-3">
+            <span class="form-control" style="height: auto;">@Model.Type.Name</span>
+            <label>Name</label>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.FromDate.ToString("y") - @Model.ToDate.ToString("y")</span>
+            <label>Time Period</label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.NumOfSamples.ToString("n0")</span>
+            <label>Samples</label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.Mean</span>
+            <label>Mean</label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.Median</span>
+            <label>Median</label>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.StdDev</span>
+            <label>Std Dev</label>
+        </div>
+    </div>
+    <div class="col-12">
+        <table class="table table-striped">
+            <thead>
+                <tr><th>@Model.Type.ValueLabel</th><th>Percent Below</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var rank in Model.Ranks)
+                {
+                    <tr>
+                        <td>@rank.Item1</td>
+                        <td>@rank.Item2</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $("#delete").click(function() {
+                if (confirm("Do you want to delete this distribution?"))
+                    window.location.href = "../../distribution/delete/@Model.Id";
+            });
+        });
+    </script>
+}

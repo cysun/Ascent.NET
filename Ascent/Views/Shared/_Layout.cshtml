@@ -38,7 +38,7 @@
                                     <li><a class="dropdown-item" href="#">Rubrics</a></li>
                                     <li><a class="dropdown-item" href="#">Surveys</a></li>
                                     <li><a class="dropdown-item" href="#">Course Journals</a></li>
-                                    <li><a class="dropdown-item" asp-area="Mft" asp-controller="Home">Major Field Test</a></li>
+                                    <li><a class="dropdown-item" asp-area="Mft" asp-controller="Home" asp-action="Index">Major Field Test</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -47,11 +47,11 @@
                                     Resource
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Person">People</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Course">Courses</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Section">Sections</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Page">Pages</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="File">Files</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Person" asp-action="Index">People</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Course" asp-action="Index">Courses</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Section" asp-action="Index">Sections</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Page" asp-action="Index">Pages</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="File" asp-action="Index">Files</a></li>
                                 </ul>
                             </li>
                             @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
@@ -64,10 +64,10 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Profile">Profile</a>
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                             </li>
                         }
                     </ul>

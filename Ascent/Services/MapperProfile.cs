@@ -24,6 +24,9 @@ public class MapperProfile : Profile
 
         CreateMap<Page, PageRevision>().ForMember(dest => dest.PageId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.TimeCreated, opt => opt.Ignore());
+
+        CreateMap<string, List<(int, int)>>().ConvertUsing(new StringToRanksConverter());
+        CreateMap<MftDistributionInputModel, MftDistribution>();
     }
 }
 
@@ -35,5 +38,25 @@ public class StringToTermConverter : ITypeConverter<string, Term>
 
         var pattern = new Regex(@"^[fFwWsWxX]\d{2}$");
         return pattern.IsMatch(source) ? new Term(source) : destination;
+    }
+}
+
+public class StringToRanksConverter : ITypeConverter<string, List<(int, int)>>
+{
+    public List<(int, int)> Convert(string source, List<(int, int)> destination, ResolutionContext context)
+    {
+        destination = new List<(int, int)>();
+
+        if (!string.IsNullOrEmpty(source))
+        {
+            var lines = source.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
+            {
+                var tokens = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                destination.Add(ValueTuple.Create(int.Parse(tokens[0]), int.Parse(tokens[1])));
+            }
+        }
+
+        return destination;
     }
 }

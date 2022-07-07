@@ -55,5 +55,5 @@ FROM csns2.mft_scores m INNER JOIN csns2.users u ON m.user_id = u.id;
 INSERT INTO "MftIndicators" ("Id", "Date", "NumOfStudents", "Scores")
 SELECt id, date(date), num_of_students, array[ai1, ai2, ai3] FROM csns2.mft_indicators;
 
-INSERT INTO "MftDistributionTypes" ("Key", "Name", "Min", "Max", "ValueLabel")
-SELECT alias, name, min, max, value_label FROM csns2.mft_distribution_types;
+INSERT INTO "MftDistributionTypes" ("Id", "Alias", "Name", "Min", "Max", "ValueLabel")
+SELECT id, alias, name, min, max, value_label FROM csns2.mft_distribution_types;

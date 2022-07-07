@@ -1,0 +1,72 @@
+@model MftDistributionInputModel
+@{
+    ViewData["Title"] = "MFT - New Distribution";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Distrubtion">National Distributions</a></li>
+        <li class="breadcrumb-item active">New Distribution</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-2">
+            <input asp-for="Year" class="form-control mb-3">
+        </div>
+        <div class="col-md-10">
+            <select asp-for="TypeAlias" asp-items="@ViewBag.DistributionTypes" class="form-select mb-3"></select>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="form-floating mb-3">
+                <input asp-for="FromDate" class="form-control">
+                <label asp-for="FromDate"></label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="form-floating mb-3">
+                <input asp-for="ToDate" class="form-control">
+                <label asp-for="ToDate"></label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="form-floating mb-3">
+                <input asp-for="NumOfSamples" class="form-control">
+                <label asp-for="NumOfSamples"></label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="form-floating mb-3">
+                <input asp-for="Mean" class="form-control">
+                <label asp-for="Mean"></label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="form-floating mb-3">
+                <input asp-for="Median" class="form-control">
+                <label asp-for="Median"></label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <div class="form-floating mb-3">
+                <input asp-for="StdDev" class="form-control">
+                <label asp-for="StdDev"></label>
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <textarea asp-for="Ranks" class="form-control" rows="6"></textarea>
+            <div class="form-text">
+                Download <em>Annual Comparative Data Guide</em> from MFT (it's under the "Reports" menu). Copy the numbers
+                in the distribution table and paste them here so that each line has two numbers: score and percent below.
+                Now that a) you'll need to edit the data a little bit, e.g. changing "185 - 199 99" to "185 99", and b) for
+                the assessment indicators, you can paste the data into Visual Studio Code first, then use VSC's column
+                selection function to select the correct columns.
+            </div>
+        </div>
+        <div class="col-12">
+            <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+</form>

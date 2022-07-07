@@ -36,7 +36,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PageRevision>().HasQueryFilter(r => !r.Page.IsDeleted);
         modelBuilder.Entity<FileRevision>().HasKey(r => new { r.FileId, r.Version });
         modelBuilder.Entity<MftIndicator>().Property(i => i.Percentiles).HasDefaultValueSql("'{null, null, null}'");
-        modelBuilder.Entity<MftDistribution>().HasAlternateKey(d => new { d.Year, d.TypeKey });
+        modelBuilder.Entity<MftDistributionType>().HasAlternateKey(t => t.Alias);
+        modelBuilder.Entity<MftDistribution>().HasAlternateKey(d => new { d.Year, d.TypeAlias });
+        modelBuilder.Entity<MftDistribution>().HasOne(d => d.Type).WithMany()
+            .HasForeignKey(d => d.TypeAlias).HasPrincipalKey(t => t.Alias);
 
         // We'll create/replace Ranks as a whole instead of adding/removing individual entries, so the
         // ValueComparer is mainly for show (and to shut up the EF Core warning). See
@@ -45,9 +48,9 @@ public class AppDbContext : DbContext
         // for more serious value comparers.
         modelBuilder.Entity<MftDistribution>().Property(d => d.Ranks)
             .HasConversion(
-                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)default),
-                v => JsonSerializer.Deserialize<SortedDictionary<int, int>>(v, (JsonSerializerOptions)default),
-                new ValueComparer<SortedDictionary<int, int>>((d1, d2) => d1 == d2, d => d.GetHashCode(), d => d)
+                v => JsonSerializer.Serialize(v, new JsonSerializerOptions() { IncludeFields = true }),
+                v => JsonSerializer.Deserialize<List<(int, int)>>(v, new JsonSerializerOptions() { IncludeFields = true }),
+                new ValueComparer<List<(int, int)>>((d1, d2) => d1 == d2, d => d.GetHashCode(), d => d)
             );
     }
 }
