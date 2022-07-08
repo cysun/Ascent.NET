@@ -1,7 +1,9 @@
+@using System.Text.Json
 @inject IAuthorizationService AuthorizationService
 @model List<MftIndicator>
 @{
     ViewData["Title"] = "MFT - Assessment Indicators";
+    var scoreChartData = Model.Select(i => new object[] { i.Year.ToString(), i.Scores[0], i.Scores[1], i.Scores[2] }).ToArray();
 }
 <nav>
     <ol class="breadcrumb">
@@ -65,4 +67,28 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-6">
+        <div id="scoreChart"></div>
+        <div id="percentileChart"></div>
+    </div>
 </div>
+
+@section HeadScripts{
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Year');
+            data.addColumn('number', 'AI-1');
+            data.addColumn('number', 'AI-2');
+            data.addColumn('number', 'AI-3');
+            data.addRows((@Html.Raw(JsonSerializer.Serialize(scoreChartData))).reverse());
+
+            var chart = new google.visualization.ColumnChart(document.getElementById("scoreChart"));
+            chart.draw(data, null);
+        }
+    </script>
+}
