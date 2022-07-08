@@ -27,6 +27,7 @@ public class MapperProfile : Profile
 
         CreateMap<string, List<(int, int)>>().ConvertUsing(new StringToRanksConverter());
         CreateMap<MftDistributionInputModel, MftDistribution>();
+        CreateMap<MftIndicatorInputModel, MftIndicator>();
     }
 }
 

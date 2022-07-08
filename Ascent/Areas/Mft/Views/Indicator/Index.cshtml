@@ -10,13 +10,13 @@
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
             <li>
-                <a asp-action="Percentile" class="btn btn-outline-primary btn-sm ms-2" title="Calculate Percentiles">
+                <a asp-action="UpdatePercentiles" class="btn btn-outline-primary btn-sm ms-2" title="Update Percentiles">
                     <i class="bi bi-percent"></i>
                 </a>
             </li>
             <li>
                 <a asp-action="Add" class="btn btn-outline-primary btn-sm ms-2" title="Edit Indicators">
-                    <i class="bi bi-pencil-fill"></i>
+                    <i class="bi bi-plus-lg"></i>
                 </a>
             </li>
         }

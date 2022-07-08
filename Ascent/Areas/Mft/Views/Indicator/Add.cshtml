@@ -1,0 +1,52 @@
+@model MftIndicatorInputModel
+@{
+    ViewData["Title"] = "MFT - Add or Update Indicator";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Indicator" asp-action="Index">Assessment Indicators</a></li>
+        <li class="breadcrumb-item active">Add or Update Indicator</li>
+    </ol>
+</nav>
+
+<form class="row" method="post">
+    <div class="col-6 col-md-3">
+        <div class="form-floating mb-3">
+            <input asp-for="Year" class="form-control">
+            <label asp-for="Year"></label>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="form-floating mb-3">
+            <input asp-for="NumOfStudents" class="form-control">
+            <label asp-for="NumOfStudents"></label>
+        </div>
+    </div>
+    <div class="col-4 col-md-2">
+        <div class="form-floating mb-3">
+            <input asp-for="Scores[0]" class="form-control">
+            <label asp-for="Scores[0]">AI-1</label>
+        </div>
+    </div>
+    <div class="col-4 col-md-2">
+        <div class="form-floating mb-3">
+            <input asp-for="Scores[1]" class="form-control">
+            <label asp-for="Scores[1]">AI-2</label>
+        </div>
+    </div>
+    <div class="col-4 col-md-2">
+        <div class="form-floating mb-3">
+            <input asp-for="Scores[2]" class="form-control">
+            <label asp-for="Scores[2]">AI-3</label>
+        </div>
+    </div>
+    <div class="col-12">
+        <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+        <button type="submit" class="btn btn-primary">Add or Update</button>
+        <div class="form-text">
+            If a year already exists, the indicators for that year will be updated;
+            otherwise a new set of indicators will be added.
+        </div>
+    </div>
+</form>

@@ -13,7 +13,8 @@
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
             <li>
-                <a asp-action="Percentile" class="btn btn-outline-primary btn-sm ms-2" title="Calculate Percentiles">
+                <a asp-action="UpdatePercentiles" asp-route-year="@ViewBag.Year" class="btn btn-outline-primary btn-sm ms-2"
+               title="Update Percentiles">
                     <i class="bi bi-percent"></i>
                 </a>
             </li>
@@ -32,7 +33,7 @@
         <div class="col-md-6">
             <table class="table table-striped">
                 <thead>
-                    <tr><th>Year</th><th>Students</th><th>Mean</th><th>Median</th></tr>
+                    <tr><th>Year</th><th>Students</th><th>Mean</th><th>Median</th><th>Institution</th></tr>
                 </thead>
                 <tbody>
                     @foreach (var stat in Model)
@@ -49,10 +50,12 @@
                             <td>@stat.Count</td>
                             <td>@stat.Mean (@stat.MeanPercentile)</td>
                             <td>@stat.Median (@stat.MedianPercentile)</td>
+                            <td>(@stat.InstitutionPercentile)</td>
                         </tr>
                     }
                 </tbody>
             </table>
+            <p class="text-muted">Institution percentile is based on the mean score of the students.</p>
         </div>
         <div class="col-md-6">
             <table class="table table-striped">

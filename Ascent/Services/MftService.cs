@@ -16,13 +16,23 @@ public class MftService
 
     // Score Stats
 
+    public MftScoreStat GetScoreStat(int year) => _db.MftScoreStats.Find(year);
+
     public List<MftScoreStat> GetScoreStats() => _db.MftScoreStats.AsNoTracking()
         .OrderByDescending(s => s.Year).ToList();
 
     // Indicators
 
+    public MftIndicator GetIndicator(int year) => _db.MftIndicators.Find(year);
+
     public List<MftIndicator> GetIndicators() => _db.MftIndicators
         .OrderByDescending(i => i.Year).ToList();
+
+    public void AddIndicator(MftIndicator indicator)
+    {
+        _db.MftIndicators.Add(indicator);
+        _db.SaveChanges();
+    }
 
     // Distribution Types
 
@@ -57,4 +67,6 @@ public class MftService
         _db.MftDistributions.Remove(distribution);
         _db.SaveChanges();
     }
+
+    public void SaveChanges() => _db.SaveChanges();
 }

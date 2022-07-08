@@ -10,62 +10,60 @@
     </ol>
 </nav>
 
-<form method="post">
-    <div class="row">
-        <div class="col-md-2">
-            <input asp-for="Year" class="form-control mb-3">
+<form class="row" method="post">
+    <div class="col-md-2">
+        <input asp-for="Year" class="form-control mb-3">
+    </div>
+    <div class="col-md-10">
+        <select asp-for="TypeAlias" asp-items="@ViewBag.DistributionTypes" class="form-select mb-3"></select>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="form-floating mb-3">
+            <input asp-for="FromDate" class="form-control">
+            <label asp-for="FromDate"></label>
         </div>
-        <div class="col-md-10">
-            <select asp-for="TypeAlias" asp-items="@ViewBag.DistributionTypes" class="form-select mb-3"></select>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="form-floating mb-3">
+            <input asp-for="ToDate" class="form-control">
+            <label asp-for="ToDate"></label>
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="FromDate" class="form-control">
-                <label asp-for="FromDate"></label>
-            </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="form-floating mb-3">
+            <input asp-for="NumOfSamples" class="form-control">
+            <label asp-for="NumOfSamples"></label>
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="ToDate" class="form-control">
-                <label asp-for="ToDate"></label>
-            </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="form-floating mb-3">
+            <input asp-for="Mean" class="form-control">
+            <label asp-for="Mean"></label>
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="NumOfSamples" class="form-control">
-                <label asp-for="NumOfSamples"></label>
-            </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="form-floating mb-3">
+            <input asp-for="Median" class="form-control">
+            <label asp-for="Median"></label>
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="Mean" class="form-control">
-                <label asp-for="Mean"></label>
-            </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="form-floating mb-3">
+            <input asp-for="StdDev" class="form-control">
+            <label asp-for="StdDev"></label>
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="Median" class="form-control">
-                <label asp-for="Median"></label>
-            </div>
+    </div>
+    <div class="col-12 mb-3">
+        <textarea asp-for="Ranks" class="form-control" rows="10"></textarea>
+        <div class="form-text">
+            Download <em>Annual Comparative Data Guide</em> from MFT (it's under the "Reports" menu). Copy the numbers
+            in the distribution table and paste them here. You'll need to edit the data a little bit, e.g. changing
+            "185 - 199 99" to "185 99", and remove the extra text if the table spans two pages. Note that for the score
+            tables, each line here should contains 2 numbers; for the indicator table, each line has 4 numbers.
         </div>
-        <div class="col-sm-6 col-md-4">
-            <div class="form-floating mb-3">
-                <input asp-for="StdDev" class="form-control">
-                <label asp-for="StdDev"></label>
-            </div>
-        </div>
-        <div class="col-12 mb-3">
-            <textarea asp-for="Ranks" class="form-control" rows="10"></textarea>
-            <div class="form-text">
-                Download <em>Annual Comparative Data Guide</em> from MFT (it's under the "Reports" menu). Copy the numbers
-                in the distribution table and paste them here. You'll need to edit the data a little bit, e.g. changing
-                "185 - 199 99" to "185 99", and remove the extra text if the table spans two pages. Note that for the score
-                tables, each line here should contains 2 numbers; for the indicator table, each line has 4 numbers.
-            </div>
-        </div>
-        <div class="col-12">
-            <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
-            <button type="submit" class="btn btn-primary">Add</button>
-        </div>
+    </div>
+    <div class="col-12">
+        <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+        <button type="submit" class="btn btn-primary">Add</button>
     </div>
 </form>

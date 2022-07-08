@@ -37,12 +37,13 @@ namespace Ascent.Models
 
         public int? MeanPercentile { get; set; }
         public int? MedianPercentile { get; set; }
+        public int? InstitutionPercentile { get; set; }
     }
 
     public class MftIndicator
     {
-        public int Id { get; set; }
-
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Year { get; set; }
 
         public int NumOfStudents { get; set; }
@@ -89,7 +90,7 @@ namespace Ascent.Models
 
         public List<(int, int)> Ranks { get; set; } = new List<(int, int)>();
 
-        public int getPercentile(int value)
+        public int GetPercentile(int value)
         {
             foreach (var rank in Ranks)
                 if (value >= rank.Item1) return rank.Item2;
