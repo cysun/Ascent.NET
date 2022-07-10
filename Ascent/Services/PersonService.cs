@@ -17,6 +17,7 @@ public class PersonService
     // maxResults=null for unlimited results
     public List<Person> SearchPersonsByPrefix(string prefix, int? maxResults = 100)
     {
+        prefix = prefix?.Trim();
         if (prefix == null || prefix.Length < 2) return new List<Person>();
 
         return _db.Persons.FromSqlRaw("SELECT * FROM \"SearchPersons\"({0}, {1})",

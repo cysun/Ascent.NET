@@ -16,10 +16,14 @@ public class CourseService
         .OrderBy(c => c.Number)
         .ToList();
 
-    public List<Course> SearchCoursesByPrefix(string prefix) => _db.Courses.AsNoTracking()
-        .Where(c => c.Number.StartsWith(prefix))
-        .OrderBy(c => c.Number)
-        .ToList();
+    public List<Course> SearchCoursesByPrefix(string prefix)
+    {
+        prefix = prefix?.Trim();
+        return _db.Courses.AsNoTracking()
+            .Where(c => c.Number.StartsWith(prefix))
+            .OrderBy(c => c.Number)
+            .ToList();
+    }
 
     public void AddCourse(Course course)
     {

@@ -58,3 +58,13 @@
         }
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $("#year").change(function() {
+                window.location.href = "distribution?year=" + $(this).val();
+            });
+        });
+    </script>
+}

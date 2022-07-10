@@ -6,7 +6,9 @@
 <nav>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Distribution" asp-action="Index">National Distributions</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Distribution" asp-action="Index" asp-route-year="@Model.Year">National Distributions</a>
+        </li>
         <li class="breadcrumb-item active me-auto">@Model.TypeAlias, @Model.Year</li>
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {

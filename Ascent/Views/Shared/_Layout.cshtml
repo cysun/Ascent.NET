@@ -16,7 +16,7 @@
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/logo.svg" alt="" width="32" height="32" class="d-inline-block align-text-top"> Ascent
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -58,7 +58,7 @@
                             @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Import" asp-action="Index">Import</a>
+                                    <a class="nav-link" asp-area="" asp-controller="Import" asp-action="Index">Import</a>
                                 </li>
                             }
                         }

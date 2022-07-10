@@ -120,13 +120,18 @@ namespace Ascent.Controllers
         public Person GetOrCreateStudent(ImportedGradeRecord record)
         {
             var student = _personService.GetPersonByCampusId(record.CampusId);
+
             if (student == null)
-                _personService.AddPerson(new Person()
+            {
+                student = new Person()
                 {
                     CampusId = record.CampusId,
                     FirstName = record.FirstName,
                     LastName = record.LastName
-                });
+                };
+                _personService.AddPerson(student);
+            }
+
             return student;
         }
 
@@ -144,8 +149,8 @@ namespace Ascent.Controllers
                 set
                 {
                     string[] tokens = value.Split(',');
-                    _firstName = tokens[0];
-                    _lastName = tokens[1];
+                    _lastName = tokens[0];
+                    _firstName = tokens[1];
                 }
             }
 
