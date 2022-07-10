@@ -31,6 +31,19 @@ namespace Ascent.Areas.Mft.Controllers
             return View(stats);
         }
 
+        public IActionResult Charts()
+        {
+            var stats = _mftService.GetScoreStats();
+            if (stats.Count == 0) return RedirectToAction("Index");
+
+            var years = stats.Select(i => i.Year).ToList();
+            ViewBag.FromYear = years.Count >= 6 ? years[5] : years.Last();
+            ViewBag.ToYear = years.First();
+            ViewBag.Years = years;
+
+            return View(stats);
+        }
+
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult UpdatePercentiles(int year)
         {

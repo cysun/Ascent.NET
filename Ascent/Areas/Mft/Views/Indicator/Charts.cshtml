@@ -1,0 +1,131 @@
+@using System.Text.Json
+@model List<MftIndicator>
+@{
+    ViewData["Title"] = "MFT - Assessment Indicator Charts";
+    var data = Model.Select(i => new object[] { i.Year.ToString(), i.Scores[0], i.Scores[1], i.Scores[2],
+        i.Percentiles[0], i.Percentiles[1], i.Percentiles[2] }).ToArray();
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Indicator" asp-action="Index">Assessment Indicators</a></li>
+        <li class="breadcrumb-item active">Charts</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <label class="col-auto col-form-label">From</label>
+    <div class="col-auto">
+        <select id="fromYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.FromYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+    <label class="col-auto col-form-label">To</label>
+    <div class="col-auto">
+        <select id="toYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.ToYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-12">
+        <div class="card mt-3">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-grow-1">Mean Score</div>
+                <a id="chart1Svg" download="AIScores.svg" class="btn btn-outline-primary btn-sm svg">
+                    <i class="bi bi-filetype-svg"></i>
+                </a>
+                <a id="chart1Png" download="AIScores.png" class="btn btn-outline-primary btn-sm ms-2 png">
+                    <i class="bi bi-filetype-png"></i>
+                </a>
+            </div>
+            <div id="chart1" class="card-body" style="height: 600px;"></div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-grow-1">Mean Score Percentile</div>
+                <a id="chart2Svg" download="AIPercentiles.svg" class="btn btn-outline-primary btn-sm svg">
+                    <i class="bi bi-filetype-svg"></i>
+                </a>
+                <a id="chart2Png" download="AIPercentiles.png" class="btn btn-outline-primary btn-sm ms-2 png">
+                    <i class="bi bi-filetype-png"></i>
+                </a>
+            </div>
+            <div id="chart2" class="card-body" style="height: 600px;"></div>
+        </div>
+    </div>
+</div>
+
+@section HeadScripts{
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+}
+    @section Scripts{
+    <script src="~/js/chart-functions.js"></script>
+    <script>
+        $(function() {
+            google.charts.load('current', { packages: ['corechart'] }).then(function() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Year');
+                data.addColumn('number', 'AI-1');
+                data.addColumn('number', 'AI-2');
+                data.addColumn('number', 'AI-3');
+                data.addColumn('number', 'AI-1');
+                data.addColumn('number', 'AI-2');
+                data.addColumn('number', 'AI-3');
+                data.addRows((@Html.Raw(JsonSerializer.Serialize(data))).reverse());
+
+                var chart1 = new google.visualization.ColumnChart(document.getElementById("chart1"));
+                var chart2 = new google.visualization.ColumnChart(document.getElementById("chart2"));
+
+                google.visualization.events.addListener(chart1, "ready", setImageLinks(chart1, "chart1"));
+                google.visualization.events.addListener(chart2, "ready", setImageLinks(chart2, "chart2"));
+
+                var drawChart = function(chart, colIndexes) {
+                    var view = new google.visualization.DataView(data);
+                    var fromYear = parseInt($("#fromYear").val());
+                    var toYear = parseInt($("#toYear").val());
+                    if (fromYear <= toYear) {
+                        view.setColumns(colIndexes);
+                        var rowIndexes = data.getFilteredRows([{ column: 0, minValue: fromYear, maxValue: toYear }]);
+                        view.setRows(rowIndexes);
+                        var options = {
+                            title: `MFT Assessment Indicators (${fromYear}-${toYear})`,
+                            legend: { position: "bottom" },
+                            vAxis: { maxValue: 100 }
+                        };
+                        chart.clearChart();
+                        chart.draw(view, options);
+                    }
+                }
+
+                var drawCharts = function() {
+                    drawChart(chart1, [0, 1, 2, 3]);
+                    drawChart(chart2, [0, 4, 5, 6]);
+                };
+
+                $("#fromYear, #toYear").change(drawCharts);
+                window.onresize = drawCharts;
+
+                drawCharts();
+            });
+        });
+    </script>
+}

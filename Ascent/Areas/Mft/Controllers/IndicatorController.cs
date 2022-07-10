@@ -27,6 +27,19 @@ namespace Ascent.Areas.Mft.Controllers
             return View(_mftService.GetIndicators());
         }
 
+        public IActionResult Charts()
+        {
+            var indicators = _mftService.GetIndicators();
+            if (indicators.Count == 0) return RedirectToAction("Index");
+
+            var years = indicators.Select(i => i.Year).ToList();
+            ViewBag.FromYear = years.Count >= 6 ? years[5] : years.Last();
+            ViewBag.ToYear = years.First();
+            ViewBag.Years = years;
+
+            return View(indicators);
+        }
+
         [HttpGet]
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Add()

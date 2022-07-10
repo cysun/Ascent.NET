@@ -1,9 +1,7 @@
-@using System.Text.Json
 @inject IAuthorizationService AuthorizationService
 @model List<MftIndicator>
 @{
     ViewData["Title"] = "MFT - Assessment Indicators";
-    var scoreChartData = Model.Select(i => new object[] { i.Year.ToString(), i.Scores[0], i.Scores[1], i.Scores[2] }).ToArray();
 }
 <nav>
     <ol class="breadcrumb">
@@ -22,73 +20,45 @@
                 </a>
             </li>
         }
+        <li class="btn btn-outline-primary btn-sm ms-2" title="Charts">
+            <a asp-action="Charts"><i class="bi bi-bar-chart-line-fill"></i></a>
+        </li>
     </ol>
 </nav>
 
+<p>MFT provides <em>assessment indicators</em> for three general areas:</p>
+<ol>
+    <li>AI-1: Programming and Software Engineering</li>
+    <li>AI-2: Discrete Structures and Algorithms</li>
+    <li>AI-3: Systems: Architecture/Operating Systems/Networking/Database</li>
+</ol>
+<p>
+    Here each indicator in the table shows two numbers. The first number is the average percentage of the
+    questions in the area that were answered correctly by the students. The second number is the national
+    percentile the institution is in based on the first number.
+</p>
 <div class="row">
-    <div class="col-12">
-        <p>MFT provides <em>assessment indicators</em> for three general areas:</p>
-        <ol>
-            <li>AI-1: Programming and Software Engineering</li>
-            <li>AI-2: Discrete Structures and Algorithms</li>
-            <li>AI-3: Systems: Architecture/Operating Systems/Networking/Database</li>
-        </ol>
-        <p>
-            Here each indicator in the table shows two numbers. The first number is the average percentage of the
-            questions in the area that were answered correctly by the students. The second number is the national
-            percentile the institution is in based on the first number.
-        </p>
-    </div>
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">Indicators</div>
-            <div class="card-body">
-                @if (Model.Count > 0)
-                {
-                    <table class="table table-striped">
-                        <thead>
-                            <tr><th>Date</th><th>Students</th><th>AI-1</th><th>AI-2</th><th>AI-3</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var indicator in Model)
+    <div class="col-auto">
+        @if (Model.Count > 0)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr><th>Date</th><th>Students</th><th>AI-1</th><th>AI-2</th><th>AI-3</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var indicator in Model)
+                    {
+                        <tr>
+                            <td>@indicator.Year</td>
+                            <td>@indicator.NumOfStudents</td>
+                            @for (int i = 0; i < 3; ++i)
                             {
-                                <tr>
-                                    <td>@indicator.Year</td>
-                                    <td>@indicator.NumOfStudents</td>
-                                    @for (int i = 0; i < 3; ++i)
-                                    {
-                                        <td>@indicator.Scores[i] (@indicator.Percentiles[i])</td>
-                                    }
-                                </tr>
+                                <td>@indicator.Scores[i] (@indicator.Percentiles[i])</td>
                             }
-                        </tbody>
-                    </table>
-                }
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div id="scoreChart"></div>
-        <div id="percentileChart"></div>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
     </div>
 </div>
-
-@section HeadScripts{
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-        google.charts.load('current', { packages: ['corechart'] });
-        google.charts.setOnLoadCallback(drawCharts);
-
-        function drawCharts() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Year');
-            data.addColumn('number', 'AI-1');
-            data.addColumn('number', 'AI-2');
-            data.addColumn('number', 'AI-3');
-            data.addRows((@Html.Raw(JsonSerializer.Serialize(scoreChartData))).reverse());
-
-            var chart = new google.visualization.ColumnChart(document.getElementById("scoreChart"));
-            chart.draw(data, null);
-        }
-    </script>
-}

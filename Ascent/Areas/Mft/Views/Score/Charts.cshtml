@@ -1,0 +1,156 @@
+@using System.Text.Json
+@model List<MftScoreStat>
+@{
+    ViewData["Title"] = "MFT - Score Charts";
+    var data = Model.Select(i => new object[] { i.Year.ToString(), i.Mean, i.Median,
+        i.MeanPercentile, i.MedianPercentile, i.InstitutionPercentile }).ToArray();
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Score" asp-action="Index">Scores</a></li>
+        <li class="breadcrumb-item active">Charts</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <label class="col-auto col-form-label">From</label>
+    <div class="col-auto">
+        <select id="fromYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.FromYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+    <label class="col-auto col-form-label">To</label>
+    <div class="col-auto">
+        <select id="toYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.ToYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-12">
+        <div class="card mt-3">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-grow-1">Median Score</div>
+                <a id="chart1Svg" download="MedianScores.svg" class="btn btn-outline-primary btn-sm svg">
+                    <i class="bi bi-filetype-svg"></i>
+                </a>
+                <a id="chart1Png" download="MedianScores.png" class="btn btn-outline-primary btn-sm ms-2 png">
+                    <i class="bi bi-filetype-png"></i>
+                </a>
+            </div>
+            <div id="chart1" class="card-body" style="height: 600px;"></div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-grow-1">Median Score Percentile</div>
+                <a id="chart2Svg" download="MedianPercentiles.svg" class="btn btn-outline-primary btn-sm svg">
+                    <i class="bi bi-filetype-svg"></i>
+                </a>
+                <a id="chart2Png" download="MedianPercentiles.png" class="btn btn-outline-primary btn-sm ms-2 png">
+                    <i class="bi bi-filetype-png"></i>
+                </a>
+            </div>
+            <div id="chart2" class="card-body" style="height: 600px;"></div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header d-flex align-items-center">
+                <div class="flex-grow-1">Institution Percentile</div>
+                <a id="chart3Svg" download="InstitutionPercentiles.svg" class="btn btn-outline-primary btn-sm svg">
+                    <i class="bi bi-filetype-svg"></i>
+                </a>
+                <a id="chart3Png" download="InstitutionPercentiles.png" class="btn btn-outline-primary btn-sm ms-2 png">
+                    <i class="bi bi-filetype-png"></i>
+                </a>
+            </div>
+            <div id="chart3" class="card-body" style="height: 600px;"></div>
+        </div>
+    </div>
+</div>
+
+@section HeadScripts{
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+}
+    @section Scripts{
+    <script src="~/js/chart-functions.js"></script>
+    <script>
+        $(function() {
+            google.charts.load('current', { packages: ['corechart'] }).then(function() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Year');
+                data.addColumn('number', 'Mean Score');
+                data.addColumn('number', 'Median Score');
+                data.addColumn('number', 'Mean Score Percentile');
+                data.addColumn('number', 'Median Score Percentile');
+                data.addColumn('number', 'Institution Percentile');
+                data.addRows((@Html.Raw(JsonSerializer.Serialize(data))).reverse());
+
+                var charts = [{
+                    name: "chart1",
+                    title: "MFT Median Score",
+                    colIndexes: [0, 2]
+                }, {
+                    name: "chart2",
+                    title: "MFT Median Score Percentile",
+                    colIndexes: [0, 4],
+                    vMax: 100
+                }, {
+                    name: "chart3",
+                    title: "MFT institution Percentile",
+                    colIndexes: [0, 5],
+                    vMax: 100
+                }];
+
+                charts.forEach(c => {
+                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
+                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
+                });
+
+                var drawChart = function(c) {
+                    var view = new google.visualization.DataView(data);
+                    var fromYear = parseInt($("#fromYear").val());
+                    var toYear = parseInt($("#toYear").val());
+                    if (fromYear <= toYear) {
+                        view.setColumns(c.colIndexes);
+                        var rowIndexes = data.getFilteredRows([{ column: 0, minValue: fromYear, maxValue: toYear }]);
+                        view.setRows(rowIndexes);
+                        var options = {
+                            title: `${c.title} (${fromYear}-${toYear})`,
+                            legend: { position: "bottom" },
+                        };
+                        if (c.vMax) options.vAxis = { maxValue: c.vMax };
+                        c.chart.clearChart();
+                        c.chart.draw(view, options);
+                    }
+                }
+
+                var drawCharts = function() {
+                    charts.forEach(c => drawChart(c));
+                };
+
+                $("#fromYear, #toYear").change(drawCharts);
+                window.onresize = drawCharts;
+
+                drawCharts();
+            });
+        });
+    </script>
+}
