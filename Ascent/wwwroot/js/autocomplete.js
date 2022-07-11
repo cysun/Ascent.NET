@@ -92,7 +92,7 @@ class Autocomplete {
   }
 
   createItems() {
-    const lookup = this.field.value;
+    const lookup = this.field.value.trim();
     if (lookup.length < this.options.threshold) {
       this.dropdown.hide();
       return 0;

@@ -12,9 +12,12 @@
 <form method="post">
     <div class="row">
         <div class="col-6">
-            <div class="form-floating mb-3">
-                <input asp-for="CampusId" class="form-control" required />
-                <label asp-for="CampusId"></label>
+            <div class="input-group mb-3">
+                <div class="form-floating flex-grow-1">
+                    <input asp-for="CampusId" class="form-control" required />
+                    <label asp-for="CampusId"></label>
+                </div>
+                <button id="generateCin" class="btn btn-secondary shadow-none" type="button">Generate</button>
             </div>
         </div>
         <div class="col-3">
@@ -59,3 +62,14 @@
         </div>
     </div>
 </form>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $("#generateCin").click(function() {
+                var rnd = Math.floor(Math.random() * (1000000000 - 100000000) + 100000000);
+                $("#CampusId").val("G" + rnd);
+            });
+        });
+    </script>
+}

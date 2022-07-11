@@ -90,7 +90,7 @@
     <script src="https://www.gstatic.com/charts/loader.js"></script>
 }
     @section Scripts{
-    <script src="~/js/chart-functions.js"></script>
+    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
     <script>
         $(function() {
             google.charts.load('current', { packages: ['corechart'] }).then(function() {
@@ -106,7 +106,8 @@
                 var charts = [{
                     name: "chart1",
                     title: "MFT Median Score",
-                    colIndexes: [0, 2]
+                    colIndexes: [0, 2],
+                    vMin: 120
                 }, {
                     name: "chart2",
                     title: "MFT Median Score Percentile",
@@ -137,6 +138,7 @@
                             legend: { position: "bottom" },
                         };
                         if (c.vMax) options.vAxis = { maxValue: c.vMax };
+                        if (c.vMin) options.vAxis = { minValue: c.vMin };
                         c.chart.clearChart();
                         c.chart.draw(view, options);
                     }
