@@ -5,9 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(ViewData["Title"] == null ? "Ascent" : "Ascent - " + ViewData["Title"])</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/cerulean/bootstrap.min.css"
-          integrity="sha256-5FeWJNHtC2PdIw9W39dEuOyQN1BoL7BuHR3JdbpIzbw="
-          crossorigin="anonymous">
+    <link id="themeCSS" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/cerulean/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
     @RenderSection("StyleSheets", required: false)
     @RenderSection("HeadScripts", required: false)
@@ -27,15 +25,13 @@
                     <ul class="navbar-nav me-auto">
                         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link">Programs</a>
-                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="assessmentDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                     Assessment
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="#">Programs</a></li>
                                     <li><a class="dropdown-item" href="#">Rubrics</a></li>
                                     <li><a class="dropdown-item" href="#">Surveys</a></li>
                                     <li><a class="dropdown-item" href="#">Course Journals</a></li>
@@ -72,6 +68,18 @@
                             </li>
                         }
                     </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Theme
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="javascript:setLightTheme()">Light</a></li>
+                                <li><a class="dropdown-item" href="javascript:setDarkTheme()">Dark</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -93,6 +101,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        function setDarkTheme() {
+            Cookies.set("theme", "dark", { expires: 21 });
+            $("#themeCSS").attr(
+                "href",
+                "https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/darkly/bootstrap.min.css"
+            );
+            $("nav.navbar").removeClass("bg-primary").addClass("bg-dark");
+        }
+        function setLightTheme() {
+            Cookies.set("theme", "light", { expires: 21 });
+            $("#themeCSS").attr(
+                "href",
+                "https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/cerulean/bootstrap.min.css"
+            );
+            $("nav.navbar").removeClass("bg-dark").addClass("bg-primary");
+        }
+        $(function() {
+            var theme = Cookies.get("theme");
+            if (theme == "dark")
+                setDarkTheme();
+            else if (theme == "light")
+                setLightTheme();
+        });
+    </script>
 </body>
 </html>
