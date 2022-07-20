@@ -29,9 +29,7 @@
         </button>
         <div id="newFolderForm" class="input-group">
             <input id="newFolder" type="text" class="form-control" style="width: 20em;">
-            <div class="input-group-append">
-                <div class="input-group-text" id="clearBtn"><i class="bi bi-x-lg"></i></div>
-            </div>
+            <div class="input-group-text" id="clearBtn"><i class="bi bi-x-lg"></i></div>
         </div>
     </div>
 
@@ -143,7 +141,7 @@
                         data: {
                             name,
                             parentId: @Model.Id
-                        },
+                                },
                         success: function() {
                             location.reload();
                         }

@@ -12,9 +12,7 @@
 
 <div class="btn-toolbar mb-3">
     <form method="get" class="d-inline-flex">
-        <div class="input-group mr-2">
-            <input type="text" class="form-control me-2" name="searchText" value="@Context.Request.Query["searchText"]" required>
-        </div>
+        <input type="text" class="form-control me-2" name="searchText" value="@Context.Request.Query["searchText"]" required>
         <button class="btn btn-outline-primary" type="submit" title="Search Files"><i class="bi bi-search"></i></button>
         @if (!string.IsNullOrWhiteSpace(Context.Request.Query["searchText"]))
         {
@@ -32,9 +30,7 @@
         </button>
         <div id="newFolderForm" class="input-group ms-2">
             <input id="newFolder" type="text" class="form-control" style="width: 20em;">
-            <div class="input-group-append">
-                <div class="input-group-text" id="clearBtn"><i class="bi bi-x-lg"></i></div>
-            </div>
+            <div class="input-group-text" id="clearBtn"><i class="bi bi-x-lg"></i></div>
         </div>
     }
 </div>
