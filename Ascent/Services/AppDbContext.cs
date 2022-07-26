@@ -23,6 +23,10 @@ public class AppDbContext : DbContext
     public DbSet<MftIndicator> MftIndicators { get; set; }
     public DbSet<MftDistributionType> MftDistributionTypes { get; set; }
     public DbSet<MftDistribution> MftDistributions { get; set; }
+    public DbSet<Survey> Surveys { get; set; }
+    public DbSet<SurveyResponse> SurveyResponses { get; set; }
+    public DbSet<SurveyQuestion> SurveyQuestions { get; set; }
+    public DbSet<SurveyAnswer> SurveyAnswers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,6 +46,14 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<MftDistribution>().HasAlternateKey(d => new { d.Year, d.TypeAlias });
         modelBuilder.Entity<MftDistribution>().HasOne(d => d.Type).WithMany()
             .HasForeignKey(d => d.TypeAlias).HasPrincipalKey(t => t.Alias);
+        modelBuilder.Entity<Survey>().HasQueryFilter(s => !s.IsDeleted);
+        modelBuilder.Entity<SurveyQuestion>().HasQueryFilter(q => !q.Survey.IsDeleted);
+        modelBuilder.Entity<SurveyQuestion>().HasAlternateKey(q => new { q.SurveyId, q.Index });
+        modelBuilder.Entity<SurveyQuestion>().Property(q => q.Type).HasConversion<string>();
+        modelBuilder.Entity<SurveyResponse>().HasQueryFilter(r => !r.IsDeleted);
+        modelBuilder.Entity<SurveyResponse>().HasQueryFilter(r => !r.Survey.IsDeleted);
+        modelBuilder.Entity<SurveyAnswer>().HasQueryFilter(a => !a.Response.IsDeleted);
+        modelBuilder.Entity<SurveyAnswer>().HasAlternateKey(a => new { a.ResponseId, a.QuestionId });
 
         // We'll create/replace Ranks as a whole instead of adding/removing individual entries, so the
         // ValueComparer is mainly for show (and to shut up the EF Core warning). See
@@ -53,6 +65,20 @@ public class AppDbContext : DbContext
                 v => JsonSerializer.Serialize(v, new JsonSerializerOptions() { IncludeFields = true }),
                 v => JsonSerializer.Deserialize<List<(int, int)>>(v, new JsonSerializerOptions() { IncludeFields = true }),
                 new ValueComparer<List<(int, int)>>((d1, d2) => d1 == d2, d => d.GetHashCode(), d => d)
+            );
+
+        modelBuilder.Entity<SurveyQuestion>().Property(q => q.Choices)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<List<SurveyQuestion.Choice>>(v, (JsonSerializerOptions)null),
+                new ValueComparer<List<SurveyQuestion.Choice>>((l1, l2) => l1 == l2, l => l.GetHashCode(), l => l)
+            );
+
+        modelBuilder.Entity<SurveyAnswer>().Property(a => a.Selections)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<HashSet<int>>(v, (JsonSerializerOptions)null),
+                new ValueComparer<HashSet<int>>((s1, s2) => s1.SetEquals(s2), s => s.GetHashCode(), s => s.ToHashSet())
             );
     }
 }

@@ -21,8 +21,10 @@
                 </a>
             </li>
         }
-        <li class="btn btn-outline-primary btn-sm ms-2" title="Charts">
-            <a asp-action="Charts"><i class="bi bi-bar-chart-line-fill"></i></a>
+        <li>
+            <a asp-action="Charts" class="btn btn-outline-primary btn-sm ms-2" title="Charts">
+                <i class="bi bi-bar-chart-line-fill"></i>
+            </a>
         </li>
     </ol>
 </nav>
@@ -55,7 +57,10 @@
                     }
                 </tbody>
             </table>
-            <p class="text-muted">Institution percentile is based on the mean score of the students.</p>
+            <p class="text-muted">
+                The numbers in parenthesis are percentiles based on the national distribution data provided by ETS.
+                The institution percentile is calculated using the average score of the student cohort in that year.
+            </p>
         </div>
         <div class="col-md-6">
             <table class="table table-striped">

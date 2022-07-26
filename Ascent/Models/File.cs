@@ -6,8 +6,7 @@ public class File
 {
     public int Id { get; set; }
 
-    [Required]
-    [MaxLength(1000)]
+    [Required, MaxLength(1000)]
     public string Name { get; set; }
 
     public int Version { get; set; } = 1;
@@ -33,8 +32,7 @@ public class FileRevision
     public int FileId { get; set; }
     public File File { get; set; }
 
-    [Required]
-    [MaxLength(1000)]
+    [Required, MaxLength(1000)]
     public string Name { get; set; }
 
     public int Version { get; set; }

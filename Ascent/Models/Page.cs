@@ -8,8 +8,7 @@ public class Page
 
     public int Version { get; set; } = 1;
 
-    [Required]
-    [MaxLength(80)]
+    [Required, MaxLength(80)]
     public string Subject { get; set; }
 
     public string Content { get; set; }
@@ -29,8 +28,7 @@ public class PageRevision
 
     public int Version { get; set; }
 
-    [Required]
-    [MaxLength(80)]
+    [Required, MaxLength(80)]
     public string Subject { get; set; }
 
     public string Content { get; set; }

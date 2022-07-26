@@ -14,7 +14,11 @@
         <div class="card h-100">
             <div class="card-header">Scores</div>
             <div class="card-body d-flex align-items-start flex-column">
-                <p class="card-text mb-2 mb-lg-auto">The MFT score of each student. The score range is 120-200.</p>
+                <p class="card-text mb-2 mb-lg-auto">
+                    The MFT scores of the students and the percentile of the institution among all domestic
+                    institutions that took MFT. The score range is 120-200, and the institution percentile
+                    is calculated based on the average score of the student cohort in that year.
+                </p>
                 <a asp-area="Mft" asp-controller="Score" class="btn btn-primary">View</a>
             </div>
         </div>

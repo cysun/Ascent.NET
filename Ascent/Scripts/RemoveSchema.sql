@@ -1,3 +1,8 @@
+DROP TABLE "SurveyAnswers";
+DROP TABLE "SurveyResponses";
+DROP TABLE "SurveyQuestions";
+DROP TABLE "Surveys";
+
 DROP TABLE "MftDistributions";
 DROP TABLE "MftDistributionTypes";
 DROP TABLE "MftIndicators";

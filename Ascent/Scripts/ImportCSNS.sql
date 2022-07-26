@@ -21,7 +21,6 @@ UPDATE "Persons" p SET
     "MgTerm_Code" = (SELECT term FROM csns2.academic_standings a WHERE
         a.student_id = p."Id" AND a.standing_id = 23019 AND a.department_id = 200);
 
-
 INSERT INTO "Courses" ("Id", "Subject", "Number", "Title", "MinUnits", "MaxUnits", "CatalogDescription", "IsObsolete")
 SELECT id, substring(code from 1 for 2), substring(code from 3), name, units, units, catalog_description,
     obsolete OR unit_factor < 1

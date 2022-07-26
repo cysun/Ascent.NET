@@ -88,6 +88,7 @@ services.AddScoped<CourseService>();
 services.AddScoped<SectionService>();
 services.AddScoped<EnrollmentService>();
 services.AddScoped<MftService>();
+services.AddScoped<SurveyService>();
 
 // Build App
 
