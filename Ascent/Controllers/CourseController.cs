@@ -84,6 +84,8 @@ namespace Ascent.Controllers
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Edit(int id, CourseInputModel input, IFormFile uploadedFile)
         {
+            if (!ModelState.IsValid) return View(input);
+
             var course = _courseService.GetCourse(id);
             if (course == null) return NotFound();
 

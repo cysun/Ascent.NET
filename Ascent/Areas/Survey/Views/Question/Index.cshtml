@@ -1,0 +1,71 @@
+@model List<SurveyQuestion>
+@{
+    ViewData["Title"] = "Survey Questions";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Survey" asp-action="View" asp-route-id="@ViewBag.Survey.Id">
+                @ViewBag.Survey.Name
+            </a>
+        </li>
+        <li class="breadcrumb-item active">Questions</li>
+    </ol>
+</nav>
+
+@{
+    var index = 0;
+}
+@foreach (var question in Model)
+{
+    <form>
+        <div class="card mb-3">
+            <div class="card-header d-flex align-items-center">
+                <span>@(++index)</span>
+                <div class="btn-group ms-auto" role="group">
+                    <a asp-action="Edit" asp-route-id="@question.Id" title="Move Up" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-caret-up-fill"></i>
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@question.Id" title="Move Down" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@question.Id" title="Edit" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-title">@Html.Raw(question.Description)</div>
+                @if (question.Type == QuestionType.Choice)
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var choice in question.Choices)
+                        {
+                            <li class="list-group-item"><input type="checkbox"> @choice</li>
+                        }
+                    </ul>
+                }
+                else if (question.Type == QuestionType.Rating)
+                {
+                    @question.MinRating
+                    @for (int i = question.MinRating; i <= question.MaxRating; ++i)
+                    {
+                        <input type="radio" name="q+@question.Index">
+                    }
+                    @question.MaxRating
+                }
+                else if (question.TextLength <= 60)
+                {
+                    <input type="text" class="form-control">
+                }
+                else
+                {
+                    <textarea class="form-control" rows="@(Math.Ceiling(question.TextLength/60.0))"></textarea>
+                }
+            </div>
+        </div>
+    </form>
+}
+
+<a asp-action="Add" asp-route-surveyId="@ViewBag.Survey.Id" class="btn btn-primary">New Question</a>

@@ -1,0 +1,67 @@
+@model SurveyInputModel
+@{
+    ViewData["Title"] = "Edit Survey";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@ViewBag.Survey.Id">@Model.Name</a></li>
+        <li class="breadcrumb-item active me-auto">Edit</li>
+        <li>
+            <button id="delete" class="btn btn-outline-danger btn-sm me-2" title="Delete Survey">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+            <a asp-controller="Question" asp-action="Index" asp-route-surveyId="@ViewBag.Survey.Id"
+               class="btn btn-outline-primary btn-sm" title="Questions">
+                <i class="bi bi-list-check"></i>
+            </a>
+        </li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" required>
+                <label asp-for="Name"></label>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-floating mb-3">
+                <textarea asp-for="Description" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-floating mb-3">
+                <input asp-for="TimePublished" class="form-control">
+                <label asp-for="TimePublished"></label>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-floating mb-3">
+                <input asp-for="TimeClosed" class="form-control">
+                <label asp-for="TimeClosed"></label>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-secondary me-2" asp-action="View" asp-route-id="@ViewBag.Survey.Id">Cancel</a>
+    <button type="submit" class="btn btn-primary me-auto">Save</button>
+</form>
+
+@section StyleSheets{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
+      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+    @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
+        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/js/summernote-options.js"></script>
+    <script>
+        $(function() {
+            $("#Description").summernote(summernoteOptions.standard);
+        });
+    </script>
+}

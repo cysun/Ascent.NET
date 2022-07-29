@@ -1,8 +1,8 @@
 @inject IAuthorizationService AuthorizationService
 @{
     (string Style, string NavBg) light, dark;
-    light = ("https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/cerulean/bootstrap.min.css", "bg-primary");
-    dark = ("https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/darkly/bootstrap.min.css", "bg-dark");
+    light = ("https://cdn.jsdelivr.net/npm/bootswatch@5.2.0/dist/cerulean/bootstrap.min.css", "bg-primary");
+    dark = ("https://cdn.jsdelivr.net/npm/bootswatch@5.2.0/dist/darkly/bootstrap.min.css", "bg-dark");
     var currentTheme = Context.Request.Cookies["theme"] == "dark" ? dark : light;
 }
 <!DOCTYPE html>
@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(ViewData["Title"] == null ? "Ascent" : "Ascent - " + ViewData["Title"])</title>
     <link id="themeCSS" rel="stylesheet" href="@currentTheme.Style">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     @RenderSection("StyleSheets", required: false)
     @RenderSection("HeadScripts", required: false)
 </head>
@@ -39,7 +39,7 @@
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" href="#">Programs</a></li>
                                     <li><a class="dropdown-item" href="#">Rubrics</a></li>
-                                    <li><a class="dropdown-item" asp-area="Survey" asp-controller="Home" asp-action="Index">Surveys</a></li>
+                                    <li><a class="dropdown-item" asp-area="Survey" asp-controller="Survey" asp-action="Index">Surveys</a></li>
                                     <li><a class="dropdown-item" href="#">Course Journals</a></li>
                                     <li><a class="dropdown-item" asp-area="Mft" asp-controller="Home" asp-action="Index">Major Field Test</a></li>
                                 </ul>
@@ -104,8 +104,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

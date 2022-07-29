@@ -1,0 +1,146 @@
+@model SurveyQuestionInputModel
+@{
+    ViewData["Title"] = "Edit Question";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Survey" asp-action="View" asp-route-id="@ViewBag.Survey.Id">@ViewBag.Survey.Name</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Question" asp-action="Index" asp-route-surveyId="@ViewBag.Survey.Id">Questions</a>
+        </li>
+        <li class="breadcrumb-item active">Edit Question</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <input type="hidden" asp-for="SurveyId" />
+    <input type="hidden" asp-for="Index" />
+    <div class="row">
+        <div class="col-12 mb-3">
+            <select asp-for="Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select"></select>
+        </div>
+        <div class="col-12 mb-3">
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+    </div>
+    <div id="choiceRow" class="row">
+        <div class="col-4">
+            <div class="form-floating mb-3">
+                <input id="numOfChoices" class="form-control" type="number" value="@Model.Choices.Count">
+                <label for="floatingInput">Choices</label>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-floating mb-3">
+                <input asp-for="MinSelection" class="form-control">
+                <label asp-for="MinSelection"></label>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-floating mb-3">
+                <input asp-for="MaxSelection" class="form-control">
+                <label asp-for="MaxSelection"></label>
+            </div>
+        </div>
+        @for (int i = 0; i < Model.Choices.Count; ++i)
+        {
+            <div class="col-12">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">@(i+1)</span>
+                    <input asp-for="Choices[i]" class="form-control">
+                </div>
+            </div>
+        }
+    </div>
+    <div id="ratingRow" class="row">
+        <div class="col-3">
+            <div class="form-floating mb-3">
+                <input asp-for="MinRating" class="form-control">
+                <label asp-for="MinRating"></label>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-floating mb-3">
+                <input asp-for="MaxRating" class="form-control">
+                <label asp-for="MaxRating"></label>
+            </div>
+        </div>
+        <div class="col mb-3 d-flex align-items-center">
+            <div class="form-check">
+                <input asp-for="IncludeNotApplicable" class="form-check-input" />
+                <label asp-for="IncludeNotApplicable" class="form-check-label"></label>
+            </div>
+        </div>
+    </div>
+    <div id="textRow" class="row">
+        <div class="col-3">
+            <div class="form-floating mb-3">
+                <input asp-for="TextLength" class="form-control">
+                <label asp-for="TextLength"></label>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="form-text mb-3">
+                Text length determines whether a text field or a text area will be used for the answer
+                of this question. A text field will be used if the text length is 60 or less; otherwise
+                a text area will be used.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <a class="btn btn-secondary me-2" asp-action="Index" asp-route-surveyId="@ViewBag.Survey.Id">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</form>
+
+@section StyleSheets{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
+      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+    @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
+        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/js/summernote-options.js"></script>
+    <script>
+        function toggleRows() {
+            var mappings = [
+                { type: "Choice Question", row: "#choiceRow" },
+                { type: "Rating Question", row: "#ratingRow" },
+                { type: "Text Question", row: "#textRow" }
+            ];
+            mappings.forEach(m => $("#Type option:selected").text() == m.type ? $(m.row).show() : $(m.row).hide());
+        }
+        $(function() {
+            $("#Description").summernote(summernoteOptions.standard);
+            toggleRows();
+            $("#Type").change(toggleRows);
+            $("#numOfChoices").change(function() {
+                var newNumOfChoices = $(this).val();
+                var oldNumOfChoices = $("#choiceRow").find("input[name^='Choices[']").length;
+                if (newNumOfChoices > oldNumOfChoices) {
+                    for (var i = oldNumOfChoices; i < newNumOfChoices; ++i)
+                        $("#choiceRow").append(`
+                            <div class="col-12">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">${i+1}</span>
+                                    <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
+                                </div>
+                            </div>`);
+                }
+                if (newNumOfChoices < oldNumOfChoices) {
+                    for (var i = newNumOfChoices; i < oldNumOfChoices; ++i)
+                        $(`input[name='Choices[${i}]`).closest("div.col-12").remove();
+                }
+                if ($("#MaxSelection").val() == oldNumOfChoices)
+                    $("#MaxSelection").val(newNumOfChoices);
+            });
+        });
+    </script>
+}

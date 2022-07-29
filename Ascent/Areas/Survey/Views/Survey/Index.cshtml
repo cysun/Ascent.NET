@@ -20,9 +20,9 @@
 
 @if (Model.Count > 0)
 {
-    <table class="table table-striped">
+    <table class="table table-striped align-middle">
         <thead>
-            <tr><th>Name</th><th>Published</th><th>Closed</th><th>Responses</th></tr>
+            <tr><th>Name</th><th>Publish</th><th>Close</th><th>Responses</th><th></th></tr>
         </thead>
         <tbody>
             @foreach (var survey in Model)
@@ -32,7 +32,11 @@
                     <td>
                         @if (survey.TimePublished == null)
                         {
-                            <a asp-action="Publish" asp-route-id="@survey.Id" class="btn btn-primary btn-sm">Publish</a>
+                            <a asp-action="Publish" asp-route-id="@survey.Id">Publish</a>
+                        }
+                        else if (survey.TimePublished > DateTime.UtcNow)
+                        {
+                            <a asp-action="Publish" asp-route-id="@survey.Id">@survey.TimePublished?.ToLocalTime().ToString("d")</a>
                         }
                         else
                         {
@@ -42,7 +46,7 @@
                     <td>
                         @if (survey.TimeClosed == null)
                         {
-                            <a asp-action="Close" asp-route-id="@survey.Id" class="btn btn-primary btn-sm">Close</a>
+                            <a asp-action="Close" asp-route-id="@survey.Id">Close</a>
                         }
                         else if (survey.TimeClosed > DateTime.UtcNow)
                         {
@@ -54,6 +58,14 @@
                         }
                     </td>
                     <td>@survey.NumOfCompletedResponses / @survey.NumOfResponses</td>
+                    <td>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                        {
+                            <a asp-action="Edit" asp-route-id="@survey.Id" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

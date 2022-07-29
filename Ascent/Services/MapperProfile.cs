@@ -28,6 +28,16 @@ public class MapperProfile : Profile
         CreateMap<string, List<(int, int)>>().ConvertUsing(new StringToRanksConverter());
         CreateMap<MftDistributionInputModel, MftDistribution>();
         CreateMap<MftIndicatorInputModel, MftIndicator>();
+
+        CreateMap<SurveyInputModel, Survey>()
+            .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) => src.TimePublished?.ToUniversalTime()))
+            .ForMember(dest => dest.TimeClosed, opt => opt.MapFrom((src, dest) => src.TimeClosed?.ToUniversalTime()));
+        CreateMap<Survey, SurveyInputModel>()
+            .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) => src.TimePublished?.ToLocalTime()))
+            .ForMember(dest => dest.TimeClosed, opt => opt.MapFrom((src, dest) => src.TimeClosed?.ToLocalTime()));
+
+        CreateMap<SurveyQuestionInputModel, SurveyQuestion>();
+        CreateMap<SurveyQuestion, SurveyQuestionInputModel>();
     }
 }
 

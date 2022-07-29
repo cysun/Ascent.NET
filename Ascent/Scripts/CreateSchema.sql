@@ -104,6 +104,7 @@ CREATE TABLE "Surveys" (
     "TimeCreated" timestamp with time zone NOT NULL,
     "TimePublished" timestamp with time zone NULL,
     "TimeClosed" timestamp with time zone NULL,
+    "NumOfQuestions" integer NOT NULL,
     "NumOfResponses" integer NOT NULL,
     "NumOfCompletedResponses" integer NOT NULL,
     "IsDeleted" boolean NOT NULL,
@@ -168,10 +169,10 @@ CREATE TABLE "SurveyQuestions" (
     "Description" text NULL,
     "SurveyId" integer NOT NULL,
     "Index" integer NOT NULL,
-    "AllowNotApplicable" boolean NOT NULL,
     "TextLength" integer NOT NULL,
     "MinRating" integer NOT NULL,
     "MaxRating" integer NOT NULL,
+    "IncludeNotApplicable" boolean NOT NULL,
     "Choices" text NULL,
     "MinSelection" integer NOT NULL,
     "MaxSelection" integer NOT NULL,
@@ -248,7 +249,7 @@ CREATE INDEX "IX_SurveyAnswers_QuestionId" ON "SurveyAnswers" ("QuestionId");
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220726164640_InitialSchema', '6.0.7');
+VALUES ('20220728225311_InitialSchema', '6.0.7');
 
 COMMIT;
 

@@ -49,25 +49,29 @@
     <div class="col-12">
         <div class="card mt-3">
             <div class="card-header d-flex align-items-center">
-                <div class="flex-grow-1">Mean Score</div>
-                <a id="chart1Svg" download="AIScores.svg" class="btn btn-outline-primary btn-sm svg">
-                    <i class="bi bi-filetype-svg"></i>
-                </a>
-                <a id="chart1Png" download="AIScores.png" class="btn btn-outline-primary btn-sm ms-2 png">
-                    <i class="bi bi-filetype-png"></i>
-                </a>
+                <span>Mean Score</span>
+                <div class="btn-group ms-auto" role="group">
+                    <a id="chart1Svg" download="AIScores.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
+                        <i class="bi bi-filetype-svg"></i>
+                    </a>
+                    <a id="chart1Png" download="AIScores.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
+                        <i class="bi bi-filetype-png"></i>
+                    </a>
+                </div>
             </div>
             <div id="chart1" class="card-body" style="height: 600px;"></div>
         </div>
         <div class="card mt-3">
             <div class="card-header d-flex align-items-center">
-                <div class="flex-grow-1">Mean Score Percentile</div>
-                <a id="chart2Svg" download="AIPercentiles.svg" class="btn btn-outline-primary btn-sm svg">
-                    <i class="bi bi-filetype-svg"></i>
-                </a>
-                <a id="chart2Png" download="AIPercentiles.png" class="btn btn-outline-primary btn-sm ms-2 png">
-                    <i class="bi bi-filetype-png"></i>
-                </a>
+                <span>Mean Score Percentile</span>
+                <div class="btn-group ms-auto" role="group">
+                    <a id="chart2Svg" download="AIPercentiles.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
+                        <i class="bi bi-filetype-svg"></i>
+                    </a>
+                    <a id="chart2Png" download="AIPercentiles.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
+                        <i class="bi bi-filetype-png"></i>
+                    </a>
+                </div>
             </div>
             <div id="chart2" class="card-body" style="height: 600px;"></div>
         </div>

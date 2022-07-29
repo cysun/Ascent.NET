@@ -70,8 +70,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<SurveyQuestion>().Property(q => q.Choices)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => JsonSerializer.Deserialize<List<SurveyQuestion.Choice>>(v, (JsonSerializerOptions)null),
-                new ValueComparer<List<SurveyQuestion.Choice>>((l1, l2) => l1 == l2, l => l.GetHashCode(), l => l)
+                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null),
+                new ValueComparer<List<string>>((l1, l2) => l1.SequenceEqual(l2), l => l.GetHashCode(), l => l.ToList())
             );
 
         modelBuilder.Entity<SurveyAnswer>().Property(a => a.Selections)
