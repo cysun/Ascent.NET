@@ -30,7 +30,8 @@ public class MapperProfile : Profile
         CreateMap<MftIndicatorInputModel, MftIndicator>();
 
         CreateMap<SurveyInputModel, Survey>()
-            .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) => src.TimePublished?.ToUniversalTime()))
+            .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) =>
+                dest.IsPublished ? dest.TimePublished : src.TimePublished?.ToUniversalTime())) // skip if already published
             .ForMember(dest => dest.TimeClosed, opt => opt.MapFrom((src, dest) => src.TimeClosed?.ToUniversalTime()));
         CreateMap<Survey, SurveyInputModel>()
             .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) => src.TimePublished?.ToLocalTime()))

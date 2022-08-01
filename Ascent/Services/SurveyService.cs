@@ -29,6 +29,9 @@ public class SurveyService
     public SurveyQuestion GetQuestion(int id) => _db.SurveyQuestions
         .Where(q => q.Id == id).Include(q => q.Survey).SingleOrDefault();
 
+    public SurveyQuestion GetQuestion(int surveyId, int index) => _db.SurveyQuestions
+        .Where(q => q.SurveyId == surveyId && q.Index == index).SingleOrDefault();
+
     public List<SurveyQuestion> GetQuestions(int surveyId) => _db.SurveyQuestions
         .Where(q => q.SurveyId == surveyId).OrderBy(q => q.Index).ToList();
 
@@ -40,6 +43,23 @@ public class SurveyService
         question.SurveyId = surveyId;
         question.Index = survey.NumOfQuestions++;
         _db.SurveyQuestions.Add(question);
+        _db.SaveChanges();
+    }
+
+    public async Task DeleteQuestionAsync(int id)
+    {
+        var question = _db.SurveyQuestions.Find(id);
+        if (question == null) return;
+
+        var survey = _db.Surveys.Find(question.SurveyId);
+        if (question.Index < survey.NumOfQuestions - 1)
+        {
+            await _db.SurveyQuestions
+                .Where(q => q.SurveyId == question.SurveyId && q.Index > question.Index)
+                .ForEachAsync(q => q.Index--);
+        }
+        survey.NumOfQuestions--;
+        _db.SurveyQuestions.Remove(question);
         _db.SaveChanges();
     }
 

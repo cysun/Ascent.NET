@@ -16,19 +16,25 @@ public class Survey
     public DateTime? TimePublished { get; set; }
     public DateTime? TimeClosed { get; set; }
 
+    public bool IsPublished => TimePublished.HasValue && TimePublished < DateTime.UtcNow;
+    public bool IsClosed => TimeClosed.HasValue && TimeClosed < DateTime.UtcNow;
+
     public int NumOfQuestions { get; set; }
     public int NumOfResponses { get; set; }
     public int NumOfCompletedResponses { get; set; }
+
+    // Whether to allow one person to submit multiple responses
+    public bool AllowMultipleSubmissions { get; set; }
 
     public bool IsDeleted { get; set; }
 }
 
 public enum QuestionType
 {
-    [Display(Name = "Choice Question")] Choice,
-    [Display(Name = "Rating Question")] Rating,
-    [Display(Name = "Text Question")] Text,
-    [Display(Name = "Section Block")] Section // Used to separate a survey into sections
+    [Display(Name = "Choice Question")] Choice = 0,
+    [Display(Name = "Rating Question")] Rating = 1,
+    [Display(Name = "Text Question")] Text = 2,
+    [Display(Name = "Section Block")] Section = 3 // Used to separate a survey into sections
 }
 
 // It's kind of ugly to put everything inside Question instead of creating subclasses like
@@ -105,5 +111,5 @@ public class SurveyAnswer
 
     // Choice Answer
 
-    public HashSet<int> Selections { get; set; } = new HashSet<int>();
+    public List<bool> Selections { get; set; } = new List<bool>();
 }

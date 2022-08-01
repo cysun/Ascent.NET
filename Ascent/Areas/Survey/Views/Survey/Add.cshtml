@@ -35,6 +35,10 @@
             </div>
         </div>
     </div>
+    <div class="form-check mb-3">
+        <input asp-for="AllowMultipleSubmissions" class="form-check-input" />
+        <label asp-for="AllowMultipleSubmissions" class="form-check-label"></label>
+    </div>
     <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
     <button type="submit" class="btn btn-primary">Create</button>
 </form>

@@ -19,20 +19,39 @@
     <input type="hidden" asp-for="SurveyId" />
     <input type="hidden" asp-for="Index" />
     <div class="row">
-        <div class="col-12 mb-3">
-            <select asp-for="Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select"></select>
-        </div>
+        @if (ViewBag.Survey.IsPublished)
+        {
+            <input type="hidden" asp-for="Type" value="@((int)Model.Type)" />
+        }
+        else
+        {
+            <div class="col-12 mb-3">
+                <select asp-for="Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select"></select>
+            </div>
+        }
         <div class="col-12 mb-3">
             <textarea asp-for="Description" class="form-control"></textarea>
         </div>
     </div>
     <div id="choiceRow" class="row">
-        <div class="col-4">
-            <div class="form-floating mb-3">
-                <input id="numOfChoices" class="form-control" type="number" value="@Model.Choices.Count">
-                <label for="floatingInput">Choices</label>
+        @if (ViewBag.Survey.IsPublished)
+        {
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    <span class="form-control">@Model.Choices.Count</span>
+                    <label>Choices</label>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    <input id="numOfChoices" class="form-control" type="number" value="@Model.Choices.Count">
+                    <label for="floatingInput">Choices</label>
+                </div>
+            </div>
+        }
         <div class="col-4">
             <div class="form-floating mb-3">
                 <input asp-for="MinSelection" class="form-control">
@@ -111,11 +130,11 @@
     <script>
         function toggleRows() {
             var mappings = [
-                { type: "Choice Question", row: "#choiceRow" },
-                { type: "Rating Question", row: "#ratingRow" },
-                { type: "Text Question", row: "#textRow" }
+                { type: 0, row: "#choiceRow" },
+                { type: 1, row: "#ratingRow" },
+                { type: 2, row: "#textRow" }
             ];
-            mappings.forEach(m => $("#Type option:selected").text() == m.type ? $(m.row).show() : $(m.row).hide());
+            mappings.forEach(m => $("#Type").val() == m.type ? $(m.row).show() : $(m.row).hide());
         }
         $(function() {
             $("#Description").summernote(summernoteOptions.standard);
@@ -127,12 +146,12 @@
                 if (newNumOfChoices > oldNumOfChoices) {
                     for (var i = oldNumOfChoices; i < newNumOfChoices; ++i)
                         $("#choiceRow").append(`
-                            <div class="col-12">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">${i+1}</span>
-                                    <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
-                                </div>
-                            </div>`);
+                                                    <div class="col-12">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">${i + 1}</span>
+                                                            <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
+                                                        </div>
+                                                    </div>`);
                 }
                 if (newNumOfChoices < oldNumOfChoices) {
                     for (var i = newNumOfChoices; i < oldNumOfChoices; ++i)

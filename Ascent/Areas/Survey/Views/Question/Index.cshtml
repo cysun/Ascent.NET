@@ -19,23 +19,44 @@
 }
 @foreach (var question in Model)
 {
-    <form>
-        <div class="card mb-3">
-            <div class="card-header d-flex align-items-center">
+    <div class="card mb-3">
+        <div class="card-header d-flex align-items-center">
+            @if (question.Type != QuestionType.Section)
+            {
                 <span>@(++index)</span>
-                <div class="btn-group ms-auto" role="group">
-                    <a asp-action="Edit" asp-route-id="@question.Id" title="Move Up" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-caret-up-fill"></i>
-                    </a>
-                    <a asp-action="Edit" asp-route-id="@question.Id" title="Move Down" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-caret-down-fill"></i>
-                    </a>
+            }
+            <div class="btn-toolbar ms-auto" role="toolbar">
+                @if (!@ViewBag.Survey.IsPublished)
+                {
+                    <div class="btn-group me-2" role="group">
+                        <button class="delete btn btn-outline-danger btn-sm" data-id="@question.Id" title="Delete Question">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                }
+                <div class="btn-group" role="group">
+                    @if (!@ViewBag.Survey.IsPublished)
+                    {
+                        <a asp-action="MoveUp" asp-route-id="@question.Id" title="Move Up" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-caret-up-fill"></i>
+                        </a>
+                        <a asp-action="MoveDown" asp-route-id="@question.Id" title="Move Down" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-caret-down-fill"></i>
+                        </a>
+                    }
                     <a asp-action="Edit" asp-route-id="@question.Id" title="Edit" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-pencil-fill"></i>
                     </a>
                 </div>
             </div>
-            <div class="card-body">
+        </div>
+        <div class="card-body">
+            @if (question.Type == QuestionType.Section)
+            {
+                <div class="card-title bg-secondary border rounded p-3">@Html.Raw(question.Description)</div>
+            }
+            else
+            {
                 <div class="card-title">@Html.Raw(question.Description)</div>
                 @if (question.Type == QuestionType.Choice)
                 {
@@ -51,9 +72,14 @@
                     @question.MinRating
                     @for (int i = question.MinRating; i <= question.MaxRating; ++i)
                     {
-                        <input type="radio" name="q+@question.Index">
+                        <input type="radio" name="q-@question.Index">
                     }
                     @question.MaxRating
+
+                    if (question.IncludeNotApplicable)
+                    {
+                        <input class="ms-3" type="checkbox" name="q-@question.Index-na"> <text>N/A</text>
+                    }
                 }
                 else if (question.TextLength <= 60)
                 {
@@ -63,9 +89,20 @@
                 {
                     <textarea class="form-control" rows="@(Math.Ceiling(question.TextLength/60.0))"></textarea>
                 }
-            </div>
+            }
         </div>
-    </form>
+    </div>
 }
 
 <a asp-action="Add" asp-route-surveyId="@ViewBag.Survey.Id" class="btn btn-primary">New Question</a>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $(".delete").click(function() {
+                if (confirm("Are you suer you want to delete this question?"))
+                    window.location.href = "question/delete/" + $(this).attr("data-id") + "?surveyId=@ViewBag.Survey.Id";
+            });
+        });
+    </script>
+}

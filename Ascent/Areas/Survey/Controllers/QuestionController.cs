@@ -83,6 +83,50 @@ namespace Ascent.Areas.Survey.Controllers
 
             return RedirectToAction("Index", new { surveyId = question.SurveyId });
         }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult MoveUp(int id)
+        {
+            var current = _surveyService.GetQuestion(id);
+            if (current == null) return NotFound();
+
+            if (current.Index > 0)
+            {
+                var previous = _surveyService.GetQuestion(current.SurveyId, current.Index - 1);
+                current.Index--;
+                previous.Index++;
+                _surveyService.SaveChanges();
+                _logger.LogInformation("{user} moved up question {question}", User.Identity.Name, id);
+            }
+
+            return RedirectToAction("Index", new { surveyId = current.SurveyId });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult MoveDown(int id)
+        {
+            var current = _surveyService.GetQuestion(id);
+            if (current == null) return NotFound();
+
+            if (current.Index < current.Survey.NumOfQuestions - 1)
+            {
+                var next = _surveyService.GetQuestion(current.SurveyId, current.Index + 1);
+                current.Index++;
+                next.Index--;
+                _surveyService.SaveChanges();
+                _logger.LogInformation("{user} moved down question {question}", User.Identity.Name, id);
+            }
+
+            return RedirectToAction("Index", new { surveyId = current.SurveyId });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public async Task<IActionResult> DeleteAsync(int id, int surveyId)
+        {
+            await _surveyService.DeleteQuestionAsync(id);
+            _logger.LogInformation("{user} deleted question {question}", User.Identity.Name, id);
+            return RedirectToAction("Index", new { surveyId });
+        }
     }
 }
 

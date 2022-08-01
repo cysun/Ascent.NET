@@ -48,7 +48,7 @@ public class AppDbContext : DbContext
             .HasForeignKey(d => d.TypeAlias).HasPrincipalKey(t => t.Alias);
         modelBuilder.Entity<Survey>().HasQueryFilter(s => !s.IsDeleted);
         modelBuilder.Entity<SurveyQuestion>().HasQueryFilter(q => !q.Survey.IsDeleted);
-        modelBuilder.Entity<SurveyQuestion>().HasAlternateKey(q => new { q.SurveyId, q.Index });
+        modelBuilder.Entity<SurveyQuestion>().HasIndex(q => new { q.SurveyId, q.Index });
         modelBuilder.Entity<SurveyQuestion>().Property(q => q.Type).HasConversion<string>();
         modelBuilder.Entity<SurveyResponse>().HasQueryFilter(r => !r.IsDeleted);
         modelBuilder.Entity<SurveyResponse>().HasQueryFilter(r => !r.Survey.IsDeleted);
@@ -77,8 +77,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<SurveyAnswer>().Property(a => a.Selections)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => JsonSerializer.Deserialize<HashSet<int>>(v, (JsonSerializerOptions)null),
-                new ValueComparer<HashSet<int>>((s1, s2) => s1.SetEquals(s2), s => s.GetHashCode(), s => s.ToHashSet())
+                v => JsonSerializer.Deserialize<List<bool>>(v, (JsonSerializerOptions)null),
+                new ValueComparer<List<bool>>((l1, l2) => l1.SequenceEqual(l2), l => l.GetHashCode(), l => l.ToList())
             );
     }
 }

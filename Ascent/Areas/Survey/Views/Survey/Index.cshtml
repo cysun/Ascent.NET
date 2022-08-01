@@ -22,50 +22,48 @@
 {
     <table class="table table-striped align-middle">
         <thead>
-            <tr><th>Name</th><th>Publish</th><th>Close</th><th>Responses</th><th></th></tr>
+            <tr>
+                <th>Name</th>
+                <th class="d-none d-lg-table-cell">Publish Date</th>
+                <th class="d-none d-lg-table-cell">Close Date</th>
+                <th>Responses</th>
+                @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                {
+                    <th class="d-none d-lg-table-cell"></th>
+                }
+            </tr>
         </thead>
         <tbody>
             @foreach (var survey in Model)
             {
                 <tr>
-                    <td>@survey.Name</td>
                     <td>
-                        @if (survey.TimePublished == null)
+                        <a asp-action="View" asp-route-id="@survey.Id">@survey.Name</a>
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        @if (survey.TimePublished.HasValue)
                         {
-                            <a asp-action="Publish" asp-route-id="@survey.Id">Publish</a>
-                        }
-                        else if (survey.TimePublished > DateTime.UtcNow)
-                        {
-                            <a asp-action="Publish" asp-route-id="@survey.Id">@survey.TimePublished?.ToLocalTime().ToString("d")</a>
-                        }
-                        else
-                        {
-                            <text>@survey.TimePublished?.ToLocalTime().ToString("d")</text>
+                            var color = survey.IsPublished ? "" : "text-warning";
+                            <span class="@color">@survey.TimePublished?.ToLocalTime().ToString("d")</span>
                         }
                     </td>
-                    <td>
-                        @if (survey.TimeClosed == null)
+                    <td class="d-none d-lg-table-cell">
+                        @if (survey.TimeClosed.HasValue)
                         {
-                            <a asp-action="Close" asp-route-id="@survey.Id">Close</a>
-                        }
-                        else if (survey.TimeClosed > DateTime.UtcNow)
-                        {
-                            <a asp-action="Close" asp-route-id="@survey.Id">@survey.TimeClosed?.ToLocalTime().ToString("d")</a>
-                        }
-                        else
-                        {
-                            <text>@survey.TimeClosed?.ToLocalTime().ToString("d")</text>
+                            var color = survey.IsClosed ? "" : "text-warning";
+                            <span class="@color">@survey.TimeClosed?.ToLocalTime().ToString("d")</span>
                         }
                     </td>
                     <td>@survey.NumOfCompletedResponses / @survey.NumOfResponses</td>
-                    <td>
-                        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-                        {
+                    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                    {
+                        <td class="d-none d-lg-table-cell">
+
                             <a asp-action="Edit" asp-route-id="@survey.Id" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
-                        }
-                    </td>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

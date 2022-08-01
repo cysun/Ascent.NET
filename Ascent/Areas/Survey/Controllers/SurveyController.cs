@@ -27,12 +27,23 @@ namespace Ascent.Areas.Survey.Controllers
             return View(_surveyService.GetSurveys());
         }
 
+        public IActionResult View(int id)
+        {
+            var survey = _surveyService.GetSurvey(id);
+            if (survey == null) return NotFound();
+
+            ViewBag.Questions = _surveyService.GetQuestions(id);
+
+            return View(survey);
+        }
+
         [HttpGet]
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Add()
         {
             return View(new SurveyInputModel());
         }
+
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Add(SurveyInputModel input)
@@ -72,6 +83,22 @@ namespace Ascent.Areas.Survey.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Delete(int id)
+        {
+            var survey = _surveyService.GetSurvey(id);
+            if (survey == null) return NotFound();
+
+            if (!survey.IsDeleted)
+            {
+                survey.IsDeleted = true;
+                _surveyService.SaveChanges();
+                _logger.LogInformation("{user} deleted survey {survey}", User.Identity.Name, id);
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }
 
@@ -89,6 +116,12 @@ namespace Ascent.Models
 
         [Display(Name = "Close Time")]
         public DateTime? TimeClosed { get; set; }
+
+        [Display(Name = "Allow multiple responses from one person")]
+        public bool AllowMultipleSubmissions { get; set; }
+
+        public bool IsPublished => TimePublished.HasValue && TimePublished < DateTime.UtcNow;
+        public bool IsClosed => TimeClosed.HasValue && TimeClosed < DateTime.UtcNow;
     }
 }
 

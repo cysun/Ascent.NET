@@ -1,0 +1,114 @@
+@inject IAuthorizationService AuthorizationService
+@model Survey
+@{
+    ViewData["Title"] = "View Survey";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.Name</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Survey">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row row-cols-3 g-4 mb-3">
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header text-bg-info">Publish <span class="d-none d-md-inline">Date</span></div>
+            <div class="card-body">
+                @if (Model.TimePublished.HasValue)
+                {
+                    var color = Model.IsPublished ? "" : "text-warning";
+                    <span class="@color">@Model.TimePublished?.ToLocalTime().ToString("d")</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header text-bg-info">Close <span class="d-none d-md-inline">Date</span></div>
+            <div class="card-body">
+                @if (Model.TimeClosed.HasValue)
+                {
+                    var color = Model.IsClosed ? "" : "text-warning";
+                    <span class="@color">@Model.TimeClosed?.ToLocalTime().ToString("d")</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header text-bg-info">Responses</div>
+            <div class="card-body">
+                @Model.NumOfCompletedResponses / @Model.NumOfResponses
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="rounded bg-secondary p-3 mb-3">@Html.Raw(Model.Description)</div>
+
+@{
+    var index = 0;
+}
+@foreach (var question in ViewBag.Questions)
+{
+    if (question.Type == QuestionType.Section)
+    {
+        <div class="rounded bg-secondary p-3 mb-3">
+            @Html.Raw(question.Description)
+        </div>
+    }
+    else
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex align-items-center">
+                @if (question.Type != QuestionType.Section)
+                {
+                    <span>@(++index)</span>
+                }
+            </div>
+            <div class="card-body">
+                <div class="card-title">@Html.Raw(question.Description)</div>
+                @if (question.Type == QuestionType.Choice)
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var choice in question.Choices)
+                        {
+                            <li class="list-group-item"><input type="checkbox"> @choice</li>
+                        }
+                    </ul>
+                }
+                else if (question.Type == QuestionType.Rating)
+                {
+                    @question.MinRating
+                    @for (int i = question.MinRating; i <= question.MaxRating; ++i)
+                    {
+                        <input type="radio" name="q-@question.Index">
+                    }
+                    @question.MaxRating
+
+                    if (question.IncludeNotApplicable)
+                    {
+                        <input class="ms-3" type="checkbox" name="q-@question.Index-na"> <text>N/A</text>
+                    }
+                }
+                else if (question.TextLength <= 60)
+                {
+                    <input type="text" class="form-control">
+                }
+                else
+                {
+                    <textarea class="form-control" rows="@(Math.Ceiling(question.TextLength/60.0))"></textarea>
+                }
+            </div>
+        </div>
+    }
+}
