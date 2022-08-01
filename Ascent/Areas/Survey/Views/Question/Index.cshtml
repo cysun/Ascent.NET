@@ -19,7 +19,7 @@
 }
 @foreach (var question in Model)
 {
-    <div class="card mb-3">
+    <div id="q-id-@question.Id" class="card mb-3">
         <div class="card-header d-flex align-items-center">
             @if (question.Type != QuestionType.Section)
             {
@@ -94,7 +94,10 @@
     </div>
 }
 
-<a asp-action="Add" asp-route-surveyId="@ViewBag.Survey.Id" class="btn btn-primary">New Question</a>
+@if (!ViewBag.Survey.IsPublished)
+{
+    <a asp-action="Add" asp-route-surveyId="@ViewBag.Survey.Id" class="btn btn-primary">New Question</a>
+}
 
 @section Scripts{
     <script>

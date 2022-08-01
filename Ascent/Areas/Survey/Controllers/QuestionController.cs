@@ -55,7 +55,7 @@ namespace Ascent.Areas.Survey.Controllers
             _logger.LogInformation("{user} added question {question} to {survey}",
                 User.Identity.Name, question.Id, surveyId);
 
-            return RedirectToAction("Index", new { surveyId });
+            return RedirectToAction("Index", "Question", new { surveyId }, $"q-id-{question.Id}");
         }
 
         [HttpGet]
@@ -81,7 +81,7 @@ namespace Ascent.Areas.Survey.Controllers
             _surveyService.SaveChanges();
             _logger.LogInformation("{user} edited question {question}", User.Identity.Name, id);
 
-            return RedirectToAction("Index", new { surveyId = question.SurveyId });
+            return RedirectToAction("Index", "Question", new { surveyId = question.SurveyId }, $"q-id-{question.Id}");
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]
@@ -99,7 +99,7 @@ namespace Ascent.Areas.Survey.Controllers
                 _logger.LogInformation("{user} moved up question {question}", User.Identity.Name, id);
             }
 
-            return RedirectToAction("Index", new { surveyId = current.SurveyId });
+            return RedirectToAction("Index", "Question", new { surveyId = current.SurveyId }, $"q-id-{current.Id}");
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]
@@ -117,7 +117,7 @@ namespace Ascent.Areas.Survey.Controllers
                 _logger.LogInformation("{user} moved down question {question}", User.Identity.Name, id);
             }
 
-            return RedirectToAction("Index", new { surveyId = current.SurveyId });
+            return RedirectToAction("Index", "Question", new { surveyId = current.SurveyId }, $"q-id-{current.Id}");
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]
