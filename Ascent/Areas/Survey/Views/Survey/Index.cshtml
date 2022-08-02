@@ -55,17 +55,40 @@
                         }
                     </td>
                     <td>@survey.NumOfCompletedResponses / @survey.NumOfResponses</td>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-                    {
-                        <td class="d-none d-lg-table-cell">
-
-                            <a asp-action="Edit" asp-route-id="@survey.Id" class="btn btn-outline-primary btn-sm">
+                    <td class="d-none d-lg-table-cell">
+                        <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link" data-id="@survey.Id">
+                            <i class="bi bi-link"></i>
+                        </button>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                        {
+                            <a asp-action="Edit" asp-route-id="@survey.Id" title="Edit Survey" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
-                        </td>
-                    }
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+}
+
+<div id="toast" class="toast position-fixed top-50 start-50 translate-middle" role="alert">
+    <div class="toast-header">
+        <strong>Survey link copied to clipboard</strong>
+    </div>
+    <div class="toast-body"><code id="surveyLink"></code></div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $(".link").click(function() {
+                var url = window.location.origin + "/survey/survey/take/" + $(this).attr("data-id");
+                navigator.clipboard.writeText(url);
+                $("#surveyLink").text(url);
+                var toast = new bootstrap.Toast($("#toast"), { delay: 3000 });
+                toast.show();
+            });
+        });
+    </script>
 }

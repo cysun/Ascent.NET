@@ -7,14 +7,17 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Name</li>
-        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-        {
-            <li>
+        <li>
+            <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link" data-id="@Model.Id">
+                <i class="bi bi-link"></i>
+            </button>
+            @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+            {
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Survey">
                     <i class="bi bi-pencil-fill"></i>
                 </a>
-            </li>
-        }
+            }
+        </li>
     </ol>
 </nav>
 
@@ -111,4 +114,25 @@
             </div>
         </div>
     }
+}
+
+<div id="toast" class="toast position-fixed top-50 start-50 translate-middle" role="alert">
+    <div class="toast-header">
+        <strong>Survey link copied to clipboard</strong>
+    </div>
+    <div class="toast-body"><code id="surveyLink"></code></div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $(".link").click(function() {
+                var url = window.location.origin + "/survey/survey/take/" + $(this).attr("data-id");
+                navigator.clipboard.writeText(url);
+                $("#surveyLink").text(url);
+                var toast = new bootstrap.Toast($("#toast"), { delay: 3000 });
+                toast.show();
+            });
+        });
+    </script>
 }

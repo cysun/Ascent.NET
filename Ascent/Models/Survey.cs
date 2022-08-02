@@ -85,6 +85,8 @@ public class SurveyResponse
     public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
     public DateTime? TimeCompleted { get; set; }
 
+    public List<SurveyAnswer> Answers { get; set; } = new List<SurveyAnswer>();
+
     public bool IsCompleted { get; set; }
     public bool IsDeleted { get; set; }
 }

@@ -99,6 +99,12 @@ namespace Ascent.Areas.Survey.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [AllowAnonymous]
+        public IActionResult Take(int id)
+        {
+            return RedirectToAction("Edit", "Response", new { surveyId = id });
+        }
     }
 }
 
