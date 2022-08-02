@@ -41,7 +41,7 @@ public class SurveyService
         if (survey == null) return;
 
         question.SurveyId = surveyId;
-        question.Index = survey.NumOfQuestions++;
+        question.Index = survey.QuestionCount++;
         _db.SurveyQuestions.Add(question);
         _db.SaveChanges();
     }
@@ -52,14 +52,24 @@ public class SurveyService
         if (question == null) return;
 
         var survey = _db.Surveys.Find(question.SurveyId);
-        if (question.Index < survey.NumOfQuestions - 1)
+        if (question.Index < survey.QuestionCount - 1)
         {
             await _db.SurveyQuestions
                 .Where(q => q.SurveyId == question.SurveyId && q.Index > question.Index)
                 .ForEachAsync(q => q.Index--);
         }
-        survey.NumOfQuestions--;
+        survey.QuestionCount--;
         _db.SurveyQuestions.Remove(question);
+        _db.SaveChanges();
+    }
+
+    public void AddResponseToSurvey(Survey survey, SurveyResponse response)
+    {
+        response.Id = Guid.NewGuid();
+        response.Survey = survey;
+        response.TimeSubmitted = DateTime.UtcNow;
+        survey.ResponseCount++;
+        _db.SurveyResponses.Add(response);
         _db.SaveChanges();
     }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ascent.Controllers;
 
+[AllowAnonymous]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -13,13 +14,11 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [AllowAnonymous]
     public IActionResult Index()
     {
         return View();
     }
 
-    [AllowAnonymous]
     public IActionResult AccessDenied()
     {
         return View();

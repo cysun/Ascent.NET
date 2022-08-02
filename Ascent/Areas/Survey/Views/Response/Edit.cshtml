@@ -1,0 +1,75 @@
+@model SurveyResponse
+@{
+    ViewData["Title"] = "Take Survey";
+}
+
+<div class="rounded bg-secondary p-3 mb-3">@Html.Raw(Model.Survey.Description)</div>
+
+@{
+    var index = 0;
+}
+<form method="post">
+    <input type="hidden" name="surveyId" valeu="@Model.SurveyId" />
+    @for (int i = 0; i < Model.Answers.Count; ++i)
+    {
+        var answer = Model.Answers[i];
+        var question = answer.Question;
+        <input type="hidden" asp-for="Answers[i].QuestionId">
+        if (question.Type == QuestionType.Section)
+        {
+            <div class="rounded bg-secondary p-3 mb-3">
+                @Html.Raw(question.Description)
+                <input type="hidden" asp-for="Answers[i].Text" value="">
+            </div>
+        }
+        else
+        {
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center">
+                    @if (question.Type != QuestionType.Section)
+                    {
+                        <span>@(++index)</span>
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="card-title">@Html.Raw(question.Description)</div>
+                    @if (question.Type == QuestionType.Choice)
+                    {
+                        <ul class="list-group list-group-flush">
+                            @for (int j = 0; j < answer.Selections.Count; ++j)
+                            {
+                                <li class="list-group-item">
+                                    <input type="checkbox" asp-for="Answers[i].Selections[j]"> @question.Choices[j]
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else if (question.Type == QuestionType.Rating)
+                    {
+                        @question.MinRating
+                        @for (int j = question.MinRating; j <= question.MaxRating; ++j)
+                        {
+                            <input type="radio" asp-for="Answers[i].Rating" value="@j">
+                        }
+                        @question.MaxRating
+
+                        if (question.IncludeNotApplicable)
+                        {
+                            <input class="ms-3" type="checkbox" asp-for="Answers[i].NotApplicable"> <text>N/A</text>
+                        }
+                    }
+                    else if (question.TextLength <= 60)
+                    {
+                        <input asp-for="Answers[i].Text" class="form-control">
+                    }
+                    else
+                    {
+                        <textarea asp-for="Answers[i].Text" class="form-control"
+                      rows="@(Math.Ceiling(question.TextLength/60.0))"></textarea>
+                    }
+                </div>
+            </div>
+        }
+    }
+    <button type="submit" class="btn btn-primary">Finish</button>
+</form>

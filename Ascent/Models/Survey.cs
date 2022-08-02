@@ -19,9 +19,8 @@ public class Survey
     public bool IsPublished => TimePublished.HasValue && TimePublished < DateTime.UtcNow;
     public bool IsClosed => TimeClosed.HasValue && TimeClosed < DateTime.UtcNow;
 
-    public int NumOfQuestions { get; set; }
-    public int NumOfResponses { get; set; }
-    public int NumOfCompletedResponses { get; set; }
+    public int QuestionCount { get; set; }
+    public int ResponseCount { get; set; }
 
     // Whether to allow one person to submit multiple responses
     public bool AllowMultipleSubmissions { get; set; }
@@ -82,13 +81,21 @@ public class SurveyResponse
     public Survey Survey { get; set; }
     public int SurveyId { get; set; }
 
-    public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
-    public DateTime? TimeCompleted { get; set; }
+    public DateTime? TimeSubmitted { get; set; }
 
     public List<SurveyAnswer> Answers { get; set; } = new List<SurveyAnswer>();
 
-    public bool IsCompleted { get; set; }
     public bool IsDeleted { get; set; }
+
+    public SurveyResponse() { }
+
+    public SurveyResponse(Survey survey, List<SurveyQuestion> questions)
+    {
+        Survey = survey;
+        SurveyId = survey.Id;
+        foreach (var question in questions)
+            Answers.Add(new SurveyAnswer(question));
+    }
 }
 
 public class SurveyAnswer
@@ -114,4 +121,14 @@ public class SurveyAnswer
     // Choice Answer
 
     public List<bool> Selections { get; set; } = new List<bool>();
+
+    public SurveyAnswer() { }
+
+    public SurveyAnswer(SurveyQuestion question)
+    {
+        Question = question;
+        QuestionId = question.Id;
+        if (question.Type == QuestionType.Choice)
+            for (int i = 0; i < question.Choices.Count; ++i) Selections.Add(false);
+    }
 }

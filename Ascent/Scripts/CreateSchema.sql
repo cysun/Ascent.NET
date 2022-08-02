@@ -104,9 +104,8 @@ CREATE TABLE "Surveys" (
     "TimeCreated" timestamp with time zone NOT NULL,
     "TimePublished" timestamp with time zone NULL,
     "TimeClosed" timestamp with time zone NULL,
-    "NumOfQuestions" integer NOT NULL,
-    "NumOfResponses" integer NOT NULL,
-    "NumOfCompletedResponses" integer NOT NULL,
+    "QuestionCount" integer NOT NULL,
+    "ResponseCount" integer NOT NULL,
     "AllowMultipleSubmissions" boolean NOT NULL,
     "IsDeleted" boolean NOT NULL,
     CONSTRAINT "PK_Surveys" PRIMARY KEY ("Id")
@@ -184,9 +183,7 @@ CREATE TABLE "SurveyQuestions" (
 CREATE TABLE "SurveyResponses" (
     "Id" uuid NOT NULL,
     "SurveyId" integer NOT NULL,
-    "TimeCreated" timestamp with time zone NOT NULL,
-    "TimeCompleted" timestamp with time zone NULL,
-    "IsCompleted" boolean NOT NULL,
+    "TimeSubmitted" timestamp with time zone NULL,
     "IsDeleted" boolean NOT NULL,
     CONSTRAINT "PK_SurveyResponses" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_SurveyResponses_Surveys_SurveyId" FOREIGN KEY ("SurveyId") REFERENCES "Surveys" ("Id") ON DELETE CASCADE
@@ -251,7 +248,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220802164234_InitialSchema', '6.0.7');
+VALUES ('20220802215654_InitialSchema', '6.0.7');
 
 COMMIT;
 

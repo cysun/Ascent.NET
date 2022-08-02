@@ -8,9 +8,12 @@
         <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Name</li>
         <li>
-            <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link" data-id="@Model.Id">
-                <i class="bi bi-link"></i>
-            </button>
+            @if (Model.IsPublished && !Model.IsClosed)
+            {
+                <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link">
+                    <i class="bi bi-link"></i>
+                </button>
+            }
             @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
             {
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Survey">
@@ -49,9 +52,7 @@
     <div class="col">
         <div class="card h-100">
             <div class="card-header text-bg-info">Responses</div>
-            <div class="card-body">
-                @Model.NumOfCompletedResponses / @Model.NumOfResponses
-            </div>
+            <div class="card-body">@Model.ResponseCount</div>
         </div>
     </div>
 </div>
@@ -127,7 +128,7 @@
     <script>
         $(function() {
             $(".link").click(function() {
-                var url = window.location.origin + "/survey/survey/take/" + $(this).attr("data-id");
+                var url = window.location.origin + "/survey/response/edit?surveyId=@Model.Id";
                 navigator.clipboard.writeText(url);
                 $("#surveyLink").text(url);
                 var toast = new bootstrap.Toast($("#toast"), { delay: 3000 });

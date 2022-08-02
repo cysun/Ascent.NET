@@ -108,7 +108,7 @@ namespace Ascent.Areas.Survey.Controllers
             var current = _surveyService.GetQuestion(id);
             if (current == null) return NotFound();
 
-            if (current.Index < current.Survey.NumOfQuestions - 1)
+            if (current.Index < current.Survey.QuestionCount - 1)
             {
                 var next = _surveyService.GetQuestion(current.SurveyId, current.Index + 1);
                 current.Index++;

@@ -1,0 +1,24 @@
+@model ResponseStatus
+@{
+    ViewData["Title"] = "Survey Response Status";
+}
+
+@if (Model == ResponseStatus.SurveyUnpublished)
+{
+    <div class="alert alert-warning" role="alert">Sorry, this survey is not published yet.</div>
+}
+else if (Model == ResponseStatus.SurveyClosed)
+{
+    <div class="alert alert-warning" role="alert">Sorry, this survey is already closed.</div>
+}
+else if (Model == ResponseStatus.SurveyTaken)
+{
+    <div class="alert alert-warning" role="alert">Sorry, you have already taken this survey.</div>
+}
+else
+{
+    <div class="alert alert-success" role="alert">
+        Your response has been recorded. Thank you for taking the time to complete this survey.
+        We really appreciate it.
+    </div>
+}
