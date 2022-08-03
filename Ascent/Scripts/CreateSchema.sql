@@ -206,6 +206,7 @@ CREATE TABLE "SurveyAnswers" (
     "Text" text NULL,
     "Rating" integer NULL,
     "NotApplicable" boolean NOT NULL,
+    "SingleSelection" text NULL,
     "Selections" text NULL,
     CONSTRAINT "PK_SurveyAnswers" PRIMARY KEY ("Id"),
     CONSTRAINT "AK_SurveyAnswers_ResponseId_QuestionId" UNIQUE ("ResponseId", "QuestionId"),
@@ -248,7 +249,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220802215654_InitialSchema', '6.0.7');
+VALUES ('20220803174221_InitialSchema', '6.0.7');
 
 COMMIT;
 

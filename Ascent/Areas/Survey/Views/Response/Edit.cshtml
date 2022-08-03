@@ -35,14 +35,39 @@
                     <div class="card-title">@Html.Raw(question.Description)</div>
                     @if (question.Type == QuestionType.Choice)
                     {
-                        <ul class="list-group list-group-flush">
-                            @for (int j = 0; j < answer.Selections.Count; ++j)
-                            {
-                                <li class="list-group-item">
-                                    <input type="checkbox" asp-for="Answers[i].Selections[j]"> @question.Choices[j]
-                                </li>
-                            }
-                        </ul>
+                        if (question.MaxSelection == 1)
+                        {
+                            <ul class="list-group list-group-flush">
+                                @for (int j = 0; j < answer.Selections.Count; ++j)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="form-check">
+                                            <input type="radio" asp-for="Answers[i].SingleSelection" value="@question.Choices[j]"
+                               class="form-check-input highlight">
+                                            <label asp-for="Answers[i].SingleSelection" class="form-check-label highlight">
+                                                @question.Choices[j]
+                                            </label>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul class="list-group list-group-flush">
+                                @for (int j = 0; j < answer.Selections.Count; ++j)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="form-check">
+                                            <input type="checkbox" asp-for="Answers[i].Selections[j]" class="form-check-input highlight">
+                                            <label asp-for="Answers[i].Selections[j]" class="form-check-label highlight">
+                                                @question.Choices[j]
+                                            </label>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
                     }
                     else if (question.Type == QuestionType.Rating)
                     {
@@ -73,3 +98,25 @@
     }
     <button type="submit" class="btn btn-primary">Finish</button>
 </form>
+
+@section Scripts{
+    <script>
+        $(function() {
+            var highlight = "text-bg-success";
+            $(".highlight").change(function() {
+                if ($(this).is(":checked")) {
+                    $(this).closest("li").addClass(highlight);
+                    // radio button is tricky because deselection does not generate a change() event -- this kind of makes
+                    // sense if we think of "change" as applying to the radio button group instead of individual buttons.
+                    if ($(this).attr("type") == "radio") {
+                        var name = $(this).attr("name");
+                        $(`input[name='${name}']`).filter(":not(:checked)").closest("li").removeClass(highlight);
+                    }
+                }
+                else {
+                    $(this).closest("li").removeClass(highlight);
+                }
+            });
+        });
+    </script>
+}

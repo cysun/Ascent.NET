@@ -45,6 +45,7 @@ CREATE TABLE "SurveyAnswers" (
     "Text" text NULL,
     "Rating" integer NULL,
     "NotApplicable" boolean NOT NULL,
+    "SingleSelection" text NULL,
     "Selections" text NULL,
     CONSTRAINT "PK_SurveyAnswers" PRIMARY KEY ("Id"),
     CONSTRAINT "AK_SurveyAnswers_ResponseId_QuestionId" UNIQUE ("ResponseId", "QuestionId"),

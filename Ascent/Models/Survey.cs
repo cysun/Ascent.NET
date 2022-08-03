@@ -120,6 +120,8 @@ public class SurveyAnswer
 
     // Choice Answer
 
+    public string SingleSelection { get; set; }
+
     public List<bool> Selections { get; set; } = new List<bool>();
 
     public SurveyAnswer() { }
