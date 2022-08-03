@@ -67,6 +67,9 @@
                             <button class="btn btn-outline-primary btn-sm ms-2 link" title="Copy Survey Link" data-id="@survey.Id">
                                 <i class="bi bi-link"></i>
                             </button>
+                            <button class="btn btn-outline-primary btn-sm ms-2 qr" title="QR Code" data-id="@survey.Id">
+                                <i class="bi bi-qr-code"></i>
+                            </button>
                         }
                     </td>
                 </tr>
@@ -82,7 +85,22 @@
     <div class="toast-body"><code id="surveyLink"></code></div>
 </div>
 
+<div id="qr-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <code id="qr-link" class="modal-title"></code>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <canvas id="qr-code"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script>
         $(function() {
             $(".link").click(function() {
@@ -91,6 +109,17 @@
                 $("#surveyLink").text(url);
                 var toast = new bootstrap.Toast($("#toast"), { delay: 3000 });
                 toast.show();
+            });
+            $(".qr").click(function() {
+                var url = window.location.origin + "/survey/response/edit?surveyId=" + $(this).attr("data-id");
+                $("#qr-link").text(url);
+                var qrCode = new QRious({
+                    element: document.getElementById('qr-code'),
+                    value: url,
+                    size: 400
+                });
+                var qrModal = new bootstrap.Modal($("#qr-modal"));
+                qrModal.show();
             });
         });
     </script>
