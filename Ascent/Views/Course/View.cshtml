@@ -25,20 +25,21 @@
 </nav>
 
 <div class="row">
-    <div class="col-4 col-md-3 col-lg-2">
-        <select class="form-select h-100" size="8">
-            @foreach (var course in ViewBag.Courses)
-            {
-                if (course.Id == Model.Id)
+    <div id="sidebar" class="col-4" style="max-height: 80vh; overflow-y: auto;">
+        <div class="d-flex flex-column align-items-stretch flex-shrink-0">
+            <div class="list-group list-group-flush border-bottom">
+                @foreach (var course in ViewBag.Courses)
                 {
-                    <option value="@course.Id" selected>@course.Code</option>
+                    <a asp-action="View" asp-route-id="@course.Id"
+                   class="list-group-item list-group-item-action py-3 lh-sm @(course.Id == Model.Id ? "active" : "")">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">@course.Subject @course.Number</strong>
+                        </div>
+                        <div class="col-10 mb-1 small d-none d-md-block">@course.Title</div>
+                    </a>
                 }
-                else
-                {
-                    <option value="@course.Id">@course.Code</option>
-                }
-            }
-        </select>
+            </div>
+        </div>
     </div>
     <div class="col">
         <div class="row">
@@ -91,9 +92,8 @@
 @section Scripts{
     <script>
         $(function() {
-            $("select").change(function() {
-                window.location.href = `../view/${$(this).val()}`;
-            });
+            var top = $("a.active").offset().top;
+            $("#sidebar").scrollTop(top - 200);
         });
     </script>
 }
