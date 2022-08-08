@@ -367,3 +367,5 @@ appsettings.json
 Migrations/
 deploy.sh
 .vscode/
+/Ascent/Areas/Program/Views/Program/_Mission.cshtml
+/Ascent/Areas/Program/Views/Program/_Vision.cshtml
