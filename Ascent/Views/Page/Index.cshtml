@@ -14,46 +14,61 @@
     </ol>
 </nav>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header">Search</div>
-            <div class="card-body">
-                <form method="get" class="d-inline-flex mb-3">
-                    <input id="search" name="searchText" class="form-control me-2" value="@searchText">
-                    <button class="btn btn-outline-primary me-2" type="submit"><i class="bi bi-search"></i></button>
-                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
-                </form>
-            </div>
-            @if (!string.IsNullOrEmpty(searchText))
+<form method="get" class="d-inline-flex mb-3">
+    <input id="search" name="searchText" class="form-control me-2" value="@searchText">
+    <button class="btn btn-outline-primary me-2" type="submit"><i class="bi bi-search"></i></button>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+</form>
+
+@if (!string.IsNullOrEmpty(searchText))
+{
+    if (Model.Count == 0)
+    {
+        <p>No results found.</p>
+    }
+    else
+    {
+        <ul class="list-group list-group-flush">
+            @foreach (var p in Model)
             {
-                if (Model.Count == 0)
-                {
-                    <p>No results found.</p>
-                }
-                else
-                {
+                <li class="list-group-item"><a asp-action="View" asp-route-id="@p.Id">@p.Subject</a></li>
+            }
+        </ul>
+    }
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Pinned Pages</div>
+                <div class="card-body">
                     <ul class="list-group list-group-flush">
-                        @foreach (var p in Model)
+                        @foreach (var p in ViewBag.PinnedPages)
                         {
-                            <li class="list-group-item"><a asp-action="View" asp-route-id="@p.Id">@p.Subject</a></li>
+                            <li class="list-group-item">
+                                <a asp-action="View" asp-route-id="@p.Id">@p.Subject</a>
+                            </li>
                         }
                     </ul>
-                }
-            }
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header">Recent Pages</div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    @foreach (var p in ViewBag.LastViewedPages)
-                    {
-                        <li class="list-group-item"><a asp-action="View" asp-route-id="@p.Id">@p.Subject</a></li>
-                    }
-                </ul>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Recent Pages</div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var p in ViewBag.LastViewedPages)
+                        {
+                            <li class="list-group-item">
+                                <a asp-action="View" asp-route-id="@p.Id">@p.Subject</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
+

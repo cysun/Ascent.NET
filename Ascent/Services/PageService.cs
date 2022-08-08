@@ -11,8 +11,11 @@ public class PageService
 
     public Page GetPage(int id) => _db.Pages.Find(id);
 
+    public List<Page> GetPinnedPages() => _db.Pages.AsNoTracking()
+        .Where(p => p.IsPinned).OrderBy(p => p.Subject).ToList();
+
     public List<Page> GetLastViwedPages() => _db.Pages.AsNoTracking()
-        .OrderByDescending(n => n.TimeViewed).Take(20).ToList();
+        .Where(p => p.IsRegular).OrderByDescending(n => n.TimeViewed).Take(20).ToList();
 
     // maxResults=null for unlimited results
     public List<Page> SearchPages(string searchText, int? maxResults = 20)
@@ -31,6 +34,8 @@ public class PageService
 
     public void DeletePage(Page page)
     {
+        if (!page.IsRegular) return; // Can only delete regular pages
+
         if (_db.PageRevisions.Where(h => h.PageId == page.Id).Count() == 0
             && (page.Content == null || page.Content.Length < 200))
             _db.Pages.Remove(page);
@@ -55,8 +60,17 @@ public class PageService
 
     public void AddPageRevision(PageRevision revision)
     {
-        _db.PageRevisions.Add(revision);
-        _db.SaveChanges();
+        var pageId = revision.Page?.Id ?? revision.PageId;
+        var lastTimestamp = _db.PageRevisions.Where(r => r.PageId == pageId)
+            .Select(r => r.TimeCreated).OrderByDescending(t => t).Take(1).SingleOrDefault();
+
+        // Limit 1 new revision every 5 minutes
+        if (lastTimestamp == default || DateTime.UtcNow.Subtract(lastTimestamp).TotalMinutes > 5)
+        {
+            revision.TimeCreated = DateTime.UtcNow;
+            _db.PageRevisions.Add(revision);
+            _db.SaveChanges();
+        }
     }
 
     public void SaveChanges() => _db.SaveChanges();

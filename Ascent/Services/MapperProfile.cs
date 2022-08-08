@@ -39,6 +39,9 @@ public class MapperProfile : Profile
 
         CreateMap<SurveyQuestionInputModel, SurveyQuestion>();
         CreateMap<SurveyQuestion, SurveyQuestionInputModel>();
+
+        CreateMap<ProgramInputModel, Models.Program>();
+        CreateMap<Models.Program, ProgramInputModel>();
     }
 }
 

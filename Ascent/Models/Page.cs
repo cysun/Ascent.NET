@@ -17,7 +17,16 @@ public class Page
     public DateTime TimeUpdated { get; set; } = DateTime.UtcNow;
     public DateTime TimeViewed { get; set; } = DateTime.UtcNow;
 
+    public bool IsPinned { get; set; }
     public bool IsPublic { get; set; }
+
+    // Pages created via the Page UI are considered "regular", while automatically created pages
+    // that are part of some other resources (like a ProgramOutcome) are considered non-regular.
+    // Certain page functions (e.g. search, pin, recent, public) are limited to regular pages.
+    public bool IsRegular { get; set; }
+
+    // Delete Page will delete a page outright if the page has little content (less than 200
+    // characters); otherwise it sets the IsDeleted flag.
     public bool IsDeleted { get; set; }
 }
 

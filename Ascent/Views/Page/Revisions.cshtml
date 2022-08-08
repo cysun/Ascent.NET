@@ -12,7 +12,7 @@
             <li>
                 <a asp-action="SaveRevision" asp-route-id="@ViewBag.Page.Id"
                class="btn btn-outline-primary btn-sm" title="Save Current Version">
-                    <i class="bi bi-arrow-down"></i>
+                    <i class="bi bi-archive-fill"></i>
                 </a>
             </li>
         }
@@ -21,40 +21,42 @@
             <li>
                 <a asp-action="RevertToRevision" asp-route-id="@ViewBag.Page.Id" asp-route-version="@ViewBag.Version"
                class="btn btn-outline-primary btn-sm" title="Revert to This Version">
-                    <i class="bi bi-arrow-up"></i>
+                    <i class="bi bi-arrow-counterclockwise"></i>
                 </a>
             </li>
         }
     </ol>
 </nav>
 
-<select class="form-select mb-3">
-    @if (ViewBag.Version == ViewBag.Page.Version)
-    {
-        <option value="@ViewBag.Page.Version" selected>Current</option>
-    }
-    else
-    {
-        <option value="@ViewBag.Page.Version">Current</option>
-    }
-    @foreach (var revision in ViewBag.Revisions)
-    {
-        if (revision.Version == ViewBag.Version)
+<div class="d-inline-flex">
+    <select class="form-select mb-3">
+        @if (ViewBag.Version == ViewBag.Page.Version)
         {
-            <option value="@revision.Version" selected>
-                @revision.TimeCreated.ToLocalTime().ToString("g") - @revision.Subject
-            </option>
+            <option value="@ViewBag.Page.Version" selected>Current</option>
         }
         else
         {
-            <option value="@revision.Version">
-                @revision.TimeCreated.ToLocalTime().ToString("g") - @revision.Subject
-            </option>
+            <option value="@ViewBag.Page.Version">Current</option>
         }
-    }
-</select>
+        @foreach (var revision in ViewBag.Revisions)
+        {
+            if (revision.Version == ViewBag.Version)
+            {
+                <option value="@revision.Version" selected>
+                    @revision.TimeCreated.ToLocalTime().ToString("g") - @revision.Subject
+                </option>
+            }
+            else
+            {
+                <option value="@revision.Version">
+                    @revision.TimeCreated.ToLocalTime().ToString("g") - @revision.Subject
+                </option>
+            }
+        }
+    </select>
+</div>
 
-<div class="p-3">
+<div class="p-3 border rounded">
     @Html.Raw(Model.Content)
 </div>
 

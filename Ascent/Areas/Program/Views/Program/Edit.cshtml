@@ -1,0 +1,48 @@
+@model ProgramInputModel
+@{
+    ViewData["Title"] = "Edit Program";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@ViewBag.Program.Id">@Model.Name</a></li>
+        <li class="breadcrumb-item active me-auto">Edit</li>
+        <li>
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Survey">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="form-floating mb-3">
+        <input asp-for="Name" class="form-control" placeholder="Name" required>
+        <label asp-for="Name"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <textarea asp-for="Vision" class="form-control"></textarea>
+    </div>
+    <div class="form-floating mb-3">
+        <textarea asp-for="Mission" class="form-control"></textarea>
+    </div>
+    <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section StyleSheets{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
+      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+    @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
+        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/js/summernote-options.js" asp-append-version="true"></script>
+    <script>
+        $(function() {
+            $("textarea").summernote(summernoteOptions.minimal);
+        });
+    </script>
+}

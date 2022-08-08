@@ -31,13 +31,15 @@
                     <ul class="navbar-nav me-auto">
                         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Program" asp-controller="Program" asp-action="Index">Programs</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="assessmentDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                     Assessment
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Programs</a></li>
                                     <li><a class="dropdown-item" href="#">Rubrics</a></li>
                                     <li><a class="dropdown-item" asp-area="Survey" asp-controller="Survey" asp-action="Index">Surveys</a></li>
                                     <li><a class="dropdown-item" href="#">Course Journals</a></li>

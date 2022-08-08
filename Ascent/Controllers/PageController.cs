@@ -27,8 +27,19 @@ namespace Ascent.Controllers
 
         public IActionResult Index(string searchText)
         {
-            ViewBag.LastViewedPages = _pageService.GetLastViwedPages();
-            return View(!string.IsNullOrEmpty(searchText) ? _pageService.SearchPages(searchText) : null);
+            List<Page> searchResults = null;
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                ViewBag.PinnedPages = _pageService.GetPinnedPages();
+                ViewBag.LastViewedPages = _pageService.GetLastViwedPages();
+            }
+            else
+            {
+                searchResults = _pageService.SearchPages(searchText);
+            }
+
+            return View(searchResults);
         }
 
         [AllowAnonymous]
@@ -61,6 +72,7 @@ namespace Ascent.Controllers
             if (!ModelState.IsValid) return View(input);
 
             var page = _mapper.Map<Page>(input);
+            page.IsRegular = true; // pages created via Page UI are "regular"
             _pageService.AddPage(page);
             _logger.LogInformation("{user} created page {page}", User.Identity.Name, page.Id);
 
@@ -94,7 +106,10 @@ namespace Ascent.Controllers
                     page.Content = value;
                     break;
                 case "public":
-                    page.IsPublic = !page.IsPublic;
+                    if (page.IsRegular) page.IsPublic = !page.IsPublic;
+                    break;
+                case "pinned":
+                    if (page.IsRegular) page.IsPinned = !page.IsPinned;
                     break;
                 default:
                     _logger.LogWarning("Unrecognized field: {field}", field);
@@ -179,6 +194,7 @@ namespace Ascent.Models
 
         public string Content { get; set; }
 
+        public bool IsPinned { get; set; }
         public bool IsPublic { get; set; }
     }
 }

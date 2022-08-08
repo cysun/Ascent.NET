@@ -1,0 +1,19 @@
+@inject IAuthorizationService AuthorizationService
+@model Program
+@{
+    ViewData["Title"] = "View Program";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.Name</li>
+        <li>
+            @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Program">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            }
+        </li>
+    </ol>
+</nav>

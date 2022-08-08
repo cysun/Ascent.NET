@@ -19,14 +19,12 @@
     <div class="input-group mb-3">
         <span id="status" class="input-group-text text-success"><i class="bi bi-check-circle-fill"></i></span>
         <input asp-for="Subject" class="form-control">
-        @if (Model.IsPublic)
-        {
-            <span id="toggle" class="input-group-text text-info"><i class="bi bi-unlock-fill"></i></span>
-        }
-        else
-        {
-            <span id="toggle" class="input-group-text text-secondary"><i class="bi bi-lock-fill"></i></span>
-        }
+        <span class="input-group-text @(Model.IsPinned? "text-success" : "text-secondary") toggle" data-field="pinned" title="Toggle Pinned">
+            <i class="bi bi-pin-fill"></i>
+        </span>
+        <span class="input-group-text @(Model.IsPublic? "text-success" : "text-secondary") toggle" data-field="public" title="Toggle Public">
+            <i class="bi bi-book-fill"></i>
+        </span>
     </div>
     <div id="editor" class="mb-3">
         <textarea asp-for="Content"></textarea>
@@ -168,24 +166,15 @@
                 if (confirm("Are you sure you want to delete this page?"))
                     window.location.href = "../delete/@ViewBag.Page.Id";
             });
-            $("#toggle").click(function() {
+            $(".toggle").click(function() {
+                var field = $(this).attr("data-field");
                 $.ajax({
-                    url: "../@ViewBag.Page.Id/public",
+                    url: "../@ViewBag.Page.Id/" + field,
                     method: "put",
                     data: { value: "toggle" },
+                    context: this,
                     success: function() {
-                        if ($("#toggle").hasClass("text-info"))
-                            $("#toggle")
-                                .removeClass("text-info")
-                                .addClass('text-secondary')
-                                .empty()
-                                .append("<i class='bi bi-lock-fill'></i>");
-                        else
-                            $("#toggle")
-                                .removeClass("text-secondary")
-                                .addClass('text-info')
-                                .empty()
-                                .append("<i class='bi bi-unlock-fill'></i>");
+                        $(this).toggleClass("text-success").toggleClass("text-secondary");
                     }
                 });
             });

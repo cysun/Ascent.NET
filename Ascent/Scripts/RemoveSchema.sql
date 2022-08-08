@@ -1,3 +1,8 @@
+DROP TABLE "ProgramItems";
+DROP TABLE "ProgramModules";
+DROP TABLE "ProgramOutcomes";
+DROP TABLE "Programs";
+
 DROP TABLE "SurveyAnswers";
 DROP TABLE "SurveyResponses";
 DROP TABLE "SurveyQuestions";

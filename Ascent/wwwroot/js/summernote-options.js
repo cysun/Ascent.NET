@@ -31,6 +31,7 @@ summernoteOptions.minimal = {
     height: 150,
     toolbar: [
         ['font', ['bold', 'italic', 'underline']],
-        ['para', ['ul', 'ol']]
+        ['para', ['ul', 'ol']],
+        ['view', ['codeview', 'fullscreen']]
     ]
 };

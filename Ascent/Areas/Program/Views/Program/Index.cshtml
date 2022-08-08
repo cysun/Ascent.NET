@@ -1,0 +1,37 @@
+@inject IAuthorizationService AuthorizationService
+@model List<Program>
+@{
+    ViewData["Title"] = "Programs";
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active me-auto">Programs</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Program">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header text-bg-info">Department Vision</div>
+            <div class="card-body">
+                <partial name="_Vision" />
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header text-bg-info">Department Mission</div>
+            <div class="card-body">
+                <partial name="_Mission" />
+            </div>
+        </div>
+    </div>
+    <div class="col"></div>
+</div>

@@ -42,7 +42,7 @@ CREATE TRIGGER "PagesTsTrigger"
 CREATE OR REPLACE FUNCTION "SearchPages"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Pages" AS $$
 BEGIN
-    RETURN QUERY SELECT * FROM "Pages" WHERE plainto_tsquery($1) @@ tsv LIMIT $2;
+    RETURN QUERY SELECT * FROM "Pages" WHERE "IsRegular" AND plainto_tsquery($1) @@ tsv LIMIT $2;
     RETURN;
  END
 $$ LANGUAGE plpgsql;
