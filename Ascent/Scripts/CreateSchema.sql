@@ -16,6 +16,7 @@ CREATE TABLE "Files" (
     "ParentId" integer NULL,
     "IsFolder" boolean NOT NULL,
     "IsPublic" boolean NOT NULL,
+    "IsRegular" boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT "PK_Files" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Files_Files_ParentId" FOREIGN KEY ("ParentId") REFERENCES "Files" ("Id")
 );
@@ -309,7 +310,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220809192548_InitialSchema', '6.0.7');
+VALUES ('20220810173856_InitialSchema', '6.0.8');
 
 COMMIT;
 

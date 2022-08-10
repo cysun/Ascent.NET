@@ -38,46 +38,23 @@ public class FileService
         _settings = settings.Value;
     }
 
-    public bool IsAttachmentType(string fileName)
-    {
-        return _settings.AttachmentTypes.Contains(Path.GetExtension(fileName).ToLower());
-    }
+    public bool IsAttachmentType(string fileName) => _settings.AttachmentTypes.Contains(Path.GetExtension(fileName).ToLower());
 
-    public bool IsTextType(string fileName)
-    {
-        return _settings.TextTypes.Contains(Path.GetExtension(fileName).ToLower());
-    }
+    public bool IsTextType(string fileName) => _settings.TextTypes.Contains(Path.GetExtension(fileName).ToLower());
 
-    public List<Models.File> GetFiles()
-    {
-        return _db.Files.Where(f => f.ParentId == null)
-            .OrderByDescending(f => f.IsFolder).ThenBy(f => f.Name)
-            .AsNoTracking().ToList();
-    }
+    public List<Models.File> GetFiles() => _db.Files.AsNoTracking()
+        .Where(f => f.ParentId == null && f.IsRegular)
+        .OrderByDescending(f => f.IsFolder).ThenBy(f => f.Name)
+        .ToList();
 
-    public Models.File GetFile(int id)
-    {
-        return _db.Files.Find(id);
-    }
+    public Models.File GetFile(int id) => _db.Files.Find(id);
 
-    public Models.File GetFolder(int id)
-    {
-        var folder = _db.Files.Where(f => f.Id == id && f.IsFolder)
-            .Include(f => f.Children)
-            .SingleOrDefault();
+    public Models.File GetFolder(int id) => _db.Files.AsNoTracking()
+        .Where(f => f.Id == id && f.IsFolder)
+        .Include(f => f.Children.OrderByDescending(c => c.IsFolder).ThenBy(c => c.Name))
+        .SingleOrDefault();
 
-        if (folder != null)
-        {
-            folder.Children = folder.Children
-                .OrderByDescending(c => c.IsFolder)
-                .ThenBy(c => c.Name)
-                .ToList();
-        }
-
-        return folder;
-    }
-
-    public Models.File GetFolder(string path, bool createFolder = true)
+    public Models.File GetFolder(string path, bool createFolder = true, bool isRegular = true)
     {
         string[] names = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         Models.File parent = null;
@@ -91,6 +68,7 @@ public class FileService
                 {
                     Name = name,
                     IsFolder = true,
+                    IsRegular = isRegular,
                     ParentId = parent?.Id
                 };
                 _db.Files.Add(folder);
@@ -129,7 +107,7 @@ public class FileService
         return _db.Files.Where(f => f.ParentId == parentId && f.Name == name).FirstOrDefault();
     }
 
-    public Models.File UploadFile(int? parentId, IFormFile uploadedFile, string fileName = null)
+    public Models.File UploadFile(int? parentId, IFormFile uploadedFile, bool IsRegular = true, string fileName = null)
     {
         string name = Path.GetFileName(uploadedFile.FileName);
         if (fileName != null)
@@ -143,7 +121,8 @@ public class FileService
                 Name = name,
                 ContentType = uploadedFile.ContentType,
                 Size = uploadedFile.Length,
-                ParentId = parentId
+                ParentId = parentId,
+                IsRegular = IsRegular
             };
             if (parentId != null)
             {

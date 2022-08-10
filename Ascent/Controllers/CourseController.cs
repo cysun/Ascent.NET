@@ -59,7 +59,7 @@ namespace Ascent.Controllers
             if (uploadedFile != null)
             {
                 var folder = _fileService.GetFolder("Courses/ABET Syllabi");
-                course.AbetDescription = _fileService.UploadFile(folder.Id, uploadedFile, $"{course.Code} ABET Syllabus");
+                course.AbetDescription = _fileService.UploadFile(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
             }
 
             _courseService.AddCourse(course);
@@ -93,7 +93,7 @@ namespace Ascent.Controllers
             if (uploadedFile != null)
             {
                 var folder = _fileService.GetFolder("Courses/ABET Syllabi");
-                course.AbetDescription = _fileService.UploadFile(folder.Id, uploadedFile, $"{course.Code} ABET Syllabus");
+                course.AbetDescription = _fileService.UploadFile(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
             }
 
             _courseService.SaveChanges();

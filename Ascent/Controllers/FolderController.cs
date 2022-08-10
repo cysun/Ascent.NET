@@ -51,7 +51,8 @@ namespace Ascent.Controllers
             {
                 Name = name,
                 ParentId = parentId,
-                IsFolder = true
+                IsFolder = true,
+                IsRegular = true
             };
             _fileService.AddFolder(folder);
             _fileService.SaveChanges();

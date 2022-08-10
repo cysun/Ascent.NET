@@ -43,6 +43,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Page>().HasQueryFilter(p => !p.IsDeleted);
         modelBuilder.Entity<Page>().Property(p => p.IsPinned).HasDefaultValue(false);
         modelBuilder.Entity<Page>().Property(p => p.IsRegular).HasDefaultValue(false);
+        modelBuilder.Entity<Models.File>().Property(f => f.IsRegular).HasDefaultValue(false);
         modelBuilder.Entity<PageRevision>().HasKey(r => new { r.PageId, r.Version });
         modelBuilder.Entity<PageRevision>().HasQueryFilter(r => !r.Page.IsDeleted);
         modelBuilder.Entity<FileRevision>().HasKey(r => new { r.FileId, r.Version });

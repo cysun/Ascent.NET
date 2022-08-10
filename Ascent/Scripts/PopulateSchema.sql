@@ -73,7 +73,7 @@ CREATE TRIGGER "FilesTsTrigger"
 CREATE OR REPLACE FUNCTION "SearchFiles"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Files" AS $$
 BEGIN
-    RETURN QUERY SELECT * FROM "Files" WHERE plainto_tsquery($1) @@ tsv LIMIT $2;
+    RETURN QUERY SELECT * FROM "Files" WHERE "IsRegular" AND plainto_tsquery($1) @@ tsv LIMIT $2;
     RETURN;
  END
 $$ LANGUAGE plpgsql;

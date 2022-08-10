@@ -25,6 +25,11 @@ public class File
 
     public bool IsFolder { get; set; }
     public bool IsPublic { get; set; }
+
+    // Files created via the File UI are considered "regular", while files uploaded as part of
+    // some other resources (like a Course or CourseJournal) are considered non-regular.
+    // Certain file functions (e.g. search, public, etc.) are limited to regular files.
+    public bool IsRegular { get; set; }
 }
 
 public class FileRevision
