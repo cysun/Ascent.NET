@@ -41,8 +41,9 @@ namespace Ascent.Areas.Program.Controllers
         {
             return View(new ProgramInputModel()
             {
-                Vision = "Vision",
-                Mission = "Mission"
+                HasObjectives = true,
+                Objectives = new List<string>() { "", "", "", "" },
+                Outcomes = new List<string>() { "", "", "", "" }
             });
         }
 
@@ -53,6 +54,20 @@ namespace Ascent.Areas.Program.Controllers
             if (!ModelState.IsValid) return View(input);
 
             var program = _mapper.Map<Models.Program>(input);
+
+            if (input.HasObjectives)
+                program.ObjectivesDescription = new Page { Subject = $"{input.Name} Objectives Description" };
+
+            program.Outcomes = new List<ProgramOutcome>();
+            for (var i = 0; i < input.Outcomes.Count; ++i)
+            {
+                program.Outcomes.Add(new ProgramOutcome
+                {
+                    Index = i,
+                    Text = input.Outcomes[i],
+                    Description = new Page { Subject = $"{input.Name} Outcome {i} Description" }
+                });
+            }
             _programService.AddProgram(program);
             _logger.LogInformation("{user} created program {program}", User.Identity.Name, program.Id);
 
@@ -67,7 +82,8 @@ namespace Ascent.Areas.Program.Controllers
             if (program == null) return NotFound();
 
             ViewBag.Program = program;
-            return View(_mapper.Map<ProgramInputModel>(program));
+            var input = _mapper.Map<ProgramInputModel>(program);
+            return View(input);
         }
 
         [HttpPost]
@@ -80,10 +96,15 @@ namespace Ascent.Areas.Program.Controllers
             if (program == null) return NotFound();
 
             _mapper.Map(input, program);
+            if (program.Outcomes.Count == input.Outcomes?.Count) // # of outcomes cannot be changed
+            {
+                for (int i = 0; i < program.Outcomes.Count; ++i)
+                    program.Outcomes[i].Text = input.Outcomes[i];
+            }
             _programService.SaveChanges();
             _logger.LogInformation("{user} edited program {program}", User.Identity.Name, id);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("View", new { id });
         }
     }
 }
@@ -95,7 +116,9 @@ namespace Ascent.Models
         [Required, MaxLength(255)]
         public string Name { get; set; }
 
-        public string Vision { get; set; }
-        public string Mission { get; set; }
+        public bool HasObjectives { get; set; }
+        public List<string> Objectives { get; set; }
+
+        public List<string> Outcomes { get; set; }
     }
 }

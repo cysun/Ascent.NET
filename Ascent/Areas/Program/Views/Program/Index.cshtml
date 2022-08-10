@@ -19,19 +19,35 @@
 </nav>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="d-none d-md-block col-md-4">
         <div class="card mb-3">
-            <div class="card-header text-bg-info">Department Vision</div>
+            <div class="card-header">Department Vision</div>
             <div class="card-body">
                 <partial name="_Vision" />
             </div>
         </div>
-        <div class="card">
-            <div class="card-header text-bg-info">Department Mission</div>
+        <div class="card mb-3">
+            <div class="card-header">Department Mission</div>
             <div class="card-body">
                 <partial name="_Mission" />
             </div>
         </div>
     </div>
-    <div class="col"></div>
+    <div class="col">
+        @foreach (var program in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-header text-bg-info">@program.Name</div>
+                <ul class="list-group list-group-flush">
+                    @for (int i = 0; i < program.Outcomes.Count; ++i)
+                    {
+                        <li class="list-group-item">SO #@(i+1). @program.Outcomes[i].Text</li>
+                    }
+                </ul>
+                <div class="card-body">
+                    <a asp-action="View" asp-route-id="@program.Id" class="btn btn-primary">View</a>
+                </div>
+            </div>
+        }
+    </div>
 </div>

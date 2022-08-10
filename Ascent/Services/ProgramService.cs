@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Ascent.Services;
 
 public class ProgramService
@@ -9,9 +11,11 @@ public class ProgramService
         _db = db;
     }
 
-    public List<Models.Program> GetPrograms() => _db.Programs.OrderBy(p => p.Name).ToList();
+    public List<Models.Program> GetPrograms() => _db.Programs.AsNoTracking()
+        .Include(p => p.Outcomes.OrderBy(o => o.Index)).OrderBy(p => p.Id).ToList();
 
-    public Models.Program GetProgram(int id) => _db.Programs.Find(id);
+    public Models.Program GetProgram(int id) => _db.Programs
+        .Where(p => p.Id == id).Include(p => p.Outcomes.OrderBy(o => o.Index)).SingleOrDefault();
 
     public void AddProgram(Models.Program program)
     {

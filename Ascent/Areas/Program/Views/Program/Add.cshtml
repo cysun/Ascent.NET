@@ -14,29 +14,67 @@
         <input asp-for="Name" class="form-control" placeholder="Name" required>
         <label asp-for="Name"></label>
     </div>
-    <div class="form-floating mb-3">
-        <textarea asp-for="Vision" class="form-control"></textarea>
+    <input type="hidden" asp-for="HasObjectives" />
+    <div class="card mb-3">
+        <div class="card-header d-flex align-items-center">
+            <span>Program Educational Objectives</span>
+            <div class="btn-group ms-auto" role="group">
+                <button title="Remove Objective" type="button" class="btn btn-outline-primary btn-sm remove" data-type="Objectives">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+                <button title="Add Objective" type="button" class="btn btn-outline-primary btn-sm add" data-type="Objectives">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div id="ObjectivesContainer" class="card-body">
+            @for (int i = 0; i < Model.Objectives.Count; ++i)
+            {
+                <textarea asp-for="Objectives[i]" class="form-control mb-2" rows="2"></textarea>
+            }
+        </div>
     </div>
-    <div class="form-floating mb-3">
-        <textarea asp-for="Mission" class="form-control"></textarea>
+    <div class="card mb-3">
+        <div class="card-header d-flex align-items-center">
+            <span>Student Outcomes</span>
+            <div class="btn-group ms-auto" role="group">
+                <button title="Remove Outcome" type="button" class="btn btn-outline-primary btn-sm remove" data-type="Outcomes">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+                <button title="Add Outcome" type="button" class="btn btn-outline-primary btn-sm add" data-type="Outcomes">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div id="OutcomesContainer" class="card-body">
+            @for (int i = 0; i < Model.Outcomes.Count; ++i)
+            {
+                <textarea asp-for="Outcomes[i]" class="form-control mb-2" rows="2"></textarea>
+            }
+        </div>
     </div>
     <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
-@section StyleSheets{
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
-      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
-      crossorigin="anonymous" referrerpolicy="no-referrer" />
-}
-    @section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
-        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="~/js/summernote-options.js"></script>
+@section Scripts{
     <script>
         $(function() {
-            $("textarea").summernote(summernoteOptions.minimal);
+            $(".remove").click(function() {
+                var type = $(this).attr("data-type");
+                var $container = $("#" + type + "Container");
+                $container.children().last().remove();
+                if (type == "Objectives" && $container.children().length == 0)
+                    $("#HasObjectives").val("False");
+            });
+            $(".add").click(function() {
+                var type = $(this).attr("data-type");
+                var $container = $("#" + type + "Container");
+                var index = $container.children().length;
+                $container.append(`<textarea class="form-control mb-2" row="2" id="${type}_${index}_" name="${type}[${index}]"></textarea>`);
+                if (type == "Objectives" && $container.children().length > 0)
+                    $("#HasObjectives").val("True");
+            });
         });
     </script>
 }

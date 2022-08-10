@@ -8,7 +8,7 @@
         <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@ViewBag.Program.Id">@Model.Name</a></li>
         <li class="breadcrumb-item active me-auto">Edit</li>
         <li>
-            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Survey">
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Program">
                 <i class="bi bi-trash-fill"></i>
             </button>
         </li>
@@ -20,29 +20,55 @@
         <input asp-for="Name" class="form-control" placeholder="Name" required>
         <label asp-for="Name"></label>
     </div>
-    <div class="form-floating mb-3">
-        <textarea asp-for="Vision" class="form-control"></textarea>
+    <input type="hidden" asp-for="HasObjectives" />
+    <div class="card mb-3">
+        <div class="card-header d-flex align-items-center">
+            <span>Program Educational Objectives</span>
+            <div class="btn-group ms-auto" role="group">
+                <button id="removeObjective" title="Remove Objective" type="button" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+                <button id="addObjective" title="Add Objective" type="button" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div id="ObjectivesContainer" class="card-body">
+            @for (int i = 0; i < Model.Objectives.Count; ++i)
+            {
+                <textarea asp-for="Objectives[i]" class="form-control mb-2" rows="2"></textarea>
+            }
+        </div>
     </div>
-    <div class="form-floating mb-3">
-        <textarea asp-for="Mission" class="form-control"></textarea>
+    <div class="card mb-3">
+        <div class="card-header">Student Outcomes</div>
+        <div id="OutcomesContainer" class="card-body">
+            @for (int i = 0; i < Model.Outcomes.Count; ++i)
+            {
+                <textarea asp-for="Outcomes[i]" class="form-control mb-2" rows="2"></textarea>
+            }
+        </div>
     </div>
-    <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
-    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-secondary me-2" asp-action="View" asp-route-id="@ViewBag.Program.Id">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
-@section StyleSheets{
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
-      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
-      crossorigin="anonymous" referrerpolicy="no-referrer" />
-}
-    @section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
-        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="~/js/summernote-options.js" asp-append-version="true"></script>
+@section Scripts{
     <script>
         $(function() {
-            $("textarea").summernote(summernoteOptions.minimal);
+            $("#removeObjective").click(function() {
+                var $container = $("#ObjectivesContainer");
+                $container.children().last().remove();
+                if ($container.children().length == 0)
+                    $("#HasObjectives").val("False");
+            });
+            $("#addObjective").click(function() {
+                var $container = $("#ObjectivesContainer");
+                var index = $container.children().length;
+                $container.append(`<textarea class="form-control mb-2" row="2" id="Objectives_${index}_" name="Objectives[${index}]"></textarea>`);
+                if ($container.children().length > 0)
+                    $("#HasObjectives").val("True");
+            });
         });
     </script>
 }

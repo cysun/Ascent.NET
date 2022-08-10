@@ -40,7 +40,9 @@ public class MapperProfile : Profile
         CreateMap<SurveyQuestionInputModel, SurveyQuestion>();
         CreateMap<SurveyQuestion, SurveyQuestionInputModel>();
 
-        CreateMap<ProgramInputModel, Models.Program>();
+        CreateMap<ProgramOutcome, string>().ConvertUsing(new OutcomeToStringConverter());
+        CreateMap<ProgramInputModel, Models.Program>()
+            .ForMember(dest => dest.Outcomes, opt => opt.Ignore()); // Handled in controller
         CreateMap<Models.Program, ProgramInputModel>();
     }
 }
@@ -84,5 +86,13 @@ public class StringToRanksConverter : ITypeConverter<string, List<(int, int)>>
         }
 
         return destination;
+    }
+}
+
+public class OutcomeToStringConverter : ITypeConverter<ProgramOutcome, string>
+{
+    public string Convert(ProgramOutcome source, string destination, ResolutionContext context)
+    {
+        return source.Text;
     }
 }
