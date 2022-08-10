@@ -1,0 +1,47 @@
+@inject IAuthorizationService AuthorizationService
+@model Program
+@{
+    ViewData["Title"] = "PEO Details";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@Model.Id">@Model.Name</a></li>
+        <li class="breadcrumb-item active me-auto">PEO Details</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-area="" asp-controller="Page" asp-action="Edit" asp-route-id="@ViewBag.Page.Id"
+               class="btn btn-outline-primary btn-sm" title="Edit PEO Details">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="d-none d-md-block col-md-4 col-lg-3">
+        <div class="card">
+            <div class="card-header">Program Educational Objectives</div>
+            <div class="card-body">
+                    <div class="d-flex flex-column align-items-stretch flex-shrink-0">
+                        <div class="list-group list-group-flush border-bottom">
+                            @for (int i = 0; i < Model.Objectives.Count; ++i)
+                            {
+                            <div class="list-group-item py-3 lh-sm">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <strong class="mb-1">PEO #@(i + 1)</strong>
+                                    </div>
+                                    <div class="small d-xl-block">@Model.Objectives[i]</div>
+                                    </div>
+                            }
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="col p-3">
+        @Html.Raw(ViewBag.Page.Content)
+    </div>
+</div>

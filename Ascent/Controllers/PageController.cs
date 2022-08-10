@@ -85,9 +85,7 @@ namespace Ascent.Controllers
             var page = _pageService.GetPage(id);
             if (page == null) return NotFound();
 
-            ViewBag.Page = page;
-
-            return View(_mapper.Map<PageInputModel>(page));
+            return View(page);
         }
 
         [HttpPut("page/{id}/{field}")]

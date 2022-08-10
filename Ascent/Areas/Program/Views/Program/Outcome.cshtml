@@ -1,0 +1,60 @@
+@inject IAuthorizationService AuthorizationService
+@model Program
+@{
+    ViewData["Title"] = "Outcome Details";
+    var index = int.Parse(Context.Request.Query["index"]);
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@Model.Id">@Model.Name</a></li>
+        <li class="breadcrumb-item active me-auto">SO #@(index + 1) Details</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-area="" asp-controller="Page" asp-action="Edit" asp-route-id="@ViewBag.Page.Id"
+               class="btn btn-outline-primary btn-sm" title="Edit SO Details">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="d-none d-md-block col-md-3">
+        <div class="card">
+            <div class="card-header">Student Outcomes</div>
+            <div class="card-body">
+                <div id="sidebar" style="max-height: 75vh; overflow-y: auto;">
+                    <div class="d-flex flex-column align-items-stretch flex-shrink-0">
+                        <div class="list-group list-group-flush border-bottom">
+                            @for (int i = 0; i < Model.Outcomes.Count; ++i)
+                            {
+                                <a asp-action="Outcome" asp-route-id="@Model.Id" asp-route-index="@i"
+                               class="list-group-item list-group-item-action py-3 lh-sm @(i == index ? "active" : "")">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        <strong class="mb-1">SO #@(i + 1)</strong>
+                                    </div>
+                                    <div class="small d-none d-xl-block">@Model.Outcomes[i].Text</div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col p-3">
+        @Html.Raw(ViewBag.Page.Content)
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            var top = $("a.active").offset().top;
+            $("#sidebar").scrollTop(top - 200);
+        });
+    </script>
+}

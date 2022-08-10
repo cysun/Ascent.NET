@@ -11,13 +11,16 @@ namespace Ascent.Areas.Program.Controllers
     public class ProgramController : Controller
     {
         private readonly ProgramService _programService;
+        private readonly PageService _pageService;
 
         private readonly IMapper _mapper;
         private readonly ILogger<ProgramController> _logger;
 
-        public ProgramController(ProgramService programService, IMapper mapper, ILogger<ProgramController> logger)
+        public ProgramController(ProgramService programService, PageService pageService,
+            IMapper mapper, ILogger<ProgramController> logger)
         {
             _programService = programService;
+            _pageService = pageService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -65,7 +68,7 @@ namespace Ascent.Areas.Program.Controllers
                 {
                     Index = i,
                     Text = input.Outcomes[i],
-                    Description = new Page { Subject = $"{input.Name} Outcome {i} Description" }
+                    Description = new Page { Subject = $"{input.Name} Outcome {i + 1} Description" }
                 });
             }
             _programService.AddProgram(program);
@@ -105,6 +108,26 @@ namespace Ascent.Areas.Program.Controllers
             _logger.LogInformation("{user} edited program {program}", User.Identity.Name, id);
 
             return RedirectToAction("View", new { id });
+        }
+
+        public IActionResult Objectives(int id)
+        {
+            var program = _programService.GetProgram(id);
+            if (program == null || !program.HasObjectives) return NotFound();
+
+            ViewBag.Page = _pageService.GetPage((int)program.ObjectivesDescriptionId);
+
+            return View(program);
+        }
+
+        public IActionResult Outcome(int id, int index)
+        {
+            var program = _programService.GetProgram(id);
+            if (program == null || !program.HasObjectives) return NotFound();
+
+            ViewBag.Page = _pageService.GetPage(program.Outcomes[index].DescriptionId);
+
+            return View(program);
         }
     }
 }
