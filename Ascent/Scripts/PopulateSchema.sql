@@ -3,6 +3,7 @@ CREATE INDEX ON "Persons" ("CampusId" varchar_pattern_ops);
 CREATE INDEX ON "Persons" (lower("FirstName") varchar_pattern_ops);
 CREATE INDEX ON "Persons" (lower("LastName") varchar_pattern_ops);
 CREATE INDEX ON "Persons" (lower("FirstName" || ' ' || "LastName") varchar_pattern_ops);
+CREATE INDEX ON "Persons" (lower("LastName" || ', ' || "FirstName") varchar_pattern_ops);
 CREATE INDEX ON "Persons" (lower("SchoolEmail") varchar_pattern_ops);
 CREATE INDEX ON "Persons" (lower("PersonalEmail") varchar_pattern_ops);
 
@@ -13,6 +14,7 @@ RETURNS SETOF "Persons" AS $$
         OR lower("FirstName") LIKE $1
         OR lower("LastName") LIKE $1
         OR lower("FirstName" || ' ' || "LastName") LIKE $1
+        OR lower("LastName" || ', ' || "FirstName") LIKE $1
         OR lower("SchoolEmail") LIKE $1
         OR lower("PersonalEmail") LIKE $1
         ORDER BY "FirstName", "LastName" asc
