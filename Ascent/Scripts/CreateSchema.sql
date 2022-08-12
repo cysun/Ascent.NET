@@ -219,6 +219,7 @@ CREATE TABLE "ProgramModules" (
     "ProgramId" integer NOT NULL,
     "Index" integer NOT NULL,
     "Name" character varying(64) NOT NULL,
+    "ItemCount" integer NOT NULL,
     CONSTRAINT "PK_ProgramModules" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_ProgramModules_Programs_ProgramId" FOREIGN KEY ("ProgramId") REFERENCES "Programs" ("Id") ON DELETE CASCADE
 );
@@ -311,7 +312,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220811174125_InitialSchema', '6.0.8');
+VALUES ('20220812213508_InitialSchema', '6.0.8');
 
 COMMIT;
 

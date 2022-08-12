@@ -34,18 +34,14 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Person>().HasQueryFilter(p => !p.IsDeleted);
         modelBuilder.Entity<Person>().HasIndex(p => p.CampusId).IsUnique();
         modelBuilder.Entity<Person>().Property(p => p.IsDeleted).HasDefaultValue(false);
         modelBuilder.Entity<Course>().HasAlternateKey(c => new { c.Subject, c.Number });
         modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
-        modelBuilder.Entity<Enrollment>().HasQueryFilter(e => !e.Student.IsDeleted);
-        modelBuilder.Entity<Page>().HasQueryFilter(p => !p.IsDeleted);
         modelBuilder.Entity<Page>().Property(p => p.IsPinned).HasDefaultValue(false);
         modelBuilder.Entity<Page>().Property(p => p.IsRegular).HasDefaultValue(false);
         modelBuilder.Entity<Models.File>().Property(f => f.IsRegular).HasDefaultValue(false);
         modelBuilder.Entity<PageRevision>().HasKey(r => new { r.PageId, r.Version });
-        modelBuilder.Entity<PageRevision>().HasQueryFilter(r => !r.Page.IsDeleted);
         modelBuilder.Entity<FileRevision>().HasKey(r => new { r.FileId, r.Version });
         modelBuilder.Entity<MftScore>().HasAlternateKey(s => new { s.Year, s.StudentId });
         modelBuilder.Entity<MftIndicator>().Property(i => i.Percentiles).HasDefaultValueSql("'{null, null, null}'");
@@ -53,20 +49,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<MftDistribution>().HasAlternateKey(d => new { d.Year, d.TypeAlias });
         modelBuilder.Entity<MftDistribution>().HasOne(d => d.Type).WithMany()
             .HasForeignKey(d => d.TypeAlias).HasPrincipalKey(t => t.Alias);
-        modelBuilder.Entity<Survey>().HasQueryFilter(s => !s.IsDeleted);
-        modelBuilder.Entity<SurveyQuestion>().HasQueryFilter(q => !q.Survey.IsDeleted);
         modelBuilder.Entity<SurveyQuestion>().HasIndex(q => new { q.SurveyId, q.Index });
         modelBuilder.Entity<SurveyQuestion>().Property(q => q.Type).HasConversion<string>();
-        modelBuilder.Entity<SurveyResponse>().HasQueryFilter(r => !r.IsDeleted);
-        modelBuilder.Entity<SurveyResponse>().HasQueryFilter(r => !r.Survey.IsDeleted);
-        modelBuilder.Entity<SurveyAnswer>().HasQueryFilter(a => !a.Response.IsDeleted);
         modelBuilder.Entity<SurveyAnswer>().HasAlternateKey(a => new { a.ResponseId, a.QuestionId });
-        modelBuilder.Entity<Models.Program>().HasQueryFilter(p => !p.IsDeleted);
-        modelBuilder.Entity<ProgramOutcome>().HasQueryFilter(o => !o.Program.IsDeleted);
         modelBuilder.Entity<ProgramOutcome>().HasIndex(o => new { o.ProgramId, o.Index });
-        modelBuilder.Entity<ProgramModule>().HasQueryFilter(m => !m.Program.IsDeleted);
         modelBuilder.Entity<ProgramModule>().HasIndex(m => new { m.ProgramId, m.Index });
-        modelBuilder.Entity<ProgramItem>().HasQueryFilter(i => !i.Page.IsDeleted);
         modelBuilder.Entity<ProgramItem>().Property(i => i.Type).HasConversion<string>();
         modelBuilder.Entity<ProgramItem>().HasIndex(i => new { i.ModuleId, i.Index });
 

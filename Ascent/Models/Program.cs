@@ -50,7 +50,7 @@ namespace Ascent.Models
         [Required, MaxLength(64)]
         public string Name { get; set; }
 
-        public List<ProgramItem> Items { get; set; }
+        public int ItemCount { get; set; }
     }
 
     public enum ItemType { File, Page }

@@ -15,7 +15,7 @@ public class PageService
         .Where(p => p.IsPinned).OrderBy(p => p.Subject).ToList();
 
     public List<Page> GetLastViwedPages() => _db.Pages.AsNoTracking()
-        .Where(p => p.IsRegular).OrderByDescending(n => n.TimeViewed).Take(20).ToList();
+        .Where(p => !p.IsDeleted && p.IsRegular).OrderByDescending(n => n.TimeViewed).Take(20).ToList();
 
     // maxResults=null for unlimited results
     public List<Page> SearchPages(string searchText, int? maxResults = 20)
@@ -40,7 +40,11 @@ public class PageService
             && (page.Content == null || page.Content.Length < 200))
             _db.Pages.Remove(page);
         else
+        {
             page.IsDeleted = true;
+            page.IsPinned = false;
+        }
+
         _db.SaveChanges();
     }
 

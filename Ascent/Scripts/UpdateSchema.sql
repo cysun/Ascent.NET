@@ -15,18 +15,20 @@ CREATE INDEX ON "Persons" (lower("LastName" || ', ' || "FirstName") varchar_patt
 
 CREATE OR REPLACE FUNCTION "SearchPersons"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Persons" AS $$
-    SELECT * FROM "Persons" WHERE "CampusId" LIKE $1
+    SELECT * FROM "Persons" WHERE NOT "IsDeleted"
+        AND ("CampusId" LIKE $1
         OR lower("FirstName") LIKE $1
         OR lower("LastName") LIKE $1
         OR lower("FirstName" || ' ' || "LastName") LIKE $1
         OR lower("LastName" || ', ' || "FirstName") LIKE $1
         OR lower("SchoolEmail") LIKE $1
-        OR lower("PersonalEmail") LIKE $1
+        OR lower("PersonalEmail") LIKE $1)
         ORDER BY "FirstName", "LastName" asc
         LIMIT $2;
 $$ LANGUAGE sql;
 
 ALTER TABLE "Programs" ADD COLUMN "ModuleCount" integer NOT NULL;
+ALTER TABLE "ProgramModules" ADD COLUMN "ItemCount" integer NOT NULL;
 
 CREATE OR REPLACE FUNCTION "SearchPages"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Pages" AS $$
@@ -37,7 +39,7 @@ BEGIN
     IF l_query <> '' THEN
         l_query := l_query || ':*';
     END IF;
-    RETURN QUERY SELECT * FROM "Pages" WHERE "IsRegular" AND l_query::tsquery @@ tsv LIMIT $2;
+    RETURN QUERY SELECT * FROM "Pages" WHERE NOT "IsDeleted" AND "IsRegular" AND l_query::tsquery @@ tsv LIMIT $2;
     RETURN;
  END
 $$ LANGUAGE plpgsql;
@@ -57,4 +59,4 @@ BEGIN
 $$ LANGUAGE plpgsql;
 
 DELETE FROM "__EFMigrationsHistory";
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ('20220811174125_InitialSchema', '6.0.8');
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ('20220812171219_InitialSchema', '6.0.8');

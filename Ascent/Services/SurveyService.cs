@@ -14,11 +14,9 @@ public class SurveyService
 
     public Survey GetSurvey(int id) => _db.Surveys.Find(id);
 
-    public List<Survey> GetSurveys()
-    {
-        return _db.Surveys.OrderByDescending(s => s.TimeClosed).ThenByDescending(s => s.TimePublished)
-            .ThenByDescending(s => s.TimeCreated).ToList();
-    }
+    public List<Survey> GetSurveys() => _db.Surveys.AsNoTracking().Where(s => !s.IsDeleted)
+        .OrderByDescending(s => s.TimeClosed).ThenByDescending(s => s.TimePublished).ThenByDescending(s => s.TimeCreated)
+        .ToList();
 
     public void AddSurvey(Survey survey)
     {
@@ -32,7 +30,7 @@ public class SurveyService
     public SurveyQuestion GetQuestion(int surveyId, int index) => _db.SurveyQuestions
         .Where(q => q.SurveyId == surveyId && q.Index == index).SingleOrDefault();
 
-    public List<SurveyQuestion> GetQuestions(int surveyId) => _db.SurveyQuestions
+    public List<SurveyQuestion> GetQuestions(int surveyId) => _db.SurveyQuestions.AsNoTracking()
         .Where(q => q.SurveyId == surveyId).OrderBy(q => q.Index).ToList();
 
     public void AddQuestionToSurvey(int surveyId, SurveyQuestion question)

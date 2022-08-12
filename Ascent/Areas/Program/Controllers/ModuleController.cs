@@ -60,10 +60,11 @@ namespace Ascent.Areas.Program.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var module = _programService.GetModuleWithItems(id);
+            var module = _programService.GetModule(id);
             if (module == null) return NotFound();
 
             ViewBag.Program = _programService.GetProgram(module.ProgramId);
+            ViewBag.Items = _programService.GetItems(id);
 
             return View(module);
         }
@@ -81,6 +82,29 @@ namespace Ascent.Areas.Program.Controllers
             _logger.LogInformation("{user} edited module {module}", User.Identity.Name, id);
 
             return RedirectToAction("Index", "Module", new { programId = module.ProgramId }, $"m-id-{module.Id}");
+        }
+
+        public IActionResult AddItem(int id, int contentId, string type)
+        {
+            var item = new ProgramItem();
+            switch (type?.ToLower())
+            {
+                case "file":
+                    item.Type = ItemType.File;
+                    item.FileId = contentId;
+                    break;
+                case "page":
+                    item.Type = ItemType.Page;
+                    item.PageId = contentId;
+                    break;
+                default:
+                    _logger.LogInformation("Unrecognized item type: {type}", type);
+                    return BadRequest();
+            }
+
+            _programService.AddItemToModule(id, item);
+            _logger.LogInformation("{user} added item {item} to module {module}", User.Identity.Name, item.Id, id);
+            return RedirectToAction("Edit", new { id });
         }
     }
 }

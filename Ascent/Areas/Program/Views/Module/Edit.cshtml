@@ -30,7 +30,7 @@
 <div class="card mt-3">
     <div class="card-header">Items</div>
     <ul class="list-group">
-        @foreach (var item in Model.Items)
+        @foreach (var item in ViewBag.Items)
         {
             <li class="list-group-item">
                 @if (item.Type == ItemType.Page)
@@ -41,6 +41,9 @@
                 {
                     <span>@item.File.Name</span>
                 }
+                else{
+                    <span>Something</span>
+                }
             </li>
         }
     </ul>
@@ -49,11 +52,11 @@
 <div class="input-group mt-3">
     <div class="input-group-text">
         <select id="itemType" class="form-select">
-            <option value="page">Page</option>
             <option value="file">File</option>
+            <option value="page">Page</option>
         </select>
     </div>
-    <input id="search" type="text" class="form-control" />
+    <input id="search" type="text" class="form-control" placeholder="Search files or pages to add to the module"/>
 </div>
 
 @section Scripts{
@@ -76,8 +79,8 @@
                     })
                 },
                 onSelectItem: ({ label, value }) => {
-                    // window.location.href = `person/view/${value}`;
-                    console.log(label + " " + value);
+                    var itemType = $("#itemType").val();
+                    window.location.href = `../additem/@(Model.Id)?contentId=${value}&type=${itemType}`;
                 }
             });
             $("#itemType").change(function () {
