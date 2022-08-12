@@ -172,6 +172,7 @@ CREATE TABLE "Programs" (
     "HasObjectives" boolean NOT NULL,
     "Objectives" text NULL,
     "ObjectivesDescriptionId" integer NULL,
+    "ModuleCount" integer NOT NULL,
     "IsDeleted" boolean NOT NULL,
     CONSTRAINT "PK_Programs" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_Programs_Pages_ObjectivesDescriptionId" FOREIGN KEY ("ObjectivesDescriptionId") REFERENCES "Pages" ("Id")
@@ -310,7 +311,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220810173856_InitialSchema', '6.0.8');
+VALUES ('20220811174125_InitialSchema', '6.0.8');
 
 COMMIT;
 

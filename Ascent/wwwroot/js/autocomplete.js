@@ -1,142 +1,145 @@
-// https://github.com/gch1p/bootstrap-5-autocomplete with PR #17 and #19 and a simple fix on line 104.
+// https://github.com/gch1p/bootstrap-5-autocomplete with PR #17 and #19 and a number of fixes
 const DEFAULTS = {
-  threshold: 2,
-  maximumItems: 10,
-  highlightTyped: true,
-  highlightClass: 'text-primary',
-  label: 'label',
-  value: 'value',
-  showValue: false,
-  showValueBeforeLabel: false,
+    threshold: 2,
+    maximumItems: 10,
+    highlightTyped: true,
+    highlightClass: 'text-primary',
+    label: 'label',
+    value: 'value',
+    showValue: false,
+    showValueBeforeLabel: false,
 };
 
 class Autocomplete {
-  constructor(field, options) {
-    this.field = field;
-    this.options = Object.assign({}, DEFAULTS, options);
-    this.dropdown = null;
+    constructor(field, options) {
+        this.field = field;
+        this.options = Object.assign({}, DEFAULTS, options);
+        this.dropdown = null;
 
-    field.parentNode.classList.add('dropdown');
-    field.setAttribute('data-bs-toggle', 'dropdown');
-    field.classList.add('dropdown-toggle');
+        field.parentNode.classList.add('dropdown');
+        field.setAttribute('data-bs-toggle', 'dropdown');
+        field.classList.add('dropdown-toggle');
 
-    const dropdown = ce(`<div class="dropdown-menu"></div>`);
-    if (this.options.dropdownClass)
-      dropdown.classList.add(this.options.dropdownClass);
+        const dropdown = ce(`<div class="dropdown-menu"></div>`);
+        if (this.options.dropdownClass)
+            dropdown.classList.add(this.options.dropdownClass);
 
-    insertAfter(dropdown, field);
+        insertAfter(dropdown, field);
 
-    this.dropdown = new bootstrap.Dropdown(field, this.options.dropdownOptions);
+        this.dropdown = new bootstrap.Dropdown(field, this.options.dropdownOptions);
 
-    field.addEventListener('click', (e) => {
-      if (this.createItems() === 0) {
-        e.stopPropagation();
-        this.dropdown.hide();
-      }
-    });
+        field.addEventListener('click', (e) => {
+            if (this.createItems() === 0) {
+                e.stopPropagation();
+                this.dropdown.hide();
+            }
+        });
 
-    field.addEventListener('input', debounce(() => {
-      if (this.options.onInput)
-        this.options.onInput(this.field.value);
-      this.renderIfNeeded();
-    }));
+        field.addEventListener('input', debounce(() => {
+            const lookup = this.field.value.trim();
+            if (this.options.onInput && lookup.length > this.options.threshold)
+                this.options.onInput(lookup);
+            this.renderIfNeeded();
+        }));
 
-    field.addEventListener('keydown', (e) => {
-      if (e.keyCode === 27) {
-        this.dropdown.hide();
-        return;
-      }
-      if (e.keyCode === 40) {
-        this.dropdown._menu.children[0]?.focus();
-        return;
-      }
-    });
-  }
-
-  setData(data) {
-    this.options.data = data;
-    this.renderIfNeeded();
-  }
-
-  renderIfNeeded() {
-    if (this.createItems() > 0)
-      this.dropdown.show();
-    else
-      this.field.click();
-  }
-
-  createItem(lookup, item) {
-    let label;
-    if (this.options.highlightTyped) {
-      const idx = removeDiacritics(item.label)
-          .toLowerCase()
-          .indexOf(removeDiacritics(lookup).toLowerCase());
-      const className = Array.isArray(this.options.highlightClass) ? this.options.highlightClass.join(' ')
-        : (typeof this.options.highlightClass == 'string' ? this.options.highlightClass : '');
-      label = item.label.substring(0, idx)
-        + `<span class="${className}">${item.label.substring(idx, idx + lookup.length)}</span>`
-        + item.label.substring(idx + lookup.length, item.label.length);
-    } else {
-      label = item.label;
+        field.addEventListener('keydown', (e) => {
+            if (e.keyCode === 27) {
+                this.dropdown.hide();
+                return;
+            }
+            if (e.keyCode === 40) {
+                this.dropdown._menu.children[0]?.focus();
+                return;
+            }
+        });
     }
 
-    if (this.options.showValue) {
-      if (this.options.showValueBeforeLabel) {
-        label = `${item.value} ${label}`;
-      } else {
-        label += ` ${item.value}`;
-      }
+    setData(data) {
+        this.options.data = data;
+        this.renderIfNeeded();
     }
 
-    return ce(`<button type="button" class="dropdown-item" data-label="${item.label}" data-value="${item.value}">${label}</button>`);
-  }
-
-  createItems() {
-    const lookup = this.field.value.trim();
-    if (lookup.length < this.options.threshold) {
-      this.dropdown.hide();
-      return 0;
+    renderIfNeeded() {
+        if (this.createItems() > 0)
+            this.dropdown.show();
+        else
+            this.field.click();
     }
 
-    const items = this.field.nextSibling;
-    items.innerHTML = '';
-
-    const keys = this.options.data ? Object.keys(this.options.data) : [];
-
-    let count = 0;
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      const entry = this.options.data[key];
-      const item = {
-          label: this.options.label ? entry[this.options.label] : key,
-          value: this.options.value ? entry[this.options.value] : entry
-      };
-
-    items.appendChild(this.createItem(lookup, item));
-    if (this.options.maximumItems > 0 && ++count >= this.options.maximumItems)
-      break;
-    }
-
-    this.field.nextSibling.querySelectorAll('.dropdown-item').forEach((item) => {
-      item.addEventListener('click', (e) => {
-        let dataLabel = e.currentTarget.getAttribute('data-label');
-        let dataValue = e.currentTarget.getAttribute('data-value');
-
-        this.field.value = dataLabel;
-
-        if (this.options.onSelectItem) {
-          this.options.onSelectItem({
-            value: dataValue,
-            label: dataLabel
-          });
+    createItem(lookup, item) {
+        let label;
+        if (this.options.highlightTyped) {
+            const idx = removeDiacritics(item.label).toLowerCase()
+                .indexOf(removeDiacritics(lookup).toLowerCase());
+            const className = Array.isArray(this.options.highlightClass) ? this.options.highlightClass.join(' ')
+                : (typeof this.options.highlightClass == 'string' ? this.options.highlightClass : '');
+            if (idx < 0)
+                label = item.label;
+            else
+                label = item.label.substring(0, idx)
+                    + `<span class="${className}">${item.label.substring(idx, idx + lookup.length)}</span>`
+                    + item.label.substring(idx + lookup.length, item.label.length);
+        } else {
+            label = item.label;
         }
 
-        this.dropdown.hide();
-      })
-    });
+        if (this.options.showValue) {
+            if (this.options.showValueBeforeLabel) {
+                label = `${item.value} ${label}`;
+            } else {
+                label += ` ${item.value}`;
+            }
+        }
 
-    return items.childNodes.length;
-  }
+        return ce(`<button type="button" class="dropdown-item" data-label="${item.label}" data-value="${item.value}">${label}</button>`);
+    }
+
+    createItems() {
+        const lookup = this.field.value.trim();
+        if (lookup.length <= this.options.threshold) {
+            this.dropdown.hide();
+            return 0;
+        }
+
+        const items = this.field.nextSibling;
+        items.innerHTML = '';
+
+        const keys = this.options.data ? Object.keys(this.options.data) : [];
+
+        let count = 0;
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            const entry = this.options.data[key];
+            const item = {
+                label: this.options.label ? entry[this.options.label] : key,
+                value: this.options.value ? entry[this.options.value] : entry
+            };
+
+            items.appendChild(this.createItem(lookup, item));
+            if (this.options.maximumItems > 0 && ++count >= this.options.maximumItems)
+                break;
+        }
+
+        this.field.nextSibling.querySelectorAll('.dropdown-item').forEach((item) => {
+            item.addEventListener('click', (e) => {
+                let dataLabel = e.currentTarget.getAttribute('data-label');
+                let dataValue = e.currentTarget.getAttribute('data-value');
+
+                this.field.value = dataLabel;
+
+                if (this.options.onSelectItem) {
+                    this.options.onSelectItem({
+                        value: dataValue,
+                        label: dataLabel
+                    });
+                }
+
+                this.dropdown.hide();
+            })
+        });
+
+        return items.childNodes.length;
+    }
 }
 
 /**
@@ -144,9 +147,9 @@ class Autocomplete {
  * @returns {Node}
  */
 function ce(html) {
-  let div = document.createElement('div');
-  div.innerHTML = html;
-  return div.firstChild;
+    let div = document.createElement('div');
+    div.innerHTML = html;
+    return div.firstChild;
 }
 
 /**
@@ -155,7 +158,7 @@ function ce(html) {
  * @returns {*}
  */
 function insertAfter(elem, refElem) {
-  return refElem.parentNode.insertBefore(elem, refElem.nextSibling);
+    return refElem.parentNode.insertBefore(elem, refElem.nextSibling);
 }
 
 /**
@@ -163,9 +166,9 @@ function insertAfter(elem, refElem) {
  * @returns {String}
  */
 function removeDiacritics(str) {
-  return str
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+    return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
 }
 
 /**

@@ -17,7 +17,7 @@ namespace Ascent.Models
 
         public List<ProgramOutcome> Outcomes { get; set; }
 
-        public List<ProgramModule> Modules { get; set; }
+        public int ModuleCount { get; set; }
 
         public bool IsDeleted { get; set; }
     }

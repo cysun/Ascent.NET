@@ -179,6 +179,11 @@ namespace Ascent.Controllers
 
             return RedirectToAction("Revisions", new { id = id });
         }
+
+        public List<Page> Autocomplete(string searchText)
+        {
+            return _pageService.SearchPages(searchText, 10);
+        }
     }
 }
 

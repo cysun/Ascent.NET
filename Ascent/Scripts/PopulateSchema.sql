@@ -43,8 +43,14 @@ CREATE TRIGGER "PagesTsTrigger"
 
 CREATE OR REPLACE FUNCTION "SearchPages"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Pages" AS $$
+DECLARE
+    l_query text;
 BEGIN
-    RETURN QUERY SELECT * FROM "Pages" WHERE "IsRegular" AND plainto_tsquery($1) @@ tsv LIMIT $2;
+    l_query := plainto_tsquery($1)::text;
+    IF l_query <> '' THEN
+        l_query := l_query || ':*';
+    END IF;
+    RETURN QUERY SELECT * FROM "Pages" WHERE "IsRegular" AND l_query::tsquery @@ tsv LIMIT $2;
     RETURN;
  END
 $$ LANGUAGE plpgsql;
@@ -74,8 +80,14 @@ CREATE TRIGGER "FilesTsTrigger"
 
 CREATE OR REPLACE FUNCTION "SearchFiles"(varchar, integer DEFAULT NULL)
 RETURNS SETOF "Files" AS $$
+DECLARE
+    l_query text;
 BEGIN
-    RETURN QUERY SELECT * FROM "Files" WHERE "IsRegular" AND plainto_tsquery($1) @@ tsv LIMIT $2;
+    l_query := plainto_tsquery($1)::text;
+    IF l_query <> '' THEN
+        l_query := l_query || ':*';
+    END IF;
+    RETURN QUERY SELECT * FROM "Files" WHERE "IsRegular" AND l_query::tsquery @@ tsv LIMIT $2;
     RETURN;
  END
 $$ LANGUAGE plpgsql;

@@ -173,6 +173,11 @@ namespace Ascent.Controllers
 
             return Ok();
         }
+
+        public List<Models.File> Autocomplete(string searchText)
+        {
+            return _fileService.SearchFiles(searchText, 10).Where(f => !f.IsFolder).ToList();
+        }
     }
 }
 

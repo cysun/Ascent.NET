@@ -1,0 +1,23 @@
+@model ProgramModuleInputModel
+@{
+    ViewData["Title"] = "Add Program Module";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Program" asp-action="View" asp-route-id="@ViewBag.Program.Id">@ViewBag.Program.Name</a>
+        </li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-route-programId="@ViewBag.Program.Id">Modules</a></li>
+        <li class="breadcrumb-item active">Add</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="form-floating mb-3">
+        <input asp-for="Name" class="form-control" placeholder="Name">
+        <label asp-for="Name"></label>
+    </div>
+    <a class="btn btn-secondary me-2" asp-action="Index" asp-route-programId="@ViewBag.Program.Id">Cancel</a>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>

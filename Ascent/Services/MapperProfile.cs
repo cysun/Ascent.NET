@@ -44,6 +44,9 @@ public class MapperProfile : Profile
         CreateMap<ProgramInputModel, Models.Program>()
             .ForMember(dest => dest.Outcomes, opt => opt.Ignore()); // Handled in controller
         CreateMap<Models.Program, ProgramInputModel>();
+
+        CreateMap<ProgramModuleInputModel, ProgramModule>();
+        CreateMap<ProgramModule, ProgramModuleInputModel>();
     }
 }
 

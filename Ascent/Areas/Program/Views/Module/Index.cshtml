@@ -1,0 +1,41 @@
+@model List<ProgramModule>
+@{
+    ViewData["Title"] = "Program Modules";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Program" asp-action="View" asp-route-id="@ViewBag.Program.Id">@ViewBag.Program.Name</a>
+        </li>
+        <li class="breadcrumb-item active me-auto">Modules</li>
+        <li>
+            <a asp-action="Add" asp-route-programId="@ViewBag.Program.Id"
+               class="btn btn-outline-primary btn-sm" title="Modules">
+                <i class="bi bi-plus-lg"></i>
+            </a>
+        </li>
+    </ol>
+</nav>
+
+@foreach (var module in Model)
+{
+    <div id="m-id-@module.Id" class="card mb-3">
+        <div class="card-header d-flex align-items-center">
+            <span>@module.Name</span>
+            <div class="btn-group ms-auto" role="group">
+                <a asp-action="MoveUp" asp-route-id="@module.Id" title="Move Up" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-caret-up-fill"></i>
+                </a>
+                <a asp-action="MoveDown" asp-route-id="@module.Id" title="Move Down" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-caret-down-fill"></i>
+                </a>
+                <a asp-action="Edit" asp-route-id="@module.Id" title="Edit" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+        </div>
+    </div>
+}

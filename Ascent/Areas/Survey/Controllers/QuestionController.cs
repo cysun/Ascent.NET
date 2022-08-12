@@ -77,6 +77,8 @@ namespace Ascent.Areas.Survey.Controllers
             if (!ModelState.IsValid) return View(input);
 
             var question = _surveyService.GetQuestion(id);
+            if (question == null) return NotFound();
+
             _mapper.Map(input, question);
             _surveyService.SaveChanges();
             _logger.LogInformation("{user} edited question {question}", User.Identity.Name, id);
