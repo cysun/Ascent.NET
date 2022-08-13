@@ -37,7 +37,7 @@
         @foreach (var program in Model)
         {
             <div class="card mb-3">
-                <div class="card-header text-bg-info">@program.Name</div>
+                <div class="card-header">@program.Name</div>
                 <ul class="list-group list-group-flush">
                     @for (int i = 0; i < program.Outcomes.Count; ++i)
                     {

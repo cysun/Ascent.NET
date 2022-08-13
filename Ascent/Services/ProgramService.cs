@@ -40,9 +40,13 @@ public class ProgramService
         _db.SaveChanges();
     }
 
-    public List<ProgramItem> GetItems(int moduleId) => _db.ProgramItems.AsNoTracking()
+    public List<ProgramItem> GetModuleItems(int moduleId) => _db.ProgramItems.AsNoTracking()
         .Where(i => i.ModuleId == moduleId).Include(i => i.File).Include(i => i.Page)
         .OrderBy(i => i.Index).ToList();
+
+    public Dictionary<int, List<ProgramItem>> GetProgramItems(int programId) => _db.ProgramItems.AsNoTracking()
+        .Where(i => i.Module.ProgramId == programId).Include(i => i.File).Include(i => i.Page)
+        .AsEnumerable().GroupBy(i => i.ModuleId).ToDictionary(g => g.Key, g => g.OrderBy(g => g.Index).ToList());
 
     public void AddItemToModule(int moduleId, ProgramItem item)
     {

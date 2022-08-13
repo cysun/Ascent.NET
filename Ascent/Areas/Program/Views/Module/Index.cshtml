@@ -35,7 +35,38 @@
                 </a>
             </div>
         </div>
-        <div class="card-body">
-        </div>
+        @if (ViewBag.Items.ContainsKey(module.Id))
+        {
+            <ul class="list-group list-group-flush">
+                @foreach (var item in ViewBag.Items[module.Id])
+                {
+                    <li class="list-group-item d-flex align-items-center">
+                        @if (item.Type == ItemType.Page)
+                        {
+                            <span>@item.Page.Subject</span>
+                        }
+                        else if (item.Type == ItemType.File)
+                        {
+                            <span>@item.File.Name</span>
+                        }
+                        <div class="btn-toolbar ms-auto" role="toolbar">
+                            <div class="btn-group me-2" role="group">
+                                <button class="delete btn btn-outline-danger btn-sm" data-id="@item.Id" title="Delete Item">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a asp-action="MoveUp" asp-route-id="@item.Id" title="Move Up" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-caret-up-fill"></i>
+                                </a>
+                                <a asp-action="MoveDown" asp-route-id="@item.Id" title="Move Down" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-caret-down-fill"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
     </div>
 }

@@ -55,14 +55,14 @@
 
 @section Scripts{
     <script>
-        $(function() {
-            $("#removeObjective").click(function() {
+        $(function () {
+            $("#removeObjective").click(function () {
                 var $container = $("#ObjectivesContainer");
                 $container.children().last().remove();
                 if ($container.children().length == 0)
                     $("#HasObjectives").val("False");
             });
-            $("#addObjective").click(function() {
+            $("#addObjective").click(function () {
                 var $container = $("#ObjectivesContainer");
                 var index = $container.children().length;
                 $container.append(`<textarea class="form-control mb-2" row="2" id="Objectives_${index}_" name="Objectives[${index}]"></textarea>`);
