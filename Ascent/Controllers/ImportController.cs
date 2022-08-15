@@ -100,16 +100,19 @@ namespace Ascent.Controllers
                     }
                 }
 
-                var student = GetOrCreateStudent(record);
-                var enrollment = new Enrollment()
+                if (!string.IsNullOrEmpty(record.GradeSymbol))
                 {
-                    SectionId = section.Id,
-                    StudentId = student.Id,
-                    GradeSymbol = record.GradeSymbol
-                };
-                _enrollmentService.AddEnrollment(enrollment);
+                    var student = GetOrCreateStudent(record);
+                    var enrollment = new Enrollment()
+                    {
+                        SectionId = section.Id,
+                        StudentId = student.Id,
+                        GradeSymbol = record.GradeSymbol
+                    };
+                    _enrollmentService.AddEnrollment(enrollment);
 
-                ++rowIndex;
+                    ++rowIndex;
+                }
             }
 
             _logger.LogInformation("{user} imported grades of {students} students", User.Identity.Name, rowIndex - 2);

@@ -19,83 +19,91 @@
     </ol>
 </nav>
 
-@if (Model.HasObjectives)
-{
-    <div class="card mb-3">
-        <div class="card-header d-flex align-items-center">
-            <span>Program Educational Objectives (PEO)</span>
-            <div class="btn-group ms-auto" role="group">
-                <a asp-action="Objectives" asp-route-id="@Model.Id" title="Details" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-three-dots"></i>
-                </a>
+<div class="row row-cols-1 row-cols-lg-2 g-4">
+    @if (Model.HasObjectives)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <span>Program Educational Objectives (PEO)</span>
+                    <div class="btn-group ms-auto" role="group">
+                        <a asp-action="Objectives" asp-route-id="@Model.Id" title="Details" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-three-dots"></i>
+                        </a>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                    @for (int i = 0; i < Model.Objectives.Count; ++i)
+                    {
+                        <li class="list-group-item">@(i + 1). @Model.Objectives[i]</li>
+                    }
+                </ul>
             </div>
         </div>
-        <ul class="list-group list-group-numbered">
-            @foreach (var objective in Model.Objectives)
-            {
-                <li class="list-group-item">@objective</li>
-            }
-        </ul>
-    </div>
-}
+    }
 
-<div class="card mb-3">
-    <div class="card-header">Student Outcomes (SO)</div>
-    <ul class="list-group list-group-flush">
-        @for (int i = 0; i < Model.Outcomes.Count; ++i)
-        {
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="me-auto">@(i + 1). @Model.Outcomes[i].Text</div>
-                <a asp-action="Outcome" asp-route-id="@Model.Id" asp-route-index="@i" title="Details"
-               class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-three-dots"></i>
-                </a>
-            </li>
-        }
-    </ul>
-</div>
-
-@foreach (var module in ViewBag.Modules)
-{
-    <div id="m-id-@module.Id" class="card mb-3">
-        <div class="card-header">@module.Name</div>
-        @if (ViewBag.Items.ContainsKey(module.Id))
-        {
+    <div>
+        <div class="card h-100">
+            <div class="card-header">Student Outcomes (SO)</div>
             <ul class="list-group list-group-flush">
-                @{
-                    var count = 0;
-                }
-                @foreach (var item in ViewBag.Items[module.Id])
+                @for (int i = 0; i < Model.Outcomes.Count; ++i)
                 {
-                    if (count++ < maxShowCount)
-                    {
-                        <li class="list-group-item d-flex align-items-center">
-                            @if (item.Type == ItemType.Page)
-                            {
-                                <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">
-                                    @item.Page.Subject
-                                </a>
-                            }
-                            else if (item.Type == ItemType.File)
-                            {
-                                <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">
-                                    @item.File.Name
-                                </a>
-                                <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.Id"
-               class="btn btn-outline-primary btn-sm ms-auto">
-                                    <i class="bi bi-download"></i>
-                                </a>
-                            }
-                        </li>
-                    }
+                    <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div class="me-auto">@(i + 1). @Model.Outcomes[i].Text</div>
+                        <a asp-action="Outcome" asp-route-id="@Model.Id" asp-route-index="@i" title="Details"
+                       class="btn btn-outline-primary btn-sm ms-2">
+                            <i class="bi bi-three-dots"></i>
+                        </a>
+                    </li>
                 }
             </ul>
-            @if (module.ItemCount > maxShowCount)
-            {
-                <div class="card-body">
-                    <a asp-controller="Module" asp-action="View" asp-route-id="@module.Id" class="btn btn-primary">More</a>
-                </div>
-            }
-        }
+        </div>
     </div>
-}
+
+    @foreach (var module in ViewBag.Modules)
+    {
+        <div>
+            <div id="m-id-@module.Id" class="card h-100">
+                <div class="card-header">@module.Name</div>
+                @if (ViewBag.Items.ContainsKey(module.Id))
+                {
+                    <ul class="list-group list-group-flush">
+                        @{
+                            var count = 0;
+                        }
+                        @foreach (var item in ViewBag.Items[module.Id])
+                        {
+                            if (count++ < maxShowCount)
+                            {
+                                <li class="list-group-item list-group-item-action d-flex align-items-center">
+                                    @if (item.Type == ItemType.Page)
+                                    {
+                                        <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">
+                                            @item.Page.Subject
+                                        </a>
+                                    }
+                                    else if (item.Type == ItemType.File)
+                                    {
+                                        <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">
+                                            @item.File.Name
+                                        </a>
+                                        <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.Id"
+                       class="btn btn-outline-primary btn-sm ms-auto">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                    @if (module.ItemCount > maxShowCount)
+                    {
+                        <div class="card-body">
+                            <a asp-controller="Module" asp-action="View" asp-route-id="@module.Id" class="btn btn-primary">More</a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>

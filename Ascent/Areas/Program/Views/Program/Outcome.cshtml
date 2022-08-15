@@ -22,13 +22,13 @@
 </nav>
 
 <div class="row">
-    <div class="d-none d-md-block col-md-3">
+    <div class="d-none d-md-block col-md-4 col-lg-3">
         <div class="card">
             <div class="card-header">Student Outcomes</div>
             <div class="card-body">
                 <div id="sidebar" style="max-height: 75vh; overflow-y: auto;">
                     <div class="d-flex flex-column align-items-stretch flex-shrink-0">
-                        <div class="list-group list-group-flush border-bottom">
+                        <div class="list-group list-group-flush">
                             @for (int i = 0; i < Model.Outcomes.Count; ++i)
                             {
                                 <a asp-action="Outcome" asp-route-id="@Model.Id" asp-route-index="@i"
@@ -36,7 +36,7 @@
                                     <div class="d-flex w-100 align-items-center justify-content-between">
                                         <strong class="mb-1">SO #@(i + 1)</strong>
                                     </div>
-                                    <div class="small d-none d-xl-block">@Model.Outcomes[i].Text</div>
+                                    <div class="small">@Model.Outcomes[i].Text</div>
                                 </a>
                             }
                         </div>

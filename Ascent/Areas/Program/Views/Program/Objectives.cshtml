@@ -25,19 +25,19 @@
         <div class="card">
             <div class="card-header">Program Educational Objectives</div>
             <div class="card-body">
-                    <div class="d-flex flex-column align-items-stretch flex-shrink-0">
-                        <div class="list-group list-group-flush border-bottom">
-                            @for (int i = 0; i < Model.Objectives.Count; ++i)
-                            {
+                <div class="d-flex flex-column align-items-stretch flex-shrink-0">
+                    <div class="list-group list-group-flush">
+                        @for (int i = 0; i < Model.Objectives.Count; ++i)
+                        {
                             <div class="list-group-item py-3 lh-sm">
-                                    <div class="d-flex w-100 align-items-center justify-content-between">
-                                        <strong class="mb-1">PEO #@(i + 1)</strong>
-                                    </div>
-                                    <div class="small d-xl-block">@Model.Objectives[i]</div>
-                                    </div>
-                            }
-                        </div>
+                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                    <strong class="mb-1">PEO #@(i + 1)</strong>
+                                </div>
+                                <div class="small">@Model.Objectives[i]</div>
+                            </div>
+                        }
                     </div>
+                </div>
             </div>
         </div>
     </div>
