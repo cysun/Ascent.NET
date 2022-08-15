@@ -6,11 +6,11 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Program" asp-action="Index">Programs</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Name</li>
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
-            <li>
+            <li class="d-none d-lg-block">
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Program">
                     <i class="bi bi-pencil-fill"></i>
                 </a>

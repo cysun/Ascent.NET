@@ -5,16 +5,16 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-action="Index">Pages</a></li>
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-action="Index">Pages</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Subject</li>
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
-            <li>
+            <li class="d-none d-lg-block">
                 <a asp-action="Revisions" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm me-2" title="Page Revisions">
                     <i class="bi bi-bookshelf"></i>
                 </a>
             </li>
-            <li>
+            <li class="d-none d-lg-block">
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Page">
                     <i class="bi bi-pencil-fill"></i>
                 </a>
