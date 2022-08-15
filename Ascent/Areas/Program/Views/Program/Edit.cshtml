@@ -8,9 +8,15 @@
         <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@ViewBag.Program.Id">@Model.Name</a></li>
         <li class="breadcrumb-item active me-auto">Edit</li>
         <li>
-            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Program">
+            <button id="delete" class="btn btn-outline-danger btn-sm me-2" title="Delete Program">
                 <i class="bi bi-trash-fill"></i>
             </button>
+        </li>
+        <li>
+            <a asp-controller="Module" asp-action="Add" asp-route-programId="@ViewBag.Program.Id" title="Add Module"
+               class="btn btn-outline-primary btn-sm me-2 edit-mode">
+                <i class="bi bi-plus-lg"></i>
+            </a>
         </li>
     </ol>
 </nav>
@@ -52,6 +58,29 @@
     <a class="btn btn-secondary me-2" asp-action="View" asp-route-id="@ViewBag.Program.Id">Cancel</a>
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
+
+@foreach (var module in ViewBag.Modules)
+{
+    <div id="m-id-@module.Id" class="card mt-3">
+        <div class="card-header d-flex align-items-center">
+            <span>@module.Name</span>
+            <div class="btn-group ms-auto" role="group">
+                <a asp-controller="Module" asp-action="MoveUp" asp-route-id="@module.Id" title="Move Up"
+               class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-caret-up-fill"></i>
+                </a>
+                <a asp-controller="Module" asp-action="MoveDown" asp-route-id="@module.Id" title="Move Down"
+               class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-caret-down-fill"></i>
+                </a>
+                <a asp-controller="Module" asp-action="Edit" asp-route-id="@module.Id" title="Edit"
+               class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+}
 
 @section Scripts{
     <script>

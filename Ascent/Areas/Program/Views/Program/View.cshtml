@@ -11,12 +11,6 @@
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
             <li>
-                <a asp-controller="Module" asp-action="Index" asp-route-programId="@Model.Id"
-               class="btn btn-outline-primary btn-sm me-2" title="Edit Modules">
-                    <i class="bi bi-boxes"></i>
-                </a>
-            </li>
-            <li>
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Program">
                     <i class="bi bi-pencil-fill"></i>
                 </a>
@@ -29,10 +23,12 @@
 {
     <div class="card mb-3">
         <div class="card-header d-flex align-items-center">
-            <span class="me-auto">Program Educational Objectives (PEO)</span>
-            <a asp-action="Objectives" asp-route-id="@Model.Id" title="Details" class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-three-dots"></i>
-            </a>
+            <span>Program Educational Objectives (PEO)</span>
+            <div class="btn-group ms-auto" role="group">
+                <a asp-action="Objectives" asp-route-id="@Model.Id" title="Details" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-three-dots"></i>
+                </a>
+            </div>
         </div>
         <ul class="list-group list-group-numbered">
             @foreach (var objective in Model.Objectives)
@@ -44,9 +40,7 @@
 }
 
 <div class="card mb-3">
-    <div class="card-header">
-        <span>Student Outcomes (SO)</span>
-    </div>
+    <div class="card-header">Student Outcomes (SO)</div>
     <ul class="list-group list-group-flush">
         @for (int i = 0; i < Model.Outcomes.Count; ++i)
         {
@@ -78,12 +72,17 @@
                         <li class="list-group-item d-flex align-items-center">
                             @if (item.Type == ItemType.Page)
                             {
-                                <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">@item.Page.Subject</a>
+                                <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">
+                                    @item.Page.Subject
+                                </a>
                             }
                             else if (item.Type == ItemType.File)
                             {
-                                <a asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">@item.File.Name</a>
-                                <a asp-controller="File" asp-action="Download" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm ms-auto">
+                                <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">
+                                    @item.File.Name
+                                </a>
+                                <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.Id"
+               class="btn btn-outline-primary btn-sm ms-auto">
                                     <i class="bi bi-download"></i>
                                 </a>
                             }

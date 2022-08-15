@@ -88,8 +88,9 @@ namespace Ascent.Areas.Program.Controllers
             if (program == null) return NotFound();
 
             ViewBag.Program = program;
-            var input = _mapper.Map<ProgramInputModel>(program);
-            return View(input);
+            ViewBag.Modules = _programService.GetModules(id);
+
+            return View(_mapper.Map<ProgramInputModel>(program));
         }
 
         [HttpPost]

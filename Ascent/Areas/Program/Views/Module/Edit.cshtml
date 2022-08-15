@@ -8,10 +8,9 @@
         <li class="breadcrumb-item">
             <a asp-controller="Program" asp-action="View" asp-route-id="@ViewBag.Program.Id">@ViewBag.Program.Name</a>
         </li>
-        <li class="breadcrumb-item"><a asp-action="Index" asp-route-programId="@ViewBag.Program.Id">Modules</a></li>
-        <li class="breadcrumb-item active me-auto">Edit</li>
+        <li class="breadcrumb-item active me-auto">Edit Module</li>
         <li>
-            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Module">
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Module" data-id="@Model.Id">
                 <i class="bi bi-trash-fill"></i>
             </button>
         </li>
@@ -23,7 +22,7 @@
         <input asp-for="Name" class="form-control" placeholder="Name">
         <label asp-for="Name"></label>
     </div>
-    <a class="btn btn-secondary me-2" asp-action="Index" asp-route-programId="@ViewBag.Program.Id">Cancel</a>
+    <a class="btn btn-secondary me-2" asp-controller="Program" asp-action="View" asp-route-id="@ViewBag.Program.Id">Cancel</a>
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
@@ -32,7 +31,7 @@
     <ul class="list-group list-group-flush">
         @foreach (var item in ViewBag.Items)
         {
-            <li class="list-group-item d-flex align-items-center">
+            <li class="list-group-item list-group-item-action d-flex align-items-center">
                 @if (item.Type == ItemType.Page)
                 {
                     <span>@item.Page.Subject</span>
@@ -43,15 +42,18 @@
                 }
                 <div class="btn-toolbar ms-auto" role="toolbar">
                     <div class="btn-group me-2" role="group">
-                        <button class="delete btn btn-outline-danger btn-sm" data-id="@item.Id" title="Delete Item">
+                        <a asp-controller="Item" asp-action="Delete" asp-route-id="@item.Id" title="Delete Item"
+                       class="btn btn-outline-danger btn-sm">
                             <i class="bi bi-trash-fill"></i>
-                        </button>
+                        </a>
                     </div>
                     <div class="btn-group" role="group">
-                        <a asp-action="MoveUp" asp-route-id="@item.Id" title="Move Up" class="btn btn-outline-primary btn-sm">
+                        <a asp-controller="Item" asp-action="MoveUp" asp-route-id="@item.Id" title="Move Up"
+                       class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-caret-up-fill"></i>
                         </a>
-                        <a asp-action="MoveDown" asp-route-id="@item.Id" title="Move Down" class="btn btn-outline-primary btn-sm">
+                        <a asp-controller="Item" asp-action="MoveDown" asp-route-id="@item.Id" title="Move Down"
+                       class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-caret-down-fill"></i>
                         </a>
                     </div>
@@ -92,13 +94,17 @@
                 },
                 onSelectItem: ({ label, value }) => {
                     var itemType = $("#itemType").val();
-                    window.location.href = `../additem/@(Model.Id)?contentId=${value}&type=${itemType}`;
+                    window.location.href = `../../item/add?moduleId=@(Model.Id)&contentId=${value}&type=${itemType}`;
                 }
             });
             $("#itemType").change(function () {
                 $("#search").val("");
                 ac.setData([]);
             });
+            $("#delete").click(function () {
+                if (confirm("Are you sure you want to delete this module?"))
+                    window.location.href = "../delete/" + $(this).attr("data-id");
+            })
         });
     </script>
 }

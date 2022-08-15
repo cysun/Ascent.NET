@@ -1,0 +1,53 @@
+@inject IAuthorizationService AuthorizationService
+@model ProgramModule
+@{
+    ViewData["Title"] = "View Program Module";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Program" asp-action="Index">Programs</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Program" asp-action="View" asp-route-id="@ViewBag.Program.Id">@ViewBag.Program.Name</a>
+        </li>
+        <li class="breadcrumb-item active me-auto">View Module</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-controller="Module" asp-action="Edit" asp-route-id="@Model.Id" title="Edit"
+               class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-header">@Model.Name</div>
+    @if (ViewBag.Items.Count > 0)
+    {
+        <ul class="list-group list-group-flush">
+            @foreach (var item in ViewBag.Items)
+            {
+                <li class="list-group-item d-flex align-items-center">
+                    @if (item.Type == ItemType.Page)
+                    {
+                        <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">
+                            @item.Page.Subject
+                        </a>
+                    }
+                    else if (item.Type == ItemType.File)
+                    {
+                        <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">
+                            @item.File.Name
+                        </a>
+                        <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.Id"
+               class="btn btn-outline-primary btn-sm ms-auto">
+                            <i class="bi bi-download"></i>
+                        </a>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>

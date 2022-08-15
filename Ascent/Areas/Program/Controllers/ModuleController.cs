@@ -23,15 +23,16 @@ namespace Ascent.Areas.Program.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(int programId)
+        [HttpGet]
+        public IActionResult View(int id)
         {
-            var program = _programService.GetProgram(programId);
-            if (program == null) return NotFound();
+            var module = _programService.GetModule(id);
+            if (module == null) return NotFound();
 
-            ViewBag.Program = program;
-            ViewBag.Items = _programService.GetProgramItems(programId);
+            ViewBag.Program = _programService.GetProgram(module.ProgramId);
+            ViewBag.Items = _programService.GetModuleItems(id);
 
-            return View(_programService.GetModules(programId));
+            return View(module);
         }
 
         [HttpGet]
@@ -55,7 +56,7 @@ namespace Ascent.Areas.Program.Controllers
             _logger.LogInformation("{user} added module {module} to {program}",
                 User.Identity.Name, module.Id, programId);
 
-            return RedirectToAction("Index", "Module", new { programId }, $"m-id-{module.Id}");
+            return RedirectToAction("View", "Program", new { id = programId });
         }
 
         [HttpGet]
@@ -82,30 +83,40 @@ namespace Ascent.Areas.Program.Controllers
             _programService.SaveChanges();
             _logger.LogInformation("{user} edited module {module}", User.Identity.Name, id);
 
-            return RedirectToAction("Index", "Module", new { programId = module.ProgramId }, $"m-id-{module.Id}");
+            return RedirectToAction("View", "Program", new { id = module.ProgramId });
         }
 
-        public IActionResult AddItem(int id, int contentId, string type)
+        public IActionResult MoveUp(int id)
         {
-            var item = new ProgramItem();
-            switch (type?.ToLower())
-            {
-                case "file":
-                    item.Type = ItemType.File;
-                    item.FileId = contentId;
-                    break;
-                case "page":
-                    item.Type = ItemType.Page;
-                    item.PageId = contentId;
-                    break;
-                default:
-                    _logger.LogInformation("Unrecognized item type: {type}", type);
-                    return BadRequest();
-            }
+            var module = _programService.GetModule(id);
+            if (module == null) return NotFound();
 
-            _programService.AddItemToModule(id, item);
-            _logger.LogInformation("{user} added item {item} to module {module}", User.Identity.Name, item.Id, id);
-            return RedirectToAction("Edit", new { id });
+            _programService.MoveUpModule(module);
+            _logger.LogInformation("{user} moved up module {module}", User.Identity.Name, id);
+
+            return RedirectToAction("Edit", "Program", new { id = module.ProgramId }, $"m-id-{module.Id}");
+        }
+
+        public IActionResult MoveDown(int id)
+        {
+            var module = _programService.GetModule(id);
+            if (module == null) return NotFound();
+
+            _programService.MoveDownModule(module);
+            _logger.LogInformation("{user} moved down module {module}", User.Identity.Name, id);
+
+            return RedirectToAction("Edit", "Program", new { id = module.ProgramId }, $"m-id-{module.Id}");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var module = _programService.GetModule(id);
+            if (module == null) return NotFound();
+
+            _programService.DeleteModule(module);
+            _logger.LogInformation("{user} deleted module {module}", User.Identity.Name, id);
+
+            return RedirectToAction("View", "Program", new { id = module.ProgramId });
         }
     }
 }
