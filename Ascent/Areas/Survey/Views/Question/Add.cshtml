@@ -18,15 +18,11 @@
 <form method="post">
     <input type="hidden" asp-for="SurveyId" />
     <input type="hidden" asp-for="Index" />
-    <div class="row">
-        <div class="col-12 mb-3">
-            <select asp-for="Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select"></select>
-        </div>
-        <div class="col-12 mb-3">
-            <textarea asp-for="Description" class="form-control"></textarea>
-        </div>
+    <div class="d-inline-flex mb-3">
+        <select asp-for="Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select"></select>
     </div>
-    <div id="choiceRow" class="row">
+    <textarea asp-for="Description" class="form-control"></textarea>
+    <div id="choiceRow" class="row mt-3">
         <div class="col-4">
             <div class="form-floating mb-3">
                 <input id="numOfChoices" class="form-control" type="number" value="@Model.Choices.Count">
@@ -49,7 +45,7 @@
         {
             <div class="col-12">
                 <div class="input-group mb-3">
-                    <span class="input-group-text">@(i+1)</span>
+                    <span class="input-group-text">@(i + 1)</span>
                     <input asp-for="Choices[i]" class="form-control">
                 </div>
             </div>
@@ -117,22 +113,22 @@
             ];
             mappings.forEach(m => $("#Type option:selected").text() == m.type ? $(m.row).show() : $(m.row).hide());
         }
-        $(function() {
+        $(function () {
             $("#Description").summernote(summernoteOptions.standard);
             toggleRows();
             $("#Type").change(toggleRows);
-            $("#numOfChoices").change(function() {
+            $("#numOfChoices").change(function () {
                 var newNumOfChoices = $(this).val();
                 var oldNumOfChoices = $("#choiceRow").find("input[name^='Choices[']").length;
                 if (newNumOfChoices > oldNumOfChoices) {
                     for (var i = oldNumOfChoices; i < newNumOfChoices; ++i)
                         $("#choiceRow").append(`
-                            <div class="col-12">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">${i+1}</span>
-                                    <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
-                                </div>
-                            </div>`);
+                                            <div class="col-12">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">${i + 1}</span>
+                                                    <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
+                                                </div>
+                                            </div>`);
                 }
                 if (newNumOfChoices < oldNumOfChoices) {
                     for (var i = newNumOfChoices; i < oldNumOfChoices; ++i)

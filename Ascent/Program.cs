@@ -84,6 +84,7 @@ services.Configure<FilesSettings>(configuration.GetSection("Files"));
 services.AddScoped<FileService>();
 services.AddScoped<PageService>();
 services.AddScoped<PersonService>();
+services.AddScoped<GroupService>();
 services.AddScoped<CourseService>();
 services.AddScoped<SectionService>();
 services.AddScoped<EnrollmentService>();

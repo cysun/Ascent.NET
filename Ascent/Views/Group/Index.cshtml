@@ -1,0 +1,33 @@
+@inject IAuthorizationService AuthorizationService
+@model List<Group>
+@{
+    ViewData["Title"] = "People";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active me-auto">Groups</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li><a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Group"><i class="bi bi-plus-lg"></i></a></li>
+        }
+    </ol>
+</nav>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    @foreach (var group in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header">@group.Name</div>
+                <div class="card-body">
+                    <p>@group.Description</p>
+                    <a asp-controller="Email" asp-action="Group" asp-route-groupId="@group.Id" class="btn btn-primary">Email</a>
+                    @if (!group.IsVirtual)
+                    {
+                        <a asp-action="View" asp-route-id="@group.Id" class="btn btn-primary ms-2">View</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

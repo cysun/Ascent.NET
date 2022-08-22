@@ -10,6 +10,8 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Person> Persons { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<GroupMember> GroupMembers { get; set; }
     public DbSet<Course> Courses { get; set; }
     public DbSet<Section> Sections { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
@@ -36,6 +38,8 @@ public class AppDbContext : DbContext
     {
         modelBuilder.Entity<Person>().HasIndex(p => p.CampusId).IsUnique();
         modelBuilder.Entity<Person>().Property(p => p.IsDeleted).HasDefaultValue(false);
+        modelBuilder.Entity<Group>().HasIndex(g => g.Name).IsUnique();
+        modelBuilder.Entity<GroupMember>().HasKey(m => new { m.GroupId, m.PersonId });
         modelBuilder.Entity<Course>().HasAlternateKey(c => new { c.Subject, c.Number });
         modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
         modelBuilder.Entity<Page>().Property(p => p.IsPinned).HasDefaultValue(false);
