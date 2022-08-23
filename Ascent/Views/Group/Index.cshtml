@@ -19,13 +19,15 @@
         <div class="col">
             <div class="card h-100">
                 <div class="card-header">@group.Name</div>
-                <div class="card-body">
-                    <p>@group.Description</p>
-                    <a asp-controller="Email" asp-action="Group" asp-route-groupId="@group.Id" class="btn btn-primary">Email</a>
-                    @if (!group.IsVirtual)
-                    {
-                        <a asp-action="View" asp-route-id="@group.Id" class="btn btn-primary ms-2">View</a>
-                    }
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text flex-grow-1">@group.Description</p>
+                    <div>
+                        <a asp-controller="Email" asp-action="Group" asp-route-groupId="@group.Id" class="btn btn-primary">Email</a>
+                        @if (!group.IsVirtual)
+                        {
+                            <a asp-action="View" asp-route-id="@group.Id" class="btn btn-primary ms-2">View</a>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

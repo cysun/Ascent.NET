@@ -22,13 +22,13 @@ RETURNS SETOF "Persons" AS $$
         LIMIT $2;
 $$ LANGUAGE sql;
 
-INSERT INTO "Groups" ("Name", "Description", "IsVirtual") VALUES ('BS Alumni',
+INSERT INTO "Groups" ("Name", "Description", "EmailPreference", "IsVirtual") VALUES ('BS Alumni',
   'This is a virtual group that includes everyone who has a valid BG Term and a personal (i.e. non-CSULA) email.',
-  true);
+  'Personal', true);
 
-INSERT INTO "Groups" ("Name", "Description", "IsVirtual") VALUES ('MS Alumni',
+INSERT INTO "Groups" ("Name", "Description", "EmailPreference", "IsVirtual") VALUES ('MS Alumni',
   'This is a virtual group that includes everyone who has a valid GG Term and a personal (i.e. non-CSULA) email.',
-  true);
+  'Personal', true);
 
 CREATE INDEX ON "Courses" ("Number" varchar_pattern_ops);
 

@@ -13,6 +13,8 @@ public class MapperProfile : Profile
 
         CreateMap<PersonInputModel, Person>();
         CreateMap<Person, PersonInputModel>();
+        CreateMap<GroupInputModel, Models.Group>();
+        CreateMap<Models.Group, GroupInputModel>();
         CreateMap<CourseInputModel, Course>();
         CreateMap<Course, CourseInputModel>();
         CreateMap<PageInputModel, Page>();
