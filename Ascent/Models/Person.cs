@@ -38,5 +38,5 @@ public class Person
     public string FullName => $"{FirstName} {LastName}";
     public string FullName2 => $"{LastName}, {FirstName}";
 
-    public string Email => PersonalEmail ?? SchoolEmail;
+    public string Email => string.IsNullOrWhiteSpace(PersonalEmail) ? SchoolEmail : PersonalEmail;
 }

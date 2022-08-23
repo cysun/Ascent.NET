@@ -60,5 +60,29 @@ public class GroupService
         }
     }
 
+    public void AddMemberToGroup(int groupId, int personId)
+    {
+        var member = _db.GroupMembers.Where(m => m.GroupId == groupId && m.PersonId == personId).SingleOrDefault();
+        if (member == null)
+        {
+            _db.GroupMembers.Add(new GroupMember
+            {
+                GroupId = groupId,
+                PersonId = personId
+            });
+            _db.SaveChanges();
+        }
+    }
+
+    public void RemoveMemberFromGroup(int groupId, int personId)
+    {
+        var member = _db.GroupMembers.Where(m => m.GroupId == groupId && m.PersonId == personId).SingleOrDefault();
+        if (member != null)
+        {
+            _db.GroupMembers.Remove(member);
+            _db.SaveChanges();
+        }
+    }
+
     public void SaveChanges() => _db.SaveChanges();
 }

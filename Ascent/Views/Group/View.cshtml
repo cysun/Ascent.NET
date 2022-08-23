@@ -22,16 +22,23 @@
 
 <table class="table table-striped mt-3">
     <thead>
-        <tr><th>CIN</th><th>Name</th><th>School Email</th><th>Personal Email</th></tr>
+        <tr>
+            <th class="d-none d-md-table-cell">CIN</th>
+            <th>Name</th>
+            <th class="d-none d-lg-table-cell">School Email</th>
+            <th class="d-none d-lg-table-cell">Personal Email</th>
+            <th class="d-lg-none">Email</th>
+        </tr>
     </thead>
     <tbody>
         @foreach (var member in ViewBag.Members)
         {
             <tr>
-                <td>@member.CampusId</td>
-                <td>@member.Name</td>
-                <td>@member.SchoolEmail</td>
-                <td>@member.PersonalEmail</td>
+                <td class="d-none d-md-table-cell">@member.CampusId</td>
+                <td>@member.FullName</td>
+                <td class="d-none d-lg-table-cell">@member.SchoolEmail</td>
+                <td class="d-none d-lg-table-cell">@member.PersonalEmail</td>
+                <td class="d-lg-none">@member.Email</td>
             </tr>
         }
     </tbody>

@@ -32,12 +32,61 @@
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
+<div class="input-group mt-4 mb-3">
+    <input id="search" name="searchText" class="form-control" placeholder="Search people to add">
+    <span class="input-group-text"><i class="bi bi-search"></i></span>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th class="d-none d-md-table-cell">CIN</th>
+            <th>Name</th>
+            <th class="d-none d-lg-table-cell">School Email</th>
+            <th class="d-none d-lg-table-cell">Personal Email</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in ViewBag.Members)
+        {
+            <tr>
+                <td class="d-none d-md-table-cell">@member.CampusId</td>
+                <td>@member.FullName</td>
+                <td class="d-none d-lg-table-cell">@member.SchoolEmail</td>
+                <td class="d-none d-lg-table-cell">@member.PersonalEmail</td>
+                <td>
+                    <a asp-action="RemoveMember" asp-route-id="@ViewBag.Group.Id" asp-route-personId="@member.Id"
+                   class="btn btn-outline-danger btn-sm" title="Delete Member">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @section Scripts  {
+    <script src="~/js/autocomplete.js" asp-append-version="true"></script>
     <script>
         $(function () {
             $("#delete").click(function () {
                 if (confirm("Do you want to delete this group?"))
                     window.location.href = "../delete/@ViewBag.Group.Id";
+            });
+            const field = document.getElementById("search");
+            const ac = new Autocomplete(field, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/person/autocomplete",
+                        data: { searchText: $("#search").val() },
+                        success: results => ac.setData(results.map(r =>
+                            ({ label: r.campusId + " " + r.fullName, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    window.location.href = "../addmember/@ViewBag.Group.Id?personId=" + value;
+                }
             });
         });
     </script>

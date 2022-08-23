@@ -66,6 +66,7 @@ namespace Ascent.Controllers
             if (group.IsVirtual) return RedirectToAction("Index");
 
             ViewBag.Group = group;
+            ViewBag.Members = _groupService.GetMembers(group);
 
             return View(_mapper.Map<GroupInputModel>(group));
         }
@@ -85,6 +86,24 @@ namespace Ascent.Controllers
             _logger.LogInformation("{user} edited group {group}", User.Identity.Name, group.Name);
 
             return RedirectToAction("View", new { id = group.Id });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult AddMember(int id, int personId)
+        {
+            _groupService.AddMemberToGroup(id, personId);
+            _logger.LogInformation("{user} added person {person} to group {group}", User.Identity.Name, personId, id);
+
+            return RedirectToAction("Edit", new { id });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult RemoveMember(int id, int personId)
+        {
+            _groupService.RemoveMemberFromGroup(id, personId);
+            _logger.LogInformation("{user} removed person {person} from group {group}", User.Identity.Name, personId, id);
+
+            return RedirectToAction("Edit", new { id });
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]
