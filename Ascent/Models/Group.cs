@@ -16,6 +16,8 @@ public class Group
     [MaxLength(10)]
     public EmailPreference EmailPreference { get; set; }
 
+    public int MemberCount { get; set; }
+
     // The system recognizes a few "virtual" groups, e.g. BS Alumni and MS Alumni.
     // Virtual groups don't have explicitly specified members; instead, their members are
     // based on certain query criteria. For all the recognized virtual groups, please see

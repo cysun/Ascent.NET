@@ -33,6 +33,7 @@ CREATE TABLE "Groups" (
     "Name" character varying(32) NOT NULL,
     "Description" text NULL,
     "EmailPreference" character varying(10) NOT NULL,
+    "MemberCount" integer NOT NULL DEFAULT 0,
     "IsVirtual" boolean NOT NULL,
     CONSTRAINT "PK_Groups" PRIMARY KEY ("Id")
 );
@@ -333,7 +334,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20220823033543_InitialSchema', '6.0.8');
+VALUES ('20220823224348_InitialSchema', '6.0.8');
 
 COMMIT;
 

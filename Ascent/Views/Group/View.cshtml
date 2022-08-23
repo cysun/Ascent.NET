@@ -35,7 +35,7 @@
         {
             <tr>
                 <td class="d-none d-md-table-cell">@member.CampusId</td>
-                <td>@member.FullName</td>
+                <td><a asp-controller="Person" asp-action="View" asp-route-id="@member.Id">@member.FullName</a></td>
                 <td class="d-none d-lg-table-cell">@member.SchoolEmail</td>
                 <td class="d-none d-lg-table-cell">@member.PersonalEmail</td>
                 <td class="d-lg-none">@member.Email</td>

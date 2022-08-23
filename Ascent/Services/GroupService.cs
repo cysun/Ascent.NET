@@ -62,9 +62,11 @@ public class GroupService
 
     public void AddMemberToGroup(int groupId, int personId)
     {
+        var group = _db.Groups.Find(groupId);
         var member = _db.GroupMembers.Where(m => m.GroupId == groupId && m.PersonId == personId).SingleOrDefault();
-        if (member == null)
+        if (group != null && member == null)
         {
+            group.MemberCount++;
             _db.GroupMembers.Add(new GroupMember
             {
                 GroupId = groupId,
@@ -76,9 +78,11 @@ public class GroupService
 
     public void RemoveMemberFromGroup(int groupId, int personId)
     {
+        var group = _db.Groups.Find(groupId);
         var member = _db.GroupMembers.Where(m => m.GroupId == groupId && m.PersonId == personId).SingleOrDefault();
-        if (member != null)
+        if (group != null && member != null)
         {
+            group.MemberCount--;
             _db.GroupMembers.Remove(member);
             _db.SaveChanges();
         }

@@ -40,6 +40,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Person>().Property(p => p.IsDeleted).HasDefaultValue(false);
         modelBuilder.Entity<Group>().HasIndex(g => g.Name).IsUnique();
         modelBuilder.Entity<Group>().Property(g => g.EmailPreference).HasConversion<string>();
+        modelBuilder.Entity<Group>().Property(g => g.MemberCount).HasDefaultValue(0);
         modelBuilder.Entity<GroupMember>().HasKey(m => new { m.GroupId, m.PersonId });
         modelBuilder.Entity<Course>().HasAlternateKey(c => new { c.Subject, c.Number });
         modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
