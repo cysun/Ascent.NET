@@ -6,7 +6,9 @@
 <nav>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-action="Index">Groups</a></li>
-        <li class="breadcrumb-item active me-auto">@Model.Name</li>
+        <li class="breadcrumb-item active me-auto">
+            @Model.Name <span class="badge text-bg-secondary ms-2">Prefer @Model.EmailPreference.ToString() Email</span>
+        </li>
         <li>
             <a asp-controller="Email" asp-action="Group" asp-route-groupId="@Model.Id" class="btn btn-outline-primary btn-sm" title="Email Group">
                 <i class="bi bi-envelope-fill"></i>
@@ -22,8 +24,6 @@
         }
     </ol>
 </nav>
-
-<span class="badge text-bg-success">Prefer @Model.EmailPreference.ToString() Email</span>
 
 <table class="table table-striped mt-3">
     <thead>
@@ -43,7 +43,7 @@
                 <td><a asp-controller="Person" asp-action="View" asp-route-id="@member.Id">@member.FullName</a></td>
                 <td class="d-none d-lg-table-cell">@member.SchoolEmail</td>
                 <td class="d-none d-lg-table-cell">@member.PersonalEmail</td>
-                <td class="d-lg-none">@member.Email</td>
+                <td class="d-lg-none">@member.GetPreferredEmail(Model.EmailPreference)</td>
             </tr>
         }
     </tbody>

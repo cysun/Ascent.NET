@@ -1,5 +1,6 @@
 using Ascent.Models;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
@@ -44,10 +45,13 @@ public class EmailSender
                 messages.Add(msg);
             }
 
-            if (message.UseBcc)
-                msg.Bcc.Add(new MailboxAddress(recipients[i].Name, recipients[i].Email));
-            else
-                msg.To.Add(new MailboxAddress(recipients[i].Name, recipients[i].Email));
+            if (!message.Author.Email.Equals(recipients[i].Email, StringComparison.OrdinalIgnoreCase))
+            {
+                if (message.UseBcc)
+                    msg.Bcc.Add(new MailboxAddress(recipients[i].Name, recipients[i].Email));
+                else
+                    msg.To.Add(new MailboxAddress(recipients[i].Name, recipients[i].Email));
+            }
         }
 
         return Send(messages);
@@ -60,7 +64,8 @@ public class EmailSender
 
         try
         {
-            client.Connect(_settings.Host, _settings.Port, false);
+            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            client.Connect(_settings.Host, _settings.Port, SecureSocketOptions.None);
             if (_settings.RequireAuthentication)
                 client.Authenticate(_settings.Username, _settings.Password);
 
