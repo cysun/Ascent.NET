@@ -28,6 +28,7 @@ DROP TABLE "Enrollments";
 DROP TABLE "Sections";
 DROP TABLE "Grades";
 DROP TABLE "Courses";
+DROP TABLE "Messages";
 DROP TABLE "GroupMembers";
 DROP TABLE "Groups";
 DROP TABLE "Persons";

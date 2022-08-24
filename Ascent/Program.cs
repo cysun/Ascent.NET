@@ -82,8 +82,13 @@ services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
 
 services.Configure<FilesSettings>(configuration.GetSection("Files"));
 services.AddScoped<FileService>();
+
+services.Configure<EmailSettings>(configuration.GetSection("Email"));
+services.AddScoped<EmailSender>();
+
 services.AddScoped<PageService>();
 services.AddScoped<PersonService>();
+services.AddScoped<MessageService>();
 services.AddScoped<GroupService>();
 services.AddScoped<CourseService>();
 services.AddScoped<SectionService>();

@@ -32,6 +32,7 @@ summernoteOptions.minimal = {
     toolbar: [
         ['font', ['bold', 'italic', 'underline']],
         ['para', ['ul', 'ol']],
+        ['insert', ['link', 'picture']],
         ['view', ['codeview', 'fullscreen']]
     ]
 };

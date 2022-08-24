@@ -27,6 +27,8 @@ public class MapperProfile : Profile
         CreateMap<Page, PageRevision>().ForMember(dest => dest.PageId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.TimeCreated, opt => opt.Ignore());
 
+        CreateMap<MessageInputModel, Message>();
+
         CreateMap<string, List<(int, int)>>().ConvertUsing(new StringToRanksConverter());
         CreateMap<MftDistributionInputModel, MftDistribution>();
         CreateMap<MftIndicatorInputModel, MftIndicator>();

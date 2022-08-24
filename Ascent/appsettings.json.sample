@@ -7,6 +7,13 @@
     "ClientId": "ascent-webapp",
     "ClientSecret": "********"
   },
+  "Email": {
+    "Host": "localhost",
+    "Port": 25,
+    "RequireAuthentication": true,
+    "Username": "cysun@localhost.localdomain",
+    "Password": "abcd"
+  },
   "Files": {
     "Directory": "D:/Temp/Ascent/files",
     "AttachmentTypes": [ ".xls", ".xlsx", ".zip" ],

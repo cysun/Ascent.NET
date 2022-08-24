@@ -1,0 +1,49 @@
+@model MessageInputModel
+@{
+    ViewData["Title"] = "Email Group";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Group" asp-action="Index">Group</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Group" asp-action="View" asp-route-id="@ViewBag.Group.Id">
+                @ViewBag.Group.Name
+            </a>
+        </li>
+        <li class="breadcrumb-item active">Email</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <input asp-for="Subject" class="form-control mb-3" placeholder="Subject" required>
+    <textarea asp-for="Content" class="form-control" required></textarea>
+    <div class="form-check my-3">
+        <input asp-for="UseBcc" class="form-check-input">
+        <label asp-for="UseBcc" class="form-check-label"></label>
+    </div>
+    <a id="cancel" class="btn btn-secondary me-2" asp-controller="Group" asp-action="View" asp-route-id="@ViewBag.Group.Id">Cancel</a>
+    <button id="send" type="button" class="btn btn-primary">Send</button>
+</form>
+
+@section StyleSheets{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
+      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+    @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
+        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/js/summernote-options.js"></script>
+    <script>
+        $(function () {
+            $("#Content").summernote(summernoteOptions.minimal);
+            $("#send").click(function () {
+                $("#cancel").addClass("disabled");
+                $(this).prop("disabled", true);
+                $(this).html("<span class='spinner-border spinner-border-sm'></span> Sending");
+                $("form").submit();
+            });
+        });
+    </script>
+}

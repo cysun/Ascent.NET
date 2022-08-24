@@ -39,4 +39,12 @@ public class Person
     public string FullName2 => $"{LastName}, {FirstName}";
 
     public string Email => string.IsNullOrWhiteSpace(PersonalEmail) ? SchoolEmail : PersonalEmail;
+
+    public string GetPreferredEmail(EmailPreference preference)
+    {
+        if (preference == EmailPreference.Personal)
+            return !string.IsNullOrWhiteSpace(PersonalEmail) ? PersonalEmail : SchoolEmail;
+        else
+            return !string.IsNullOrWhiteSpace(SchoolEmail) ? SchoolEmail : PersonalEmail;
+    }
 }
