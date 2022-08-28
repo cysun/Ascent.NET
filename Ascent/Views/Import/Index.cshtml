@@ -10,8 +10,8 @@
     <div class="col">
         <div class="card h-100">
             <div class="card-header">Grades</div>
-            <div class="card-body" ?>
-                <p class="card-text">
+            <div class="card-body d-flex flex-column">
+                <p class="card-text flex-grow-1">
                     Grades for each class section can be downloaded from GET at Curriculum Management -&gt;
                     Grading -&gt; Grade Roster. Select a term and enter "CS" for subject area in the search form.
                     For each section in the results, go to the Grade Roster tab and select Download to Excel.
@@ -20,7 +20,29 @@
                     Note that the grade sheet must have the <em>Official Grade</em> column populated, not
                     just the <em>Roster Grade</em> column.
                 </p>
-                <a class="btn btn-primary" asp-action="Grades">Import</a>
+                <div>
+                    <a class="btn btn-primary" asp-action="Grades">Import</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header">Group</div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text flex-grow-1">
+                    Import members to a group from an Excel file. The first row of the Excel file must
+                    contain column name:
+                </p>
+                <ul>
+                    <li>CIN</li>
+                    <li>FirstName</li>
+                    <li>LastName</li>
+                    <li>Email (optional)</li>
+                </ul>
+                <div>
+                    <a class="btn btn-primary" asp-action="Group">Import</a>
+                </div>
             </div>
         </div>
     </div>

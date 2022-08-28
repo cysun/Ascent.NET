@@ -38,13 +38,18 @@ public class Person
     public string FullName => $"{FirstName} {LastName}";
     public string FullName2 => $"{LastName}, {FirstName}";
 
-    public string Email => string.IsNullOrWhiteSpace(PersonalEmail) ? SchoolEmail : PersonalEmail;
+    public string Email => SchoolEmail ?? PersonalEmail;
 
-    public string GetPreferredEmail(EmailPreference preference)
+    public string GetPreferredEmail(EmailPreference preference) => preference == EmailPreference.Personal ?
+        PersonalEmail ?? SchoolEmail : SchoolEmail ?? PersonalEmail;
+
+    public void UpdateEmail(string email)
     {
-        if (preference == EmailPreference.Personal)
-            return !string.IsNullOrWhiteSpace(PersonalEmail) ? PersonalEmail : SchoolEmail;
+        if (string.IsNullOrWhiteSpace(email)) return;
+
+        if (email.ToLower().Contains("calstatela"))
+            SchoolEmail ??= email;
         else
-            return !string.IsNullOrWhiteSpace(SchoolEmail) ? SchoolEmail : PersonalEmail;
+            PersonalEmail ??= email;
     }
 }

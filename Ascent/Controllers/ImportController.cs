@@ -1,3 +1,4 @@
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Services;
 using HtmlAgilityPack;
@@ -10,15 +11,17 @@ namespace Ascent.Controllers
     public class ImportController : Controller
     {
         private readonly PersonService _personService;
+        private readonly GroupService _groupService;
         private readonly SectionService _sectionService;
         private readonly EnrollmentService _enrollmentService;
 
         private readonly ILogger<ImportController> _logger;
 
-        public ImportController(PersonService personService, SectionService sectionService,
+        public ImportController(PersonService personService, GroupService groupService, SectionService sectionService,
             EnrollmentService enrollmentService, ILogger<ImportController> logger)
         {
             _personService = personService;
+            _groupService = groupService;
             _sectionService = sectionService;
             _enrollmentService = enrollmentService;
             _logger = logger;
@@ -158,6 +161,51 @@ namespace Ascent.Controllers
             }
 
             public string GradeSymbol { get; set; }
+        }
+
+        [HttpGet]
+        public IActionResult Group()
+        {
+            return View(_groupService.GetGroups());
+        }
+
+        [HttpPost]
+        public IActionResult Group(int groupId, IFormFile uploadedFile)
+        {
+            var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
+            while (excelReader.Next())
+            {
+                var person = GetOrCreatePerson(excelReader);
+                _groupService.AddMemberToGroup(groupId, person.Id);
+            }
+            return RedirectToAction("View", "Group", new { id = groupId });
+        }
+
+        public Person GetOrCreatePerson(ExcelReader excelReader)
+        {
+            string cin = excelReader.Get("CIN");
+            var person = _personService.GetPersonByCampusId(cin);
+            if (person == null)
+            {
+                person = new Person
+                {
+                    CampusId = cin,
+                    FirstName = excelReader.Get("FirstName"),
+                    LastName = excelReader.Get("LastName")
+                };
+                _personService.AddPerson(person);
+            }
+
+            if (excelReader.HasColumn("Email"))
+            {
+                // There could be multiple emails 
+                string[] emails = excelReader.Get("Email").Split(new string[] { ",", " " }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var email in emails)
+                    person.UpdateEmail(email);
+                _personService.SaveChanges();
+            }
+
+            return person;
         }
     }
 }
