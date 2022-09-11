@@ -28,8 +28,10 @@
             <select asp-for="Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select"></select>
         </div>
     }
-    <textarea asp-for="Description" class="form-control"></textarea>
-    <div id="choiceRow" class="row mt-3">
+    <div class="mb-3">
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <div id="choiceRow" class="row">
         @if (ViewBag.Survey.IsPublished)
         {
             <div class="col-4">
@@ -142,12 +144,12 @@
                 if (newNumOfChoices > oldNumOfChoices) {
                     for (var i = oldNumOfChoices; i < newNumOfChoices; ++i)
                         $("#choiceRow").append(`
-                                                                    <div class="col-12">
-                                                                        <div class="input-group mb-3">
-                                                                            <span class="input-group-text">${i + 1}</span>
-                                                                            <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
-                                                                        </div>
-                                                                    </div>`);
+                                                                            <div class="col-12">
+                                                                                <div class="input-group mb-3">
+                                                                                    <span class="input-group-text">${i + 1}</span>
+                                                                                    <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
+                                                                                </div>
+                                                                            </div>`);
                 }
                 if (newNumOfChoices < oldNumOfChoices) {
                     for (var i = newNumOfChoices; i < oldNumOfChoices; ++i)
