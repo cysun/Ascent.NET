@@ -1,0 +1,66 @@
+@model SurveyResponse
+@{
+    ViewData["Title"] = "View Survey Response";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="View" asp-route-id="@Model.Id">@Model.Survey.Name</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Survey.Id">Response Summary</a>
+        </li>
+        <li class="breadcrumb-item active">View Response</li>
+    </ol>
+</nav>
+
+@{
+    var index = 0;
+}
+@foreach (var answer in Model.Answers)
+{
+    var question = answer.Question;
+    if (question.Type == QuestionType.Section)
+    {
+        <div class="rounded bg-secondary p-3 mb-3">
+            @Html.Raw(answer.Question.Description)
+        </div>
+    }
+    else
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex align-items-center">
+                @if (question.Type != QuestionType.Section)
+                {
+                    <span>@(++index)</span>
+                }
+            </div>
+            <div class="card-body">
+                <div class="card-title">@Html.Raw(question.Description)</div>
+                @if (question.Type == QuestionType.Choice)
+                {
+                    <ul class="list-group list-group-flush">
+                        @for (int i = 0; i < question.Choices.Count; ++i)
+                        {
+                            var highlight = question.MaxSelection == 1 && answer.SingleSelection == question.Choices[i] ||
+                            question.MaxSelection > 1 && answer.Selections[i];
+                            <li class="list-group-item @(highlight? "text-bg-success" : "")">@question.Choices[i]</li>
+                        }
+                    </ul>
+                }
+                else if (question.Type == QuestionType.Rating)
+                {
+                    <ul class="list-group list-group-flush">
+                        @for (int i = question.MinRating; i <= question.MaxRating; ++i)
+                        {
+                            <li class="list-group-item @(answer.Rating == i? "text-bg-success" : "")">@i</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="form-control">@answer.Text</div>
+                }
+            </div>
+        </div>
+    }
+}

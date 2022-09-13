@@ -71,5 +71,12 @@ public class SurveyService
         _db.SaveChanges();
     }
 
+    public List<SurveyAnswer> GetSurveyAnswers(int surveyId) => _db.SurveyAnswers.AsNoTracking()
+        .Where(a => a.Question.SurveyId == surveyId).ToList();
+
+    public SurveyResponse GetSurveyResponse(string id) => _db.SurveyResponses.AsNoTracking()
+        .Where(r => r.Id == Guid.Parse(id)).Include(r => r.Survey)
+        .Include(r => r.Answers).ThenInclude(a => a.Question).SingleOrDefault();
+
     public void SaveChanges() => _db.SaveChanges();
 }

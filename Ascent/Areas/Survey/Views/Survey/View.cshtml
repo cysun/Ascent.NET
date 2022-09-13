@@ -55,7 +55,13 @@
     <div class="col">
         <div class="card h-100">
             <div class="card-header text-bg-info">Responses</div>
-            <div class="card-body">@Model.ResponseCount</div>
+            <div class="card-body">
+                <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Id" title="Response Summary"
+                   class="btn btn-outline-primary btn-sm ms-auto @(Model.ResponseCount == 0 ? "disabled" : "")">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span class="badge text-bg-secondary">@Model.ResponseCount</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -154,15 +160,15 @@
 @section Scripts{
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script>
-        $(function() {
-            $(".link").click(function() {
+        $(function () {
+            $(".link").click(function () {
                 var url = window.location.origin + "/survey/response/edit?surveyId=@Model.Id";
                 navigator.clipboard.writeText(url);
                 $("#surveyLink").text(url);
                 var toast = new bootstrap.Toast($("#toast"), { delay: 3000 });
                 toast.show();
             });
-            $(".qr").click(function() {
+            $(".qr").click(function () {
                 var url = window.location.origin + "/survey/response/edit?surveyId=@Model.Id";
                 $("#qr-link").text(url);
                 var qrCode = new QRious({

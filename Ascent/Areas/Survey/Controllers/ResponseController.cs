@@ -72,6 +72,26 @@ namespace Ascent.Areas.Survey.Controllers
         {
             return View(status);
         }
+
+        public new IActionResult View(string id)
+        {
+            var response = _surveyService.GetSurveyResponse(id);
+            if (response == null) return NotFound();
+
+            return View(response);
+        }
+
+        public IActionResult Summary(int surveyId)
+        {
+            var survey = _surveyService.GetSurvey(surveyId);
+            if (survey == null) return NotFound();
+
+            ViewBag.Questions = _surveyService.GetQuestions(surveyId);
+            ViewBag.AnswersByQuestion = _surveyService.GetSurveyAnswers(surveyId)
+                .GroupBy(a => a.QuestionId).ToDictionary(g => g.Key, g => g.ToList());
+
+            return View(survey);
+        }
     }
 }
 
