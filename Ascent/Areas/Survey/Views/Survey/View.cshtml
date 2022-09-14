@@ -46,7 +46,7 @@
                         <i class="bi bi-bar-chart-line-fill"></i>
                         <span class="badge text-bg-secondary">@Model.ResponseCount</span>
                     </a>
-                    <a asp-controller="Response" asp-action="Export" asp-route-surveyId="@Model.Id" title="Export Responses"
+                    <a asp-controller="Response" asp-action="Excel" asp-route-surveyId="@Model.Id" title="Export Responses"
                    class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-spreadsheet-fill"></i></a>
                 }
             </div>

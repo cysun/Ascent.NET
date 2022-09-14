@@ -3,6 +3,7 @@ using Ascent.Models;
 using Ascent.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.XSSF.UserModel;
 
 namespace Ascent.Areas.Survey.Controllers
 {
@@ -75,7 +76,7 @@ namespace Ascent.Areas.Survey.Controllers
 
         public new IActionResult View(string id)
         {
-            var response = _surveyService.GetSurveyResponse(id);
+            var response = _surveyService.GetResponse(id);
             if (response == null) return NotFound();
 
             return View(response);
@@ -87,10 +88,50 @@ namespace Ascent.Areas.Survey.Controllers
             if (survey == null) return NotFound();
 
             ViewBag.Questions = _surveyService.GetQuestions(surveyId);
-            ViewBag.AnswersByQuestion = _surveyService.GetSurveyAnswers(surveyId)
+            ViewBag.AnswersByQuestion = _surveyService.GetAnswers(surveyId)
                 .GroupBy(a => a.QuestionId).ToDictionary(g => g.Key, g => g.ToList());
 
             return View(survey);
+        }
+
+        public IActionResult Excel(int surveyId)
+        {
+            var survey = _surveyService.GetSurvey(surveyId);
+            if (survey == null) return NotFound();
+
+            var questions = _surveyService.GetQuestions(surveyId);
+            var responses = _surveyService.GetResponses(surveyId);
+
+            var workbook = new XSSFWorkbook();
+            var sheet = workbook.CreateSheet("Responses");
+
+            var row = sheet.CreateRow(0);
+            row.CreateCell(0).SetCellValue("Timestamp");
+            var questionIndex = 1;
+            foreach (var question in questions)
+                if (question.Type != QuestionType.Section)
+                    row.CreateCell(questionIndex).SetCellValue("Q" + questionIndex++);
+
+            var responseIndex = 1;
+            foreach (var response in responses)
+            {
+                row = sheet.CreateRow(responseIndex++);
+                row.CreateCell(0).SetCellValue(response.TimeSubmitted?.ToString("g"));
+                var answerIndex = 1;
+                for (int i = 0; i < response.Answers.Count; ++i)
+                {
+                    var answer = response.Answers[i];
+                    answer.Question = questions[i];
+                    if (answer.Question.Type != QuestionType.Section)
+                        row.CreateCell(answerIndex++).SetCellValue(answer.AnswerAsText);
+                }
+            }
+
+            using var stream = new MemoryStream();
+            workbook.Write(stream);
+
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                survey.Name + " Responses.xlsx");
         }
     }
 }
