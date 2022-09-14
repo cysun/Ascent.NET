@@ -5,29 +5,12 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
-        <li class="breadcrumb-item active me-auto">@Model.Name</li>
-        <li>
-            @if (Model.IsPublished && !Model.IsClosed)
-            {
-                <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link">
-                    <i class="bi bi-link"></i>
-                </button>
-                <button class="btn btn-outline-primary btn-sm me-2 qr" title="QR Code">
-                    <i class="bi bi-qr-code"></i>
-                </button>
-            }
-            @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-            {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Survey">
-                    <i class="bi bi-pencil-fill"></i>
-                </a>
-            }
-        </li>
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item active">@Model.Name</li>
     </ol>
 </nav>
 
-<div class="row row-cols-3 g-4 mb-3">
+<div class="row row-cols-2 row-cols-md-4 g-4 mb-3">
     <div class="col">
         <div class="card h-100">
             <div class="card-header text-bg-info">Publish <span class="d-none d-md-inline">Date</span></div>
@@ -56,11 +39,38 @@
         <div class="card h-100">
             <div class="card-header text-bg-info">Responses</div>
             <div class="card-body">
-                <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Id" title="Response Summary"
-                   class="btn btn-outline-primary btn-sm ms-auto @(Model.ResponseCount == 0 ? "disabled" : "")">
-                    <i class="bi bi-bar-chart-line-fill"></i>
-                    <span class="badge text-bg-secondary">@Model.ResponseCount</span>
-                </a>
+                @if (Model.ResponseCount > 0)
+                {
+                    <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Id" title="Response Summary"
+                   class="btn btn-outline-primary btn-sm me-2">
+                        <i class="bi bi-bar-chart-line-fill"></i>
+                        <span class="badge text-bg-secondary">@Model.ResponseCount</span>
+                    </a>
+                    <a asp-controller="Response" asp-action="Export" asp-route-surveyId="@Model.Id" title="Export Responses"
+                   class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-spreadsheet-fill"></i></a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header text-bg-info">Operations</div>
+            <div class="card-body">
+                @if (Model.IsPublished && !Model.IsClosed)
+                {
+                    <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link">
+                        <i class="bi bi-link"></i>
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm me-2 qr" title="QR Code">
+                        <i class="bi bi-qr-code"></i>
+                    </button>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Survey">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                }
             </div>
         </div>
     </div>

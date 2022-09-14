@@ -4,9 +4,11 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="View" asp-route-id="@Model.Id">@Model.Survey.Name</a></li>
-        <li class="breadcrumb-item">
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-lg-block">
+            <a asp-controller="Survey" asp-action="View" asp-route-id="@Model.Id">@Model.Survey.Name</a>
+        </li>
+        <li class="breadcrumb-item d-none d-lg-block">
             <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Survey.Id">Response Summary</a>
         </li>
         <li class="breadcrumb-item active">View Response</li>

@@ -4,8 +4,8 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="View" asp-route-id="@Model.Id">@Model.Name</a></li>
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="View" asp-route-id="@Model.Id">@Model.Name</a></li>
         <li class="breadcrumb-item active">Response Summary</li>
     </ol>
 </nav>
@@ -73,11 +73,14 @@
                     <ul class="list-group list-group-flush">
                         @foreach (var answer in answers)
                         {
-                            <li class="list-group-item">
-                                <a asp-controller="Response" asp-action="View" asp-route-id="@answer.ResponseId"
+                            if (!string.IsNullOrWhiteSpace(answer.Text))
+                            {
+                                <li class="list-group-item">
+                                    <a asp-controller="Response" asp-action="View" asp-route-id="@answer.ResponseId"
                    class="me-2"><i class="bi bi-card-checklist"></i></a>
-                                @answer.Text
-                            </li>
+                                    @answer.Text
+                                </li>
+                            }
                         }
                     </ul>
                 }
