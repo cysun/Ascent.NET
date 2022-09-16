@@ -123,7 +123,7 @@ namespace Ascent.Areas.Survey.Controllers
                     var answer = response.Answers[i];
                     answer.Question = questions[i];
                     if (answer.Question.Type != QuestionType.Section)
-                        row.CreateCell(answerIndex++).SetCellValue(answer.AnswerAsText);
+                        row.CreateCell(answerIndex++).SetCellValue(answer.GetAnswerAsText());
                 }
             }
 

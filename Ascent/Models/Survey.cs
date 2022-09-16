@@ -134,22 +134,19 @@ public class SurveyAnswer
             for (int i = 0; i < question.Choices.Count; ++i) Selections.Add(false);
     }
 
-    public string AnswerAsText
+    public string GetAnswerAsText()
     {
-        get
+        if (Question.Type == QuestionType.Choice && Question.MaxSelection == 1)
+            return SingleSelection;
+        else if (Question.Type == QuestionType.Choice && Question.MaxSelection > 1)
         {
-            if (Question.Type == QuestionType.Choice && Question.MaxSelection == 1)
-                return SingleSelection;
-            else if (Question.Type == QuestionType.Choice && Question.MaxSelection > 1)
-            {
-                var indexes = Selections.Select((selection, index) => new { selection, index })
-                    .Where(v => v.selection).Select(v => v.index);
-                return string.Join(",", indexes);
-            }
-            else if (Question.Type == QuestionType.Rating)
-                return !NotApplicable && Rating != null ? Rating.ToString() : "";
-            else
-                return Text;
+            var indexes = Selections.Select((selection, index) => new { selection, index })
+                .Where(v => v.selection).Select(v => v.index);
+            return string.Join(",", indexes);
         }
+        else if (Question.Type == QuestionType.Rating)
+            return !NotApplicable && Rating != null ? Rating.ToString() : "";
+        else
+            return Text;
     }
 }
