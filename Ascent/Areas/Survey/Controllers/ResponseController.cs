@@ -20,6 +20,11 @@ namespace Ascent.Areas.Survey.Controllers
             _logger = logger;
         }
 
+        public List<SurveyResponse> Find(int questionId, int selection)
+        {
+            return _surveyService.FindResponses(questionId, selection);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Edit(int surveyId)

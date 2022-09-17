@@ -81,5 +81,32 @@ public class SurveyService
     public List<SurveyResponse> GetResponses(int surveyId) => _db.SurveyResponses.AsNoTracking()
         .Where(r => r.SurveyId == surveyId).Include(r => r.Answers.OrderBy(a => a.Question.Index)).ToList();
 
+    public List<SurveyResponse> FindResponses(int questionId, int selection)
+    {
+        var question = _db.SurveyQuestions.Find(questionId);
+        if (question == null) return new List<SurveyResponse>();
+
+        if (question.Type == QuestionType.Rating)
+            return _db.SurveyAnswers.AsNoTracking()
+                .Where(a => a.QuestionId == questionId && a.Rating == selection)
+                .Include(a => a.Response).OrderBy(a => a.Response.TimeSubmitted)
+                .Select(a => a.Response).ToList();
+        else if (question.Type == QuestionType.Choice && question.MaxSelection == 1)
+            return _db.SurveyAnswers.AsNoTracking()
+                .Where(a => a.QuestionId == questionId && a.SingleSelection == question.Choices[selection])
+                .Include(a => a.Response).OrderBy(a => a.Response.TimeSubmitted)
+                .Select(a => a.Response).ToList();
+        else if (question.Type == QuestionType.Choice && question.MaxSelection > 1)
+        {
+            var query = @"SELECT * FROM ""SurveyAnswers"" WHERE ""QuestionId"" = {0}
+                AND (""Selections""::json->{1})::text::boolean"; // Need to first cast to text, then to boolean
+            return _db.SurveyAnswers.FromSqlRaw(query, questionId, selection).AsNoTracking()
+                .Include(a => a.Response).OrderBy(a => a.Response.TimeSubmitted)
+                .Select(a => a.Response).ToList();
+        }
+        else
+            return new List<SurveyResponse>();
+    }
+
     public void SaveChanges() => _db.SaveChanges();
 }

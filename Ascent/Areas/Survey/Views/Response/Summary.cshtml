@@ -1,6 +1,7 @@
 @model Survey
 @{
     ViewData["Title"] = "Survey Summary";
+    string countClasses(int count) => count > 0 ? "badge text-bg-primary clickable me-2" : "badge text-bg-secondary me-2";
 }
 <nav>
     <ol class="breadcrumb">
@@ -39,16 +40,12 @@
                         @for (int i = 0; i < question.Choices.Count; ++i)
                         {
                             <li class="list-group-item">
-                                @if (question.MaxSelection == 1)
-                                {
-                                    <span class="badge text-bg-primary me-2">
-                                        @answers.Where(a => a.SingleSelection == question.Choices[i]).Count()
-                                    </span>
+                                @{
+                                    var count = question.MaxSelection == 1
+                                    ? answers.Where(a => a.SingleSelection == question.Choices[i]).Count()
+                                    : answers.Where(a => a.Selections[i]).Count();
                                 }
-                                else
-                                {
-                                    @answers.Where(a => a.Selections[i]).Count()
-                                }
+                                <span class="@countClasses(count)" data-question="@question.Id" data-selection="@i">@count</span>
                                 @question.Choices[i]
                             </li>
                         }
@@ -60,8 +57,9 @@
                     <ul class="list-group list-group-flush">
                         @for (int i = question.MinRating; i <= question.MaxRating; ++i)
                         {
+                            var count = answers.Where(a => a.Rating == i).Count();
                             <li class="list-group-item">
-                                <span class="badge text-bg-primary me-2">@answers.Where(a => a.Rating == i).Count()</span>
+                                <span class="@countClasses(count)" data-question="@question.Id" data-selection="@i">@count</span>
                                 <span>@i</span>
                             </li>
                         }
@@ -87,4 +85,38 @@
             </div>
         </div>
     }
+}
+
+<div id="resmodal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <ul id="reslist" class="list-group list-group-flush">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            const resmodal = new bootstrap.Modal('#resmodal');
+            $(".clickable").click(function () {
+                $.ajax({
+                    url: "/survey/response/find",
+                    data: {
+                        questionId: $(this).attr("data-question"),
+                        selection: $(this).attr("data-selection")
+                    },
+                    success: function (results) {
+                        var items = results.map(res => $("<li class='list-group-item'><a href='/survey/response/view/"
+                            + res.id + "'>" + new Date(res.timeSubmitted).toLocaleString() + "</a></li>"));
+                        $("#reslist").empty().append(items);
+                        resmodal.show();
+                    }
+                });
+            });
+        });
+    </script>
 }
