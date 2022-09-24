@@ -1,3 +1,7 @@
+DROP TABLE "RubricRatings";
+DROP TABLE "RubricCriteria";
+DROP TABLE "Rubrics";
+
 DROP TABLE "ProgramItems";
 DROP TABLE "ProgramModules";
 DROP TABLE "ProgramOutcomes";

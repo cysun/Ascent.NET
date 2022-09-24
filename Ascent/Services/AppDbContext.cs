@@ -34,6 +34,9 @@ public class AppDbContext : DbContext
     public DbSet<ProgramOutcome> ProgramOutcomes { get; set; }
     public DbSet<ProgramModule> ProgramModules { get; set; }
     public DbSet<ProgramItem> ProgramItems { get; set; }
+    public DbSet<Rubric> Rubrics { get; set; }
+    public DbSet<RubricCriterion> RubricCriteria { get; set; }
+    public DbSet<RubricRating> RubricRatings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,6 +61,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ProgramModule>().HasIndex(m => new { m.ProgramId, m.Index });
         modelBuilder.Entity<ProgramItem>().Property(i => i.Type).HasConversion<string>();
         modelBuilder.Entity<ProgramItem>().HasIndex(i => new { i.ModuleId, i.Index });
+        modelBuilder.Entity<RubricRating>().HasKey(r => new { r.CriterionId, r.Index });
 
         // We'll create/replace Ranks as a whole instead of adding/removing individual entries, so the
         // ValueComparer is mainly for show (and to shut up the EF Core warning). See
