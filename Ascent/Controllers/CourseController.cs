@@ -51,7 +51,7 @@ namespace Ascent.Controllers
 
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult Add(CourseInputModel input, IFormFile uploadedFile)
+        public async Task<IActionResult> AddAsync(CourseInputModel input, IFormFile uploadedFile)
         {
             if (!ModelState.IsValid) return View(input);
 
@@ -59,7 +59,7 @@ namespace Ascent.Controllers
             if (uploadedFile != null)
             {
                 var folder = _fileService.GetFolder("Courses/ABET Syllabi");
-                course.AbetDescription = _fileService.UploadFile(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
+                course.AbetDescription = await _fileService.UploadFileAsync(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
             }
 
             _courseService.AddCourse(course);
@@ -82,7 +82,7 @@ namespace Ascent.Controllers
 
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult Edit(int id, CourseInputModel input, IFormFile uploadedFile)
+        public async Task<IActionResult> EditAsync(int id, CourseInputModel input, IFormFile uploadedFile)
         {
             if (!ModelState.IsValid) return View(input);
 
@@ -93,7 +93,7 @@ namespace Ascent.Controllers
             if (uploadedFile != null)
             {
                 var folder = _fileService.GetFolder("Courses/ABET Syllabi");
-                course.AbetDescription = _fileService.UploadFile(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
+                course.AbetDescription = await _fileService.UploadFileAsync(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
             }
 
             _courseService.SaveChanges();

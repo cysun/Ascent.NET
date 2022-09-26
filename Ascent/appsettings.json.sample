@@ -14,10 +14,14 @@
     "Username": "cysun@localhost.localdomain",
     "Password": "abcd"
   },
-  "Files": {
-    "Directory": "D:/Temp/Ascent/files",
-    "AttachmentTypes": [ ".xls", ".xlsx", ".zip" ],
-    "TextTypes": [ ".txt", ".java" ]
+  "Minio": {
+    "Endpoint": "sfo3.digitaloceanspaces.com",
+    "AccessKey": "abcd",
+    "SecretKey": "1234",
+    "Bucket": "test",
+    "PathPrefix": "",
+    "AttachmentTypes": [ ".zip" ],
+    "TextTypes": [ ".java", ".sql", ".jsp", ".txt", ".php" ]
   },
   "Serilog": {
     "Using": [

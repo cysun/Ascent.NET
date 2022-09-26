@@ -93,20 +93,20 @@ namespace Ascent.Controllers
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             var file = _fileService.GetFile(id);
             if (file == null) return NotFound();
 
             if (file.IsFolder)
             {
-                var filesDeleted = _fileService.DeleteFolder(id);
+                var filesDeleted = await _fileService.DeleteFolderAsync(id);
                 _logger.LogInformation("User {user} deleted folder {folder} with {n} files",
                     User.Identity.Name, file.Name, filesDeleted);
             }
             else
             {
-                var versionsDeleted = _fileService.DeleteFile(id);
+                var versionsDeleted = await _fileService.DeleteFileAsync(id);
                 _logger.LogInformation("User {user} deleted file {file} with {n} versions",
                     User.Identity.Name, file.Name, versionsDeleted);
             }
@@ -119,10 +119,10 @@ namespace Ascent.Controllers
 
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult Upload(int? parentId, IFormFile[] uploadedFiles)
+        public async Task<IActionResult> UploadAsync(int? parentId, IFormFile[] uploadedFiles)
         {
             foreach (var uploadedFile in uploadedFiles)
-                _fileService.UploadFile(parentId, uploadedFile);
+                await _fileService.UploadFileAsync(parentId, uploadedFile);
 
             return Ok();
         }
@@ -143,11 +143,7 @@ namespace Ascent.Controllers
             if (!file.IsPublic && !(await _authorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                 return Forbid();
 
-            var diskFile = _fileService.GetDiskFile(file.Id, file.Version);
-
-            inline = inline && !_fileService.IsAttachmentType(file.Name);
-            return !inline ? PhysicalFile(diskFile, file.ContentType, file.Name) :
-                PhysicalFile(diskFile, _fileService.IsTextType(file.Name) ? "text/plain" : file.ContentType);
+            return Redirect(await _fileService.GetDownloadUrlAsync(file, inline));
         }
 
         [HttpPut("file/{id}/{field}")]
