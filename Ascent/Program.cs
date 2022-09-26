@@ -94,8 +94,9 @@ services.AddScoped<CourseService>();
 services.AddScoped<SectionService>();
 services.AddScoped<EnrollmentService>();
 services.AddScoped<MftService>();
-services.AddScoped<SurveyService>();
 services.AddScoped<ProgramService>();
+services.AddScoped<SurveyService>();
+services.AddScoped<RubricService>();
 
 // Build App
 

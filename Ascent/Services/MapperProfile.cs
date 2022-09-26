@@ -51,6 +51,12 @@ public class MapperProfile : Profile
 
         CreateMap<ProgramModuleInputModel, ProgramModule>();
         CreateMap<ProgramModule, ProgramModuleInputModel>();
+
+        CreateMap<RubricInputModel, Rubric>()
+            .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) =>
+                dest.IsPublished ? dest.TimePublished : src.TimePublished?.ToUniversalTime())); // skip if already published
+        CreateMap<Rubric, RubricInputModel>()
+            .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) => src.TimePublished?.ToLocalTime()));
     }
 }
 

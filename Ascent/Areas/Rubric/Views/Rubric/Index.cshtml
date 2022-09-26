@@ -1,0 +1,60 @@
+@inject IAuthorizationService AuthorizationService
+@model List<Rubric>
+@{
+    ViewData["Title"] = "Rubrics";
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active me-auto">Rubrics</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Rubric">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+@if (Model.Count > 0)
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th class="d-none d-lg-table-cell">Publish Date</th>
+                @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                {
+                    <th class="d-none d-lg-table-cell"></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rubric in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="View" asp-route-id="@rubric.Id">@rubric.Name</a>
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        @if (rubric.TimePublished.HasValue)
+                        {
+                            var color = rubric.IsPublished ? "" : "text-warning";
+                            <span class="@color">@rubric.TimePublished?.ToLocalTime().ToString("d")</span>
+                        }
+                    </td>
+                    <td class="d-none d-lg-table-cell">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                        {
+                            <a asp-action="Edit" asp-route-id="@rubric.Id" title="Edit Rubric" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
