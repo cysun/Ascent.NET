@@ -127,7 +127,7 @@ namespace Ascent.Areas.Program.Controllers
         public IActionResult Outcome(int id, int index)
         {
             var program = _programService.GetProgram(id);
-            if (program == null || !program.HasObjectives) return NotFound();
+            if (program == null) return NotFound();
 
             ViewBag.Page = _pageService.GetPage(program.Outcomes[index].DescriptionId);
 
