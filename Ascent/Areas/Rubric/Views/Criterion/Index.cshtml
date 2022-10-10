@@ -1,0 +1,51 @@
+@inject IAuthorizationService AuthorizationService
+@model List<RubricCriterion>
+@{
+    ViewData["Title"] = "Rubric Criteria";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a>
+        </li>
+        <li class="breadcrumb-item active me-auto">Criteria</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Add" asp-route-rubricId="@ViewBag.Rubric.Id" class="btn btn-outline-primary btn-sm" title="Add Criterion">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+@foreach (var criterion in Model)
+{
+    <div class="card mb-2">
+        <div class="card-header d-flex align-items-center">
+            <span>@criterion.Name</span>
+            <div class="btn-group ms-auto" role="group">
+                <a asp-action="Edit" asp-route-id="@criterion.Id" title="Edit" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        @foreach (var rating in criterion.Ratings)
+                        {
+                            <td>
+                                <strong>@rating.Name (@rating.Value)</strong><br>
+                                <small>@Html.Raw(@rating.Description)</small>
+                            </td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

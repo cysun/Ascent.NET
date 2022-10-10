@@ -14,7 +14,7 @@ namespace Ascent.Models
 
         public string Description { get; set; }
 
-        public List<RubricCriterion> Criteria { get; set; }
+        public int CriteriaCount { get; set; }
 
         public DateTime? TimePublished { get; set; }
         public bool IsPublished => TimePublished.HasValue && TimePublished < DateTime.UtcNow;
@@ -42,12 +42,17 @@ namespace Ascent.Models
 
     public class RubricRating
     {
+        public int Id { get; set; }
+
         public RubricCriterion Criterion { get; set; }
         public int CriterionId { get; set; }
 
         public int Index { get; set; }
 
-        public double? Value { get; set; }
+        public double Value { get; set; }
+
+        [MaxLength(80)]
+        public string Name { get; set; }
 
         public string Description { get; set; }
     }

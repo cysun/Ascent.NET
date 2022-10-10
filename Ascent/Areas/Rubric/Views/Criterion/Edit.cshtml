@@ -1,0 +1,66 @@
+@model RubricCriterionInputModel
+@{
+    ViewData["Title"] = "Edit Criterion";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Criterion.RubricId">@ViewBag.Criterion.Rubric.Name</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-action="Index" asp-route-rubricId="@ViewBag.Criterion.RubricId">Criteria</a>
+        </li>
+        <li class="breadcrumb-item active">Edit Criterion</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <input type="hidden" asp-for="RubricId" />
+    <input type="hidden" asp-for="Index" />
+    <div class="form-floating mb-3">
+        <input asp-for="Name" class="form-control" placeholder="Name" required>
+        <label asp-for="Name"></label>
+    </div>
+    <div class="row g-1">
+        @for (int i = 0; i < Model.Ratings.Count; ++i)
+        {
+            <div class="col-10">
+                <div class="form-floating mb-1">
+                    <input asp-for="Ratings[i].Name" class="form-control" placeholder="Rating" required>
+                    <label asp-for="Ratings[i].Name"></label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-floating mb-1">
+                    <input asp-for="Ratings[i].Value" class="form-control" placeholder="Value" required>
+                    <label asp-for="Ratings[i].Value"></label>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <textarea asp-for="Ratings[i].Description" class="form-control"></textarea>
+            </div>
+        }
+        <div class="col-12">
+            <a class="btn btn-secondary me-2" asp-action="Index" asp-route-rubricId="@ViewBag.Criterion.RubricId">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</form>
+
+@section StyleSheets{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
+      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+    @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
+        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/js/summernote-options.js"></script>
+    <script>
+        $(function () {
+            $("textarea").summernote(summernoteOptions.minimal);
+        });
+    </script>
+}

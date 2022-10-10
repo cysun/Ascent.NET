@@ -27,6 +27,16 @@ namespace Ascent.Areas.Rubric.Controllers
             return View(_rubricService.GetRubrics());
         }
 
+        public IActionResult View(int id)
+        {
+            var rubric = _rubricService.GetRubric(id);
+            if (rubric == null) return NotFound();
+
+            ViewBag.Criteria = _rubricService.GetCriteria(id);
+
+            return View(rubric);
+        }
+
         [HttpGet]
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Add()
@@ -43,6 +53,33 @@ namespace Ascent.Areas.Rubric.Controllers
             var rubric = _mapper.Map<Models.Rubric>(input);
             _rubricService.AddRubric(rubric);
             _logger.LogInformation("{user} created rubric {rubric}", User.Identity.Name, rubric.Id);
+
+            return RedirectToAction("Index", "Criterion", new { rubricId = rubric.Id });
+        }
+
+        [HttpGet]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Edit(int id)
+        {
+            var rubric = _rubricService.GetRubric(id);
+            if (rubric == null) return NotFound();
+
+            ViewBag.Rubric = rubric;
+            return View(_mapper.Map<RubricInputModel>(rubric));
+        }
+
+        [HttpPost]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Edit(int id, RubricInputModel input)
+        {
+            if (!ModelState.IsValid) return View(input);
+
+            var rubric = _rubricService.GetRubric(id);
+            if (rubric == null) return NotFound();
+
+            _mapper.Map(input, rubric);
+            _rubricService.SaveChanges();
+            _logger.LogInformation("{user} edited rubric {rubric}", User.Identity.Name, id);
 
             return RedirectToAction("Index");
         }

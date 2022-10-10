@@ -52,7 +52,7 @@ namespace Ascent.Areas.Survey.Controllers
 
             var question = _mapper.Map<SurveyQuestion>(input);
             _surveyService.AddQuestionToSurvey(surveyId, question);
-            _logger.LogInformation("{user} added question {question} to {survey}",
+            _logger.LogInformation("{user} added question {question} to survey {survey}",
                 User.Identity.Name, question.Id, surveyId);
 
             return RedirectToAction("Index", "Question", new { surveyId }, $"q-id-{question.Id}");

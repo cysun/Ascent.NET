@@ -57,6 +57,12 @@ public class MapperProfile : Profile
                 dest.IsPublished ? dest.TimePublished : src.TimePublished?.ToUniversalTime())); // skip if already published
         CreateMap<Rubric, RubricInputModel>()
             .ForMember(dest => dest.TimePublished, opt => opt.MapFrom((src, dest) => src.TimePublished?.ToLocalTime()));
+
+        CreateMap<RubricCriterionInputModel, RubricCriterion>();
+        CreateMap<RubricCriterion, RubricCriterionInputModel>();
+
+        CreateMap<RubricRatingInputModel, RubricRating>();
+        CreateMap<RubricRating, RubricRatingInputModel>();
     }
 }
 

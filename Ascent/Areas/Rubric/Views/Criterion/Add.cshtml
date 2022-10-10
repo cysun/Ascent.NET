@@ -1,0 +1,32 @@
+@model RubricCriterionInputModel
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a asp-controller="Criterion" asp-action="Index" asp-route-rubricId="@ViewBag.Rubric.Id">Criteria</a>
+        </li>
+        <li class="breadcrumb-item active">New Criterion</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="row">
+        <div class="col-9 col-md-10">
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" placeholder="Name" required>
+                <label asp-for="Name"></label>
+            </div>
+        </div>
+        <div class="col-3 col-md-2">
+            <div class="form-floating mb-3">
+                <input asp-for="Scale" class="form-control" placeholder="Scale" required>
+                <label asp-for="Scale"></label>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-secondary me-2" asp-action="Index" asp-route-rubricId="@ViewBag.Rubric.Id">Cancel</a>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
