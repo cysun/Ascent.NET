@@ -18,10 +18,13 @@
     </ol>
 </nav>
 
+@{
+    var index = 1;
+}
 @foreach (var criterion in ViewBag.Criteria)
 {
     <div class="card mb-2">
-        <div class="card-header">@criterion.Name</div>
+        <div class="card-header">@(index++). @criterion.Name</div>
         <div class="card-body">
             <table class="table table-borderless">
                 <tbody>

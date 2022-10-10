@@ -22,11 +22,13 @@ namespace Ascent.Areas.Rubric.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View(_rubricService.GetRubrics());
         }
 
+        [AllowAnonymous]
         public IActionResult View(int id)
         {
             var rubric = _rubricService.GetRubric(id);
