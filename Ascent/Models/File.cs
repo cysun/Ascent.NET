@@ -30,6 +30,18 @@ public class File
     // some other resources (like a Course or CourseJournal) are considered non-regular.
     // Certain file functions (e.g. search, public, etc.) are limited to regular files.
     public bool IsRegular { get; set; }
+
+    public string GetFormattedSize()
+    {
+        if (IsFolder) return "";
+
+        if (Size < 1024)
+            return $"{Size} B";
+        else if (Size < 1048576)
+            return (Size / 1024.0).ToString("0.#") + " KB";
+        else
+            return (Size / 1024.0 / 1024.0).ToString("0.#") + " MB";
+    }
 }
 
 public class FileRevision
