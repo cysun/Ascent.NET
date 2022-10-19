@@ -1,0 +1,100 @@
+@model List<Section>
+@{
+    ViewData["Title"] = "Search Sections";
+    var searchText = Context.Request.Query["searchText"];
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Sections</a></li>
+        <li class="breadcrumb-item active">Search</li>
+    </ol>
+</nav>
+
+<form method="get" class="d-inline-flex mb-3">
+    <input id="search" name="searchText" class="form-control me-2" value="@searchText">
+    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+</form>
+
+@if (Model.Count > 0)
+{
+    <div class="row">
+        <div class="col-md-4 col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <div id="sidebar" style="max-height: 75vh; overflow-y: auto;">
+                        <div class="d-flex flex-column align-items-stretch flex-shrink-0">
+                            <div class="list-group list-group-flush border-bottom">
+                                @foreach (var s in Model)
+                                {
+                                    <a asp-action="Search" asp-route-searchText="@searchText" asp-route-sectionId="@s.Id"
+                               class="list-group-item list-group-item-action py-3 lh-sm @(s.Id == ViewBag.Section.Id ? "active" : "") d-none d-md-block">
+                                        <div class="d-flex w-100 align-items-center justify-content-between">
+                                            <strong class="mb-1">@s.Course.Code, @s.Term.ShortName</strong>
+                                        </div>
+                                        <div class="small">@s.Instructor.FullName</div>
+                                    </a>
+                                    <a asp-action="View" asp-route-id="@s.Id"
+                               class="list-group-item list-group-item-action py-3 lh-sm d-block d-md-none">
+                                        <div class="d-flex w-100 align-items-center justify-content-between">
+                                            <strong class="mb-1">@s.Course.Code, @s.Term.ShortName</strong>
+                                        </div>
+                                        <div class="small">@s.Instructor.FullName</div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col d-none d-md-block">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <span>@ViewBag.Section.Course.Code</span>
+                    <span>Students: @ViewBag.Enrollments.Count</span>
+                    <span>@ViewBag.Section.Instructor.FullName</span>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped border-top">
+                        <thead>
+                            <tr><th>CIN</th><th>Student</th><th>Grade</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrollment in ViewBag.Enrollments)
+                            {
+                                <tr>
+                                    <td>@enrollment.Student.CampusId</td>
+                                    <td>
+                                        <a asp-controller="Person" asp-action="View" asp-route-id="@enrollment.Student.Id">
+                                            @enrollment.Student.FullName2
+                                        </a>
+                                    </td>
+                                    <td>@enrollment.GradeSymbol</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section StyleSheets{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css" />
+}
+    @section Scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+    <script>
+        $(function () {
+            var top = $("a.active").offset().top;
+            $("#sidebar").scrollTop(top - 400);
+            $("table").DataTable({
+                paging: false,
+                info: false,
+                searching: false,
+                order: []
+            });
+        });
+    </script>
+}

@@ -37,6 +37,18 @@ namespace Ascent.Controllers
             return View(sections);
         }
 
+        public IActionResult Search(string searchText, int? sectionId)
+        {
+            var sections = _sectionService.SearchSections(searchText);
+            if (sections.Count > 0)
+            {
+                ViewBag.Section = sectionId == null ? sections[0] : _sectionService.GetSection((int)sectionId);
+                ViewBag.Enrollments = _enrollmentService.GetEnrollmentsBySection(ViewBag.Section.Id);
+            }
+
+            return View(sections);
+        }
+
         public IActionResult View(int id)
         {
             var section = _sectionService.GetSection(id);

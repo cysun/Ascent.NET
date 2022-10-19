@@ -28,6 +28,10 @@ DROP FUNCTION "SearchPages"(varchar, integer);
 
 DROP FUNCTION "SearchPersons"(varchar, integer);
 
+DROP TRIGGER "SectionsTsTrigger" ON "Sections";
+DROP FUNCTION "SectionsTsTriggerFunction"();
+DROP FUNCTION "SearchSections"(varchar, integer);
+
 DROP TABLE "Enrollments";
 DROP TABLE "Sections";
 DROP TABLE "Grades";

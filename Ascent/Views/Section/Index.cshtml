@@ -8,7 +8,11 @@
     </ol>
 </nav>
 
-<form method="get" class="d-inline-flex mb-3">
+<form asp-action="Search" method="get" class="d-inline-flex me-3">
+    <input id="search" name="searchText" class="form-control me-2">
+    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+</form>
+<form method="get" class="d-inline-flex">
     <select name="termCode" class="form-select">
         @foreach (var term in ViewBag.Terms)
         {
@@ -45,8 +49,8 @@
 
 @section Scripts{
     <script>
-        $(function() {
-            $("select").change(function() {
+        $(function () {
+            $("select").change(function () {
                 $("form").submit();
             });
         })

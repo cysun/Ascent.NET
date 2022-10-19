@@ -25,19 +25,17 @@ namespace Ascent.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(string searchText)
+        public IActionResult Index()
         {
-            List<Page> searchResults = null;
+            ViewBag.PinnedPages = _pageService.GetPinnedPages();
+            ViewBag.LastViewedPages = _pageService.GetLastViwedPages();
 
-            if (string.IsNullOrEmpty(searchText))
-            {
-                ViewBag.PinnedPages = _pageService.GetPinnedPages();
-                ViewBag.LastViewedPages = _pageService.GetLastViwedPages();
-            }
-            else
-            {
-                searchResults = _pageService.SearchPages(searchText);
-            }
+            return View();
+        }
+
+        public IActionResult Search(string searchText)
+        {
+            var searchResults = string.IsNullOrWhiteSpace(searchText) ? new List<Page>() : _pageService.SearchPages(searchText);
 
             return View(searchResults);
         }

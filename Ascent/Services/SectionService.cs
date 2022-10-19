@@ -25,6 +25,17 @@ public class SectionService
         .OrderBy(s => s.Course.Number)
         .ToList();
 
+    // maxResults=null for unlimited results
+    public List<Section> SearchSections(string searchText, int? maxResults = null)
+    {
+        if (string.IsNullOrWhiteSpace(searchText)) return new List<Section>();
+
+        return _db.Sections.FromSqlRaw("SELECT * FROM \"SearchSections\"({0}, {1})", searchText, maxResults)
+            .Include(s => s.Course).Include(s => s.Instructor)
+            .OrderByDescending(s => s.Term.Code)
+            .AsNoTracking().ToList();
+    }
+
     public void AddSection(Section section)
     {
         _db.Sections.Add(section);

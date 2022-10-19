@@ -1,0 +1,23 @@
+@model List<Page>
+@{
+    ViewData["Title"] = "Search Pages";
+    var searchText = Context.Request.Query["searchText"];
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-action="Index">Pages</a></li>
+        <li class="breadcrumb-item active">Search</li>
+    </ol>
+</nav>
+
+<form method="get" class="d-inline-flex mb-3">
+    <input id="search" name="searchText" class="form-control me-2" value="@searchText">
+    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+</form>
+
+<ul class="list-group list-group-flush">
+    @foreach (var p in Model)
+    {
+        <li class="list-group-item"><a asp-action="View" asp-route-id="@p.Id">@p.Subject</a></li>
+    }
+</ul>

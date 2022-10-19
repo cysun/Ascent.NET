@@ -85,6 +85,6 @@ namespace Ascent.Models
         public string Content { get; set; }
 
         [Display(Name = "Use BCC")]
-        public bool UseBcc { get; set; }
+        public bool UseBcc { get; set; } = true;
     }
 }

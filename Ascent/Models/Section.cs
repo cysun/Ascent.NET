@@ -12,7 +12,7 @@ public class Section
     public int CourseId { get; set; }
     public Course Course { get; set; }
 
-    public int? InstructorId { get; set; }
+    public int InstructorId { get; set; }
     public Person Instructor { get; set; }
 }
 
