@@ -25,11 +25,13 @@ namespace Ascent.Areas.Program.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View(_programService.GetPrograms());
         }
 
+        [AllowAnonymous]
         public IActionResult View(int id)
         {
             var program = _programService.GetProgram(id);
@@ -114,6 +116,7 @@ namespace Ascent.Areas.Program.Controllers
             return RedirectToAction("View", new { id });
         }
 
+        [AllowAnonymous]
         public IActionResult Objectives(int id)
         {
             var program = _programService.GetProgram(id);
@@ -124,6 +127,7 @@ namespace Ascent.Areas.Program.Controllers
             return View(program);
         }
 
+        [AllowAnonymous]
         public IActionResult Outcome(int id, int index)
         {
             var program = _programService.GetProgram(id);
