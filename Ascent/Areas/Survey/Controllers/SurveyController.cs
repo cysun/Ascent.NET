@@ -81,7 +81,7 @@ namespace Ascent.Areas.Survey.Controllers
             _surveyService.SaveChanges();
             _logger.LogInformation("{user} edited survey {survey}", User.Identity.Name, id);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("View", new { id });
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]

@@ -43,8 +43,8 @@
                                     <li class="list-group-item">
                                         <div class="form-check">
                                             <input type="radio" asp-for="Answers[i].SingleSelection" value="@question.Choices[j]"
-                               class="form-check-input highlight">
-                                            <label asp-for="Answers[i].SingleSelection" class="form-check-label highlight">
+                               class="form-check-input highlight" id="a-@i-@j" required="@(question.MinSelection > 0)">
+                                            <label for="a-@i-@j" class="form-check-label highlight d-block">
                                                 @question.Choices[j]
                                             </label>
                                         </div>
@@ -60,7 +60,7 @@
                                     <li class="list-group-item">
                                         <div class="form-check">
                                             <input type="checkbox" asp-for="Answers[i].Selections[j]" class="form-check-input highlight">
-                                            <label asp-for="Answers[i].Selections[j]" class="form-check-label highlight">
+                                            <label asp-for="Answers[i].Selections[j]" class="form-check-label highlight d-block">
                                                 @question.Choices[j]
                                             </label>
                                         </div>
@@ -101,9 +101,9 @@
 
 @section Scripts{
     <script>
-        $(function() {
+        $(function () {
             var highlight = "text-bg-success";
-            $(".highlight").change(function() {
+            $(".highlight").change(function () {
                 if ($(this).is(":checked")) {
                     $(this).closest("li").addClass(highlight);
                     // radio button is tricky because deselection does not generate a change() event -- this kind of makes
