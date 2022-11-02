@@ -100,6 +100,18 @@ namespace Ascent.Areas.Survey.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Clone(int id)
+        {
+            var survey = _surveyService.GetSurvey(id);
+            if (survey == null) return NotFound();
+
+            var newSurvey = _surveyService.CloneSurvey(survey);
+            _logger.LogInformation("{user} cloned survey {survey} into {newSurvey}", User.Identity.Name, id, newSurvey.Id);
+
+            return RedirectToAction("Edit", new { id = newSurvey.Id });
+        }
+
         [AllowAnonymous]
         public IActionResult Take(int id)
         {

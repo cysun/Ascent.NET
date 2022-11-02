@@ -24,6 +24,20 @@ public class SurveyService
         _db.SaveChanges();
     }
 
+    public Survey CloneSurvey(Survey survey)
+    {
+        var newSurvey = survey.Clone();
+        _db.Surveys.Add(newSurvey);
+        _db.SaveChanges();
+
+        var questions = _db.SurveyQuestions.Where(q => q.SurveyId == survey.Id);
+        foreach (var question in questions)
+            _db.SurveyQuestions.Add(question.Clone(newSurvey.Id));
+        _db.SaveChanges();
+
+        return newSurvey;
+    }
+
     public SurveyQuestion GetQuestion(int id) => _db.SurveyQuestions
         .Where(q => q.Id == id).Include(q => q.Survey).SingleOrDefault();
 
@@ -69,6 +83,18 @@ public class SurveyService
         survey.ResponseCount++;
         _db.SurveyResponses.Add(response);
         _db.SaveChanges();
+    }
+
+    public int? DeleteResponse(string id)
+    {
+        var response = _db.SurveyResponses.Find(Guid.Parse(id));
+        if (response == null) return null;
+
+        var survey = _db.Surveys.Find(response.SurveyId);
+        survey.ResponseCount--;
+        _db.SurveyResponses.Remove(response);
+        _db.SaveChanges();
+        return survey.Id;
     }
 
     public List<SurveyAnswer> GetAnswers(int surveyId) => _db.SurveyAnswers.AsNoTracking()

@@ -87,14 +87,27 @@ namespace Ascent.Areas.Survey.Controllers
             return View(response);
         }
 
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Delete(string id)
+        {
+            var surveyId = _surveyService.DeleteResponse(id);
+            if (surveyId == null) return NotFound();
+
+            _logger.LogInformation("{user} deleted response {response}", User.Identity.Name, id);
+
+            return RedirectToAction("Summary", new { surveyId });
+        }
+
         public IActionResult Summary(int surveyId)
         {
             var survey = _surveyService.GetSurvey(surveyId);
             if (survey == null) return NotFound();
 
             ViewBag.Questions = _surveyService.GetQuestions(surveyId);
-            ViewBag.AnswersByQuestion = _surveyService.GetAnswers(surveyId)
+            var answersByQuestion = _surveyService.GetAnswers(surveyId)
                 .GroupBy(a => a.QuestionId).ToDictionary(g => g.Key, g => g.ToList());
+            if (answersByQuestion.Count == survey.QuestionCount)
+                ViewBag.AnswersByQuestion = answersByQuestion;
 
             return View(survey);
         }

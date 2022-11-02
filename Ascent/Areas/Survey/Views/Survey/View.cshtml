@@ -66,6 +66,9 @@
                 }
                 @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
                 {
+                    <button id="clone" class="btn btn-outline-primary btn-sm me-2" title="Clone Survey">
+                        <i class="bi bi-layers-fill"></i>
+                    </button>
                     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Survey">
                         <i class="bi bi-pencil-fill"></i>
                     </a>
@@ -187,6 +190,10 @@
                 });
                 var qrModal = new bootstrap.Modal($("#qr-modal"));
                 qrModal.show();
+            });
+            $("#clone").click(function () {
+                if (confirm("Do you want to clone this survey?"))
+                    window.location.href = "../clone/@Model.Id";
             });
         });
     </script>

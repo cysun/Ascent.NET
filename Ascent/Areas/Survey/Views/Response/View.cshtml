@@ -11,7 +11,12 @@
         <li class="breadcrumb-item d-none d-lg-block">
             <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Survey.Id">Response Summary</a>
         </li>
-        <li class="breadcrumb-item active">View Response</li>
+        <li class="breadcrumb-item active me-auto">View Response</li>
+        <li>
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete File/Folder">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </li>
     </ol>
 </nav>
 
@@ -65,4 +70,15 @@
             </div>
         </div>
     }
+}
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#delete").click(function () {
+                if (confirm("Are you sure you want to delete this response?"))
+                    window.location.href = "../delete/@Model.Id";
+            });
+        });
+    </script>
 }

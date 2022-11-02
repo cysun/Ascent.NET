@@ -26,6 +26,18 @@ public class Survey
     public bool AllowMultipleSubmissions { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public Survey Clone()
+    {
+        return new Survey()
+        {
+            Name = $"Copy of {Name}",
+            Description = Description,
+            TimeCreated = DateTime.UtcNow,
+            QuestionCount = QuestionCount,
+            AllowMultipleSubmissions = AllowMultipleSubmissions
+        };
+    }
 }
 
 public enum QuestionType
@@ -71,6 +83,24 @@ public class SurveyQuestion
 
     public int MinSelection { get; set; } // Minimum # of choices that need to be selected
     public int MaxSelection { get; set; } // Maximum # of choices that can be selected
+
+    public SurveyQuestion Clone(int newSurveyId)
+    {
+        return new SurveyQuestion()
+        {
+            Type = Type,
+            Description = Description,
+            SurveyId = newSurveyId,
+            Index = Index,
+            TextLength = TextLength,
+            MinRating = MinRating,
+            MaxRating = MaxRating,
+            IncludeNotApplicable = IncludeNotApplicable,
+            Choices = new List<string>(Choices),
+            MinSelection = MinSelection,
+            MaxSelection = MaxSelection
+        };
+    }
 }
 
 public class SurveyResponse

@@ -33,54 +33,57 @@
             </div>
             <div class="card-body">
                 <div class="card-title">@Html.Raw(question.Description)</div>
-                @if (question.Type == QuestionType.Choice)
+                @if (ViewBag.AnswersByQuestion != null)
                 {
-                    var answers = (List<SurveyAnswer>)ViewBag.AnswersByQuestion[question.Id];
-                    <ul class="list-group list-group-flush">
-                        @for (int i = 0; i < question.Choices.Count; ++i)
-                        {
-                            <li class="list-group-item">
-                                @{
-                                    var count = question.MaxSelection == 1
-                                    ? answers.Where(a => a.SingleSelection == question.Choices[i]).Count()
-                                    : answers.Where(a => a.Selections[i]).Count();
-                                }
-                                <span class="@countClasses(count)" data-question="@question.Id" data-selection="@i">@count</span>
-                                @question.Choices[i]
-                            </li>
-                        }
-                    </ul>
-                }
-                else if (question.Type == QuestionType.Rating)
-                {
-                    var answers = (List<SurveyAnswer>)ViewBag.AnswersByQuestion[question.Id];
-                    <ul class="list-group list-group-flush">
-                        @for (int i = question.MinRating; i <= question.MaxRating; ++i)
-                        {
-                            var count = answers.Where(a => a.Rating == i).Count();
-                            <li class="list-group-item">
-                                <span class="@countClasses(count)" data-question="@question.Id" data-selection="@i">@count</span>
-                                <span>@i</span>
-                            </li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    var answers = ViewBag.AnswersByQuestion[question.Id];
-                    <ul class="list-group list-group-flush">
-                        @foreach (var answer in answers)
-                        {
-                            if (!string.IsNullOrWhiteSpace(answer.Text))
+                    if (question.Type == QuestionType.Choice)
+                    {
+                        var answers = (List<SurveyAnswer>)ViewBag.AnswersByQuestion[question.Id];
+                        <ul class="list-group list-group-flush">
+                            @for (int i = 0; i < question.Choices.Count; ++i)
                             {
                                 <li class="list-group-item">
-                                    <a asp-controller="Response" asp-action="View" asp-route-id="@answer.ResponseId"
-                   class="me-2"><i class="bi bi-card-checklist"></i></a>
-                                    @answer.Text
+                                    @{
+                                        var count = question.MaxSelection == 1
+                                        ? answers.Where(a => a.SingleSelection == question.Choices[i]).Count()
+                                        : answers.Where(a => a.Selections[i]).Count();
+                                    }
+                                    <span class="@countClasses(count)" data-question="@question.Id" data-selection="@i">@count</span>
+                                    @question.Choices[i]
                                 </li>
                             }
-                        }
-                    </ul>
+                        </ul>
+                    }
+                    else if (question.Type == QuestionType.Rating)
+                    {
+                        var answers = (List<SurveyAnswer>)ViewBag.AnswersByQuestion[question.Id];
+                        <ul class="list-group list-group-flush">
+                            @for (int i = question.MinRating; i <= question.MaxRating; ++i)
+                            {
+                                var count = answers.Where(a => a.Rating == i).Count();
+                                <li class="list-group-item">
+                                    <span class="@countClasses(count)" data-question="@question.Id" data-selection="@i">@count</span>
+                                    <span>@i</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        var answers = ViewBag.AnswersByQuestion[question.Id];
+                        <ul class="list-group list-group-flush">
+                            @foreach (var answer in answers)
+                            {
+                                if (!string.IsNullOrWhiteSpace(answer.Text))
+                                {
+                                    <li class="list-group-item">
+                                        <a asp-controller="Response" asp-action="View" asp-route-id="@answer.ResponseId"
+                   class="me-2"><i class="bi bi-card-checklist"></i></a>
+                                        @answer.Text
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
                 }
             </div>
         </div>
