@@ -14,6 +14,8 @@ public class EmailSettings
     public string Username { get; set; }
     public string Password { get; set; }
     public int MaxRecipientsPerMessage { get; set; } = 30;
+    public string SenderName { get; set; }
+    public string SenderEmail { get; set; }
 }
 
 public class EmailSender
@@ -38,7 +40,8 @@ public class EmailSender
             if (i % _settings.MaxRecipientsPerMessage == 0)
             {
                 msg = new MimeMessage();
-                msg.From.Add(new MailboxAddress(message.Author.Name, message.Author.Email));
+                msg.From.Add(new MailboxAddress(_settings.SenderName, _settings.SenderEmail));
+                msg.ReplyTo.Add(new MailboxAddress(message.Author.Name, message.Author.Email));
                 msg.To.Add(new MailboxAddress(message.Author.Name, message.Author.Email));
                 msg.Subject = message.Subject;
                 msg.Body = new TextPart("html") { Text = message.Content };
