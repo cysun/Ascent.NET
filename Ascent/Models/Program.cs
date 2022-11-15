@@ -53,8 +53,6 @@ namespace Ascent.Models
         public int ItemCount { get; set; }
     }
 
-    public enum ItemType { File, Page }
-
     public class ProgramItem
     {
         public int Id { get; set; }

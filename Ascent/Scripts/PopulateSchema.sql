@@ -134,3 +134,35 @@ BEGIN
     RETURN;
  END
 $$ LANGUAGE plpgsql;
+
+-- FTS on Projects
+
+ALTER TABLE "Projects" ADD COLUMN tsv tsvector;
+
+CREATE INDEX "ProjectsTsIndex" ON "Projects" USING GIN(tsv);
+
+CREATE OR REPLACE FUNCTION "ProjectsTsTriggerFunction"() RETURNS TRIGGER AS $$
+DECLARE
+    l_instructor    "Persons"%rowtype;
+    l_course        "Courses"%rowtype;
+BEGIN
+    SELECT * INTO l_course FROM "Courses" WHERE "Id" = NEW."CourseId";
+    SELECT * INTO l_instructor FROM "Persons" WHERE "Id" = NEW."InstructorId";
+    NEW.tsv := setweight(to_tsvector(NEW."Title"), 'A') ||
+               setweight(to_tsvector(coalesce(NEW."Sponsor",'')), 'A') ||
+               setweight(to_tsvector(coalesce(NEW."Description",'')), 'D');
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "ProjectsTsTrigger"
+    BEFORE INSERT OR UPDATE ON "Projects"
+    FOR EACH ROW EXECUTE PROCEDURE "ProjectsTsTriggerFunction"();
+
+CREATE OR REPLACE FUNCTION "SearchProjects"(varchar, integer DEFAULT NULL)
+RETURNS SETOF "Projects" AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM "Projects" WHERE plainto_tsquery($1) @@ tsv LIMIT $2;
+    RETURN;
+ END
+$$ LANGUAGE plpgsql;
