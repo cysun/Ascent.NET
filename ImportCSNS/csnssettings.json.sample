@@ -1,0 +1,6 @@
+{
+  "ConnectionStrings": {
+    "CsnsConnection": "Host=localhost;Database=csns2;Username=cysun;Password=abcd"
+  },
+  "FileDirs": [ "/mnt/data1/csns-files" ]
+}
