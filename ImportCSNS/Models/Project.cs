@@ -1,30 +1,87 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ImportCSNS.Models;
 
-public partial class Project
+[Table("projects")]
+public class Project
 {
+    [Column("id")]
     public long Id { get; set; }
 
+    [Column("title")]
     public string Title { get; set; }
 
+    [Column("description")]
     public string Description { get; set; }
 
-    public long? DepartmentId { get; set; }
-
+    [Column("year")]
     public int Year { get; set; }
 
+    [Column("published")]
     public bool Published { get; set; }
 
+    [Column("deleted")]
     public bool Deleted { get; set; }
 
+    [Column("sponsor")]
     public string Sponsor { get; set; }
 
+    [Column("private")]
     public bool Private { get; set; }
 
-    public virtual ICollection<ProjectResource> ProjectResources { get; } = new List<ProjectResource>();
+    public List<ProjectStudent> Students { get; set; } = new List<ProjectStudent>();
+    public List<ProjectAdvisor> Advisors { get; set; } = new List<ProjectAdvisor>();
+    public List<ProjectLiaison> Liaisons { get; set; } = new List<ProjectLiaison>();
+    public List<ProjectResource> Resources { get; set; } = new List<ProjectResource>();
+}
 
-    public virtual ICollection<User> Advisors { get; } = new List<User>();
+[Table("project_students")]
+public class ProjectStudent
+{
+    [Column("project_id")]
+    public long ProjectId { get; set; }
+    public Project Project { get; set; }
 
-    public virtual ICollection<User> Liaisons { get; } = new List<User>();
+    [Column("student_id")]
+    public long UserId { get; set; }
+    public User User { get; set; }
+}
 
-    public virtual ICollection<User> Students { get; } = new List<User>();
+[Table("project_advisors")]
+public class ProjectAdvisor
+{
+    [Column("project_id")]
+    public long ProjectId { get; set; }
+    public Project Project { get; set; }
+
+    [Column("advisor_id")]
+    public long UserId { get; set; }
+    public User User { get; set; }
+}
+
+[Table("project_liaisons")]
+public class ProjectLiaison
+{
+    [Column("project_id")]
+    public long ProjectId { get; set; }
+    public Project Project { get; set; }
+
+    [Column("liaison_id")]
+    public long UserId { get; set; }
+    public User User { get; set; }
+}
+
+[Table("project_resources")]
+public class ProjectResource
+{
+    [Column("project_id")]
+    public long ProjectId { get; set; }
+    public Project Project { get; set; }
+
+    [Column("resource_id")]
+    public long ResourceId { get; set; }
+    public Resource Resource { get; set; }
+
+    [Column("resource_order")]
+    public long ResourceOrder { get; set; }
 }

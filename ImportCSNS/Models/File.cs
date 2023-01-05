@@ -1,48 +1,40 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ImportCSNS.Models;
 
-public partial class File
+[Table("files")]
+public class File
 {
+    [Column("id")]
     public long Id { get; set; }
 
+    [Column("name")]
     public string Name { get; set; }
 
+    [Column("type")]
     public string Type { get; set; }
 
+    [Column("size")]
     public long? Size { get; set; }
 
+    [Column("date")]
     public DateTime? Date { get; set; }
 
+    [Column("owner_id")]
     public long OwnerId { get; set; }
 
+    [Column("public")]
     public bool Public { get; set; }
 
+    [Column("folder")]
     public bool Folder { get; set; }
 
+    [Column("parent_id")]
     public long? ParentId { get; set; }
 
+    [Column("regular")]
     public bool Regular { get; set; }
 
+    [Column("deleted")]
     public bool Deleted { get; set; }
-
-    public long? SubmissionId { get; set; }
-
-    public long? ReferenceId { get; set; }
-
-    public virtual ICollection<File> InverseParent { get; } = new List<File>();
-
-    public virtual ICollection<File> InverseReference { get; } = new List<File>();
-
-    public virtual User Owner { get; set; }
-
-    public virtual File Parent { get; set; }
-
-    public virtual File Reference { get; set; }
-
-    public virtual ICollection<Resource> Resources { get; } = new List<Resource>();
-
-    public virtual ICollection<User> UserOriginalPictures { get; } = new List<User>();
-
-    public virtual ICollection<User> UserProfilePictures { get; } = new List<User>();
-
-    public virtual ICollection<User> UserProfileThumbnails { get; } = new List<User>();
 }
