@@ -1,6 +1,5 @@
 using Ascent.Services;
 using ImportCSNS;
-using ImportCSNS.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -35,22 +34,43 @@ foreach (var cproject in csnsDb.Projects)
         Sponsor = cproject.Sponsor,
         IsPrivate = cproject.Private
     };
-    Console.WriteLine($"{aproject.AcademicYear} {aproject.Title}");
-    foreach (var student in cproject.Students)
-        Console.WriteLine($"\t {student.User.Cin}");
-    foreach (var advisor in cproject.Advisors)
-        Console.WriteLine($"\t {advisor.User.FirstName}");
-    foreach (var liaison in cproject.Liaisons)
-        Console.WriteLine($"\t {liaison.User.FirstName}");
-    foreach (var resource in cproject.Resources)
-    {
-        Console.Write($"\t {resource.Resource.Name}");
-        if (resource.Resource.Type == ResourceType.File)
-            Console.WriteLine($"({resource.Resource.File.Name})");
-        else
-            Console.WriteLine();
-    }
-}
 
-Console.WriteLine($"There are {csnsDb.Projects.Count()} in CSNS.");
-Console.WriteLine($"There are {ascentDb.Projects.Count()} in Ascent.");
+    foreach (var cstudent in cproject.Students)
+    {
+        var person = ascentDb.Persons.Where(p => p.CampusId == cstudent.User.Cin).FirstOrDefault();
+        if (person == null)
+            Console.WriteLine($"ERROR: Cannot find student with CIN={cstudent.User.Cin}");
+        aproject.Students.Add(new Ascent.Models.ProjectStudent()
+        {
+            Project = aproject,
+            Person = person
+        });
+    }
+
+    foreach (var cadvisor in cproject.Advisors)
+    {
+        var person = ascentDb.Persons.Where(p => p.CampusId == cadvisor.User.Cin).FirstOrDefault();
+        if (person == null)
+            Console.WriteLine($"ERROR: Cannot find advisor with CIN={cadvisor.User.Cin}");
+        aproject.Advisors.Add(new Ascent.Models.ProjectAdvisor()
+        {
+            Project = aproject,
+            Person = person
+        });
+    }
+
+    foreach (var cliaison in cproject.Liaisons)
+    {
+        var person = ascentDb.Persons.Where(p => p.CampusId == cliaison.User.Cin).FirstOrDefault();
+        if (person == null)
+            Console.WriteLine($"ERROR: Cannot find liaison with CIN={cliaison.User.Cin}");
+        aproject.Liaisons.Add(new Ascent.Models.ProjectLiaison()
+        {
+            Project = aproject,
+            Person = person
+        });
+    }
+
+    ascentDb.Projects.Add(aproject);
+    ascentDb.SaveChanges();
+}
