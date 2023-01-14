@@ -248,6 +248,7 @@ CREATE TABLE "ProjectItems" (
     "FileId" integer NULL,
     "Text" text NULL,
     "Url" character varying(2000) NULL,
+    "IsPrivate" boolean NOT NULL,
     CONSTRAINT "PK_ProjectItems" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_ProjectItems_Files_FileId" FOREIGN KEY ("FileId") REFERENCES "Files" ("Id"),
     CONSTRAINT "FK_ProjectItems_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE
@@ -442,7 +443,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20221115190029_InitialSchema', '7.0.0');
+VALUES ('20230109233325_InitialSchema', '7.0.1');
 
 COMMIT;
 

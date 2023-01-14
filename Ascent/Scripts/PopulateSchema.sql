@@ -142,12 +142,7 @@ ALTER TABLE "Projects" ADD COLUMN tsv tsvector;
 CREATE INDEX "ProjectsTsIndex" ON "Projects" USING GIN(tsv);
 
 CREATE OR REPLACE FUNCTION "ProjectsTsTriggerFunction"() RETURNS TRIGGER AS $$
-DECLARE
-    l_instructor    "Persons"%rowtype;
-    l_course        "Courses"%rowtype;
 BEGIN
-    SELECT * INTO l_course FROM "Courses" WHERE "Id" = NEW."CourseId";
-    SELECT * INTO l_instructor FROM "Persons" WHERE "Id" = NEW."InstructorId";
     NEW.tsv := setweight(to_tsvector(NEW."Title"), 'A') ||
                setweight(to_tsvector(coalesce(NEW."Sponsor",'')), 'A') ||
                setweight(to_tsvector(coalesce(NEW."Description",'')), 'D');

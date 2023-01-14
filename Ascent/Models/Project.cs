@@ -19,11 +19,11 @@ public class Project
     [MaxLength(255)]
     public string Sponsor { get; set; }
 
-    public List<ProjectStudent> Students { get; set; }
-    public List<ProjectAdvisor> Advisors { get; set; }
-    public List<ProjectLiaison> Liaisons { get; set; }
+    public List<ProjectStudent> Students { get; set; } = new List<ProjectStudent>();
+    public List<ProjectAdvisor> Advisors { get; set; } = new List<ProjectAdvisor>();
+    public List<ProjectLiaison> Liaisons { get; set; } = new List<ProjectLiaison>();
 
-    public List<ProjectItem> Items { get; set; }
+    public List<ProjectItem> Items { get; set; } = new List<ProjectItem>();
 
     public bool IsPrivate { get; set; }
 }
@@ -78,4 +78,6 @@ public class ProjectItem
 
     [MaxLength(2000)]
     public string Url { get; set; }
+
+    public bool IsPrivate { get; set; }
 }

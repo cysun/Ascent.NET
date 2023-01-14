@@ -1,0 +1,79 @@
+@model List<Project>
+@{
+    ViewData["Title"] = "Projects";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Projects</li>
+    </ol>
+</nav>
+
+<form method="get" class="d-inline-flex mb-2">
+    <select name="year" class="form-select">
+        @foreach (var year in ViewBag.AcademicYears)
+        {
+            if (year == ViewBag.AcademicYear)
+            {
+                <option selected>@year</option>
+            }
+            else
+            {
+                <option>@year</option>
+            }
+        }
+    </select>
+</form>
+
+<div class="row row-cols-1 row-cols-lg-2 g-4">
+    @foreach (var project in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(project.Sponsor))
+                {
+                    <div class="card-header">Sponsored by @project.Sponsor</div>
+                }
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">@project.Title</h5>
+                    <p class="card-text">
+                        @for (var i = 0; i < project.Students.Count; ++i)
+                        {
+                            <text>@project.Students[i].Person.FullName</text>
+                            if (i < project.Students.Count - 1)
+                            {
+                                <text>, </text>
+                            }
+                        }
+                    </p>
+                    <div>
+                        <a asp-action="View" asp-route-id="@project.Id" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+                @if (project.Advisors.Count > 0)
+                {
+                    <div class="card-footer text-end">
+                        Advised by
+                        @for (int i = 0; i < project.Advisors.Count; ++i)
+                        {
+                            <text>@project.Advisors[i].Person.FullName</text>
+                            if (i < project.Advisors.Count - 1)
+                            {
+                                <text>, </text>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("select").change(function () {
+                $("form").submit();
+            });
+        })
+    </script>
+}

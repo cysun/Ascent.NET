@@ -1,0 +1,80 @@
+@inject IAuthorizationService AuthorizationService
+@model Project
+@{
+    ViewData["Title"] = "Project";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Project" asp-action="Index">Projects</a></li>
+        <li class="breadcrumb-item d-none d-lg-block active me-auto">@Model.Title</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li class="d-none d-lg-block">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Project">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<h5 class="text-center">@Model.Title</h5>
+
+<div class="row p-3">@Html.Raw(Model.Description)</div>
+
+<div class="row g-2">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Student Team</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var student in Model.Students)
+                {
+                    <li class="list-group-item">@student.Person.FullName</li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-2">
+            <div class="card-header">Project Sponsor</div>
+            <div class="card-body">@Model.Sponsor</div>
+        </div>
+        @if (Model.Liaisons.Count > 0)
+        {
+            <div class="card mb-2">
+                <div class="card-header">Project Liaisons</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var liaison in Model.Liaisons)
+                    {
+                        <li class="list-group-item">@liaison.Person.FullName</li>
+                    }
+                </ul>
+            </div>
+        }
+        @if (Model.Advisors.Count > 0)
+        {
+            <div class="card">
+                <div class="card-header">Faculty Advisors</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var advisor in Model.Advisors)
+                    {
+                        <li class="list-group-item">@advisor.Person.FullName</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-header">Resources</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="list-group-item">
+                        @item.Name
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
