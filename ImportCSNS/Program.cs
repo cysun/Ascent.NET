@@ -1,5 +1,6 @@
 using Ascent.Services;
 using ImportCSNS;
+using ImportCSNS.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -8,6 +9,10 @@ IConfiguration config = new ConfigurationBuilder()
     .AddJsonFile("csnssettings.json")
     .Build();
 
+var inputDir = config.GetValue<string>("InputDir");
+var outputDir = config.GetValue<string>("OutputDir");
+
+// Connect to two databases
 // See https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/ on how to create DbContext
 
 using var csnsDb = new CsnsDbContext(config.GetConnectionString("CsnsConnection"));
@@ -17,6 +22,8 @@ var appDbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
     .Options;
 using var ascentDb = new AppDbContext(appDbContextOptions);
 
+// Get all CSNS projects
+
 var cprojects = csnsDb.Projects
     .Include(p => p.Students).ThenInclude(s => s.User)
     .Include(p => p.Advisors).ThenInclude(a => a.User)
@@ -24,8 +31,12 @@ var cprojects = csnsDb.Projects
     .Include(p => p.Resources).ThenInclude(p => p.Resource).ThenInclude(r => r.File)
     .ToList();
 
+// Import each CSNS project to Ascent
+int count = 0;
 foreach (var cproject in csnsDb.Projects)
 {
+    // if (count >= 1) break;
+
     var aproject = new Ascent.Models.Project()
     {
         AcademicYear = $"{cproject.Year - 1}-{cproject.Year}",
@@ -39,7 +50,10 @@ foreach (var cproject in csnsDb.Projects)
     {
         var person = ascentDb.Persons.Where(p => p.CampusId == cstudent.User.Cin).FirstOrDefault();
         if (person == null)
+        {
             Console.WriteLine($"ERROR: Cannot find student with CIN={cstudent.User.Cin}");
+            continue;
+        }
         aproject.Students.Add(new Ascent.Models.ProjectStudent()
         {
             Project = aproject,
@@ -51,7 +65,10 @@ foreach (var cproject in csnsDb.Projects)
     {
         var person = ascentDb.Persons.Where(p => p.CampusId == cadvisor.User.Cin).FirstOrDefault();
         if (person == null)
+        {
             Console.WriteLine($"ERROR: Cannot find advisor with CIN={cadvisor.User.Cin}");
+            continue;
+        }
         aproject.Advisors.Add(new Ascent.Models.ProjectAdvisor()
         {
             Project = aproject,
@@ -63,7 +80,10 @@ foreach (var cproject in csnsDb.Projects)
     {
         var person = ascentDb.Persons.Where(p => p.CampusId == cliaison.User.Cin).FirstOrDefault();
         if (person == null)
+        {
             Console.WriteLine($"ERROR: Cannot find liaison with CIN={cliaison.User.Cin}");
+            continue;
+        }
         aproject.Liaisons.Add(new Ascent.Models.ProjectLiaison()
         {
             Project = aproject,
@@ -73,4 +93,64 @@ foreach (var cproject in csnsDb.Projects)
 
     ascentDb.Projects.Add(aproject);
     ascentDb.SaveChanges();
+
+    // Add Resources
+    foreach (var cresource in cproject.Resources)
+    {
+        if (cresource.Resource.Type == ResourceType.None) continue;
+
+        var item = new Ascent.Models.ProjectItem()
+        {
+            Project = aproject,
+            Name = cresource.Resource.Name,
+            IsPrivate = cresource.Resource.Private
+        };
+        aproject.Items.Add(item);
+
+        switch (cresource.Resource.Type)
+        {
+            case ResourceType.Text:
+                item.Type = Ascent.Models.ItemType.Text;
+                item.Text = cresource.Resource.Text;
+                break;
+            case ResourceType.Url:
+                item.Type = Ascent.Models.ItemType.Url;
+                item.Url = cresource.Resource.Url;
+                break;
+            case ResourceType.File:
+                var cfile = csnsDb.Files.Find(cresource.Resource.FileId);
+                if (cfile == null)
+                {
+                    Console.WriteLine($"ERROR: Cannot find file with id={cresource.Resource.FileId}");
+                    break;
+                }
+                var physicalFile = Path.Combine(inputDir, cfile.Id.ToString());
+                if (!System.IO.File.Exists(physicalFile))
+                {
+                    Console.WriteLine($"ERROR: Cannot find physical file with id={cresource.Resource.FileId}");
+                    break;
+                }
+                item.Type = Ascent.Models.ItemType.File;
+                var afile = new Ascent.Models.File()
+                {
+                    Name = cfile.Name,
+                    ContentType = cfile.Type,
+                    Size = (long)cfile.Size,
+                    TimeCreated = ((DateTime)cfile.Date).ToUniversalTime()
+                };
+                item.File = afile;
+                ascentDb.SaveChanges();
+
+                var outFile = Path.Combine(outputDir, $"{afile.Id}-{afile.Version}");
+                System.IO.File.Copy(physicalFile, outFile);
+                break;
+
+            default:
+                Console.WriteLine($"Unknown resource type: ${cresource.Resource.Type}");
+                break;
+        }
+    }
+
+    Console.WriteLine($"Imported project {aproject.Title}");
+    ++count;
 }
