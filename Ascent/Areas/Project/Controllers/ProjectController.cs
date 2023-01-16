@@ -1,4 +1,5 @@
 using Ascent.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ascent.Areas.Project.Controllers
@@ -16,6 +17,7 @@ namespace Ascent.Areas.Project.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index(string year)
         {
             var academicYears = _projectService.GetAcademicYears();
@@ -27,6 +29,7 @@ namespace Ascent.Areas.Project.Controllers
             return View(_projectService.GetProjects(academicYear));
         }
 
+        [AllowAnonymous]
         public IActionResult View(int id)
         {
             return View(_projectService.GetProject(id));
