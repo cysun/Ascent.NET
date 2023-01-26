@@ -1,5 +1,6 @@
 using Ascent.Helpers;
 using Ascent.Models;
+using Ascent.Security;
 using Ascent.Services;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;

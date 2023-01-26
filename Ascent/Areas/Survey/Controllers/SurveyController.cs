@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Ascent.Models;
+using Ascent.Security;
 using Ascent.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;

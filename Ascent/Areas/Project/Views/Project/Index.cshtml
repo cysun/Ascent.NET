@@ -1,10 +1,19 @@
+@inject IAuthorizationService AuthorizationService
 @model List<Project>
 @{
     ViewData["Title"] = "Projects";
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Projects</li>
+        <li class="breadcrumb-item active me-auto">Projects</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Rubric">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
     </ol>
 </nav>
 

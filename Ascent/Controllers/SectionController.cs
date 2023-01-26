@@ -1,4 +1,5 @@
 using Ascent.Models;
+using Ascent.Security;
 using Ascent.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

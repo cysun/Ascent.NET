@@ -1,4 +1,4 @@
-using Ascent.Models;
+using Ascent.Security;
 using Ascent.Services;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -62,9 +62,9 @@ services.AddAuthentication(options =>
 
 services.AddAuthorization(options =>
 {
-    options.AddPolicy(Constants.Policy.CanRead, policy => policy.RequireClaim(Constants.ReadClaim));
-    options.AddPolicy(Constants.Policy.CanWrite, policy => policy.RequireClaim(Constants.WriteClaim));
-    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireClaim(Constants.ReadClaim).Build();
+    options.AddPolicy(Constants.Policy.CanRead, policy => policy.RequireClaim(Constants.Claim.Read));
+    options.AddPolicy(Constants.Policy.CanWrite, policy => policy.RequireClaim(Constants.Claim.Write));
+    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireClaim(Constants.Claim.Read).Build();
 });
 
 services.AddRouting(options => options.LowercaseUrls = true);
