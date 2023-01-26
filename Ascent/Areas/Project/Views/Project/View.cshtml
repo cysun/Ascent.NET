@@ -5,9 +5,11 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Project" asp-action="Index">Projects</a></li>
+        <li class="breadcrumb-item d-none d-lg-block">
+            <a asp-controller="Project" asp-action="Index" asp-route-year="@Model.AcademicYear">Projects</a>
+        </li>
         <li class="breadcrumb-item d-none d-lg-block active me-auto">@Model.Title</li>
-        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, Constants.Policy.CanManageProject)).Succeeded)
         {
             <li class="d-none d-lg-block">
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Project">

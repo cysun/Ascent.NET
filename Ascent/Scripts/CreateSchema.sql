@@ -131,7 +131,6 @@ CREATE TABLE "Projects" (
     "Title" character varying(255) NOT NULL,
     "Description" text NULL,
     "Sponsor" character varying(255) NULL,
-    "IsPrivate" boolean NOT NULL,
     CONSTRAINT "PK_Projects" PRIMARY KEY ("Id")
 );
 
@@ -443,7 +442,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20230109233325_InitialSchema', '7.0.1');
+VALUES ('20230126190943_InitialSchema', '7.0.2');
 
 COMMIT;
 

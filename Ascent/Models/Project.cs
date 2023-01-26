@@ -24,8 +24,6 @@ public class Project
     public List<ProjectLiaison> Liaisons { get; set; } = new List<ProjectLiaison>();
 
     public List<ProjectItem> Items { get; set; } = new List<ProjectItem>();
-
-    public bool IsPrivate { get; set; }
 }
 
 [PrimaryKey(nameof(ProjectId), nameof(PersonId))]

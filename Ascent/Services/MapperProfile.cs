@@ -63,6 +63,9 @@ public class MapperProfile : Profile
 
         CreateMap<RubricRatingInputModel, RubricRating>();
         CreateMap<RubricRating, RubricRatingInputModel>();
+
+        CreateMap<ProjectInputModel, Project>();
+        CreateMap<Project, ProjectInputModel>();
     }
 }
 
