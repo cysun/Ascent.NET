@@ -13,18 +13,15 @@ public class ProjectService
         .Select(p => p.AcademicYear).Distinct().OrderByDescending(y => y).ToList();
 
     public List<Project> GetProjects(string academicYear) => _db.Projects.AsNoTracking()
-        .Where(p => p.AcademicYear == academicYear)
-        .Include(p => p.Students.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
-        .Include(p => p.Advisors.OrderBy(a => a.Person.LastName)).ThenInclude(a => a.Person)
+        .Where(p => p.AcademicYear == academicYear && !p.IsDeleted)
+        .Include(p => p.Members.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
         .OrderBy(p => p.Title).ToList();
 
     public Project GetProject(int id) => _db.Projects.Find(id);
 
     public Project GetFullProject(int id) => _db.Projects.AsNoTracking()
         .Where(p => p.Id == id)
-        .Include(p => p.Students.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
-        .Include(p => p.Advisors.OrderBy(a => a.Person.LastName)).ThenInclude(a => a.Person)
-        .Include(p => p.Liaisons.OrderBy(l => l.Person.LastName)).ThenInclude(l => l.Person)
+        .Include(p => p.Members.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
         .Include(p => p.Items)
         .SingleOrDefault();
 

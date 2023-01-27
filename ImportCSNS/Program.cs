@@ -43,7 +43,6 @@ foreach (var cproject in csnsDb.Projects)
         Title = cproject.Title,
         Description = cproject.Description,
         Sponsor = cproject.Sponsor,
-        IsPrivate = cproject.Private
     };
 
     foreach (var cstudent in cproject.Students)
@@ -54,10 +53,11 @@ foreach (var cproject in csnsDb.Projects)
             Console.WriteLine($"ERROR: Cannot find student with CIN={cstudent.User.Cin}");
             continue;
         }
-        aproject.Students.Add(new Ascent.Models.ProjectStudent()
+        aproject.Members.Add(new Ascent.Models.ProjectMember()
         {
             Project = aproject,
-            Person = person
+            Person = person,
+            Type = Ascent.Models.Project.MemberType.Student
         });
     }
 
@@ -69,10 +69,11 @@ foreach (var cproject in csnsDb.Projects)
             Console.WriteLine($"ERROR: Cannot find advisor with CIN={cadvisor.User.Cin}");
             continue;
         }
-        aproject.Advisors.Add(new Ascent.Models.ProjectAdvisor()
+        aproject.Members.Add(new Ascent.Models.ProjectMember()
         {
             Project = aproject,
-            Person = person
+            Person = person,
+            Type = Ascent.Models.Project.MemberType.Advisor
         });
     }
 
@@ -84,10 +85,11 @@ foreach (var cproject in csnsDb.Projects)
             Console.WriteLine($"ERROR: Cannot find liaison with CIN={cliaison.User.Cin}");
             continue;
         }
-        aproject.Liaisons.Add(new Ascent.Models.ProjectLiaison()
+        aproject.Members.Add(new Ascent.Models.ProjectMember()
         {
             Project = aproject,
-            Person = person
+            Person = person,
+            Type = Ascent.Models.Project.MemberType.Liaison
         });
     }
 
@@ -99,7 +101,7 @@ foreach (var cproject in csnsDb.Projects)
     {
         if (cresource.Resource.Type == ResourceType.None) continue;
 
-        var item = new Ascent.Models.ProjectItem()
+        var item = new Ascent.Models.ProjectResource()
         {
             Project = aproject,
             Name = cresource.Resource.Name,
@@ -110,11 +112,11 @@ foreach (var cproject in csnsDb.Projects)
         switch (cresource.Resource.Type)
         {
             case ResourceType.Text:
-                item.Type = Ascent.Models.ItemType.Text;
+                item.Type = Ascent.Models.ResourceType.Text;
                 item.Text = cresource.Resource.Text;
                 break;
             case ResourceType.Url:
-                item.Type = Ascent.Models.ItemType.Url;
+                item.Type = Ascent.Models.ResourceType.Url;
                 item.Url = cresource.Resource.Url;
                 break;
             case ResourceType.File:
@@ -130,7 +132,7 @@ foreach (var cproject in csnsDb.Projects)
                     Console.WriteLine($"ERROR: Cannot find physical file with id={cresource.Resource.FileId}");
                     break;
                 }
-                item.Type = Ascent.Models.ItemType.File;
+                item.Type = Ascent.Models.ResourceType.File;
                 var afile = new Ascent.Models.File()
                 {
                     Name = cfile.Name,

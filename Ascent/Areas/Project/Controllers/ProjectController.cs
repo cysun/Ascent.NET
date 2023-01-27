@@ -42,7 +42,10 @@ namespace Ascent.Areas.Project.Controllers
         [AllowAnonymous]
         public IActionResult View(int id)
         {
-            return View(_projectService.GetFullProject(id));
+            var project = _projectService.GetFullProject(id);
+            if (project == null) return NotFound();
+
+            return View(project);
         }
 
         [HttpGet]
@@ -101,6 +104,19 @@ namespace Ascent.Areas.Project.Controllers
             _logger.LogInformation("{user} edited project {project}", User.Identity.Name, id);
 
             return RedirectToAction("View", new { id });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Delete(int id)
+        {
+            var project = _projectService.GetProject(id);
+            if (project == null) return NotFound();
+
+            project.IsDeleted = true;
+            _projectService.SaveChanges();
+            _logger.LogInformation("{user} deleted project {project}", User.Identity.Name, id);
+
+            return RedirectToAction("Index", new { year = project.AcademicYear });
         }
     }
 }

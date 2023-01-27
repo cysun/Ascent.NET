@@ -80,64 +80,64 @@ public class ProgramService
         _db.SaveChanges();
     }
 
-    public ProgramItem GetItem(int id) => _db.ProgramItems.Find(id);
+    public ProgramResource GetResource(int id) => _db.ProgramResources.Find(id);
 
-    public ProgramItem GetItem(int moduleId, int index) => _db.ProgramItems
+    public ProgramResource GetResource(int moduleId, int index) => _db.ProgramResources
         .Where(i => i.ModuleId == moduleId && i.Index == index).SingleOrDefault();
 
-    public List<ProgramItem> GetModuleItems(int moduleId) => _db.ProgramItems.AsNoTracking()
+    public List<ProgramResource> GetModuleResources(int moduleId) => _db.ProgramResources.AsNoTracking()
         .Where(i => i.ModuleId == moduleId).Include(i => i.File).Include(i => i.Page)
         .OrderBy(i => i.Index).ToList();
 
-    public Dictionary<int, List<ProgramItem>> GetProgramItems(int programId) => _db.ProgramItems.AsNoTracking()
+    public Dictionary<int, List<ProgramResource>> GetProgramResources(int programId) => _db.ProgramResources.AsNoTracking()
         .Where(i => i.Module.ProgramId == programId).Include(i => i.File).Include(i => i.Page)
         .AsEnumerable().GroupBy(i => i.ModuleId).ToDictionary(g => g.Key, g => g.OrderBy(g => g.Index).ToList());
 
-    public void AddItemToModule(int moduleId, ProgramItem item)
+    public void AddResourceToModule(int moduleId, ProgramResource resource)
     {
         var module = _db.ProgramModules.Find(moduleId);
         if (module == null) return;
 
-        item.ModuleId = moduleId;
-        item.Index = module.ItemCount++;
-        _db.ProgramItems.Add(item);
+        resource.ModuleId = moduleId;
+        resource.Index = module.ResourceCount++;
+        _db.ProgramResources.Add(resource);
         _db.SaveChanges();
     }
 
-    public void MoveUpItem(ProgramItem item)
+    public void MoveUpResource(ProgramResource resource)
     {
-        if (item.Index > 0)
+        if (resource.Index > 0)
         {
-            var previous = GetItem(item.ModuleId, item.Index - 1);
-            item.Index--;
+            var previous = GetResource(resource.ModuleId, resource.Index - 1);
+            resource.Index--;
             previous.Index++;
             _db.SaveChanges();
         }
     }
 
-    public void MoveDownItem(ProgramItem item)
+    public void MoveDownResource(ProgramResource resource)
     {
-        var module = _db.ProgramModules.Find(item.ModuleId);
-        if (item.Index < module.ItemCount - 1)
+        var module = _db.ProgramModules.Find(resource.ModuleId);
+        if (resource.Index < module.ResourceCount - 1)
         {
-            var next = GetItem(item.ModuleId, item.Index + 1);
-            item.Index++;
+            var next = GetResource(resource.ModuleId, resource.Index + 1);
+            resource.Index++;
             next.Index--;
             _db.SaveChanges();
         }
     }
 
-    public void DeleteItem(ProgramItem item)
+    public void DeleteResource(ProgramResource resource)
     {
-        var module = _db.ProgramModules.Find(item.ModuleId);
-        if (item.Index < module.ItemCount - 1)
+        var module = _db.ProgramModules.Find(resource.ModuleId);
+        if (resource.Index < module.ResourceCount - 1)
         {
-            var itemsAfter = _db.ProgramItems.Where(i => i.ModuleId == item.ModuleId && i.Index > item.Index);
-            foreach (var i in itemsAfter)
+            var resourcesAfter = _db.ProgramResources.Where(i => i.ModuleId == resource.ModuleId && i.Index > resource.Index);
+            foreach (var i in resourcesAfter)
                 i.Index--;
-            module.ItemCount--;
+            module.ResourceCount--;
         }
-        _db.ProgramItems.Remove(item);
+        _db.ProgramResources.Remove(resource);
         _db.SaveChanges();
     }
 

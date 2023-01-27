@@ -24,24 +24,24 @@
 
 <div class="card">
     <div class="card-header">@Model.Name</div>
-    @if (ViewBag.Items.Count > 0)
+    @if (ViewBag.Resources.Count > 0)
     {
         <ul class="list-group list-group-flush">
-            @foreach (var item in ViewBag.Items)
+            @foreach (var resource in ViewBag.Resources)
             {
                 <li class="list-group-item d-flex align-items-center">
-                    @if (item.Type == ItemType.Page)
+                    @if (resource.Type == ResourceType.Page)
                     {
-                        <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">
-                            @item.Page.Subject
+                        <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@resource.PageId">
+                            @resource.Page.Subject
                         </a>
                     }
-                    else if (item.Type == ItemType.File)
+                    else if (resource.Type == ResourceType.File)
                     {
-                        <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">
-                            @item.File.Name
+                        <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@resource.File.Id">
+                            @resource.File.Name
                         </a>
-                        <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.File.Id"
+                        <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@resource.File.Id"
                class="btn btn-outline-primary btn-sm ms-auto">
                             <i class="bi bi-download"></i>
                         </a>

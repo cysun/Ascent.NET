@@ -1,10 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ascent.Models;
 
 public class Project
 {
+    public enum MemberType
+    {
+        Student = 1,
+        Advisor = 2,
+        Liaison = 3
+    }
+
     public int Id { get; set; }
 
     // In the form of xxxx-yyyy, e.g. 2022-2023
@@ -19,44 +27,33 @@ public class Project
     [MaxLength(255)]
     public string Sponsor { get; set; }
 
-    public List<ProjectStudent> Students { get; set; } = new List<ProjectStudent>();
-    public List<ProjectAdvisor> Advisors { get; set; } = new List<ProjectAdvisor>();
-    public List<ProjectLiaison> Liaisons { get; set; } = new List<ProjectLiaison>();
+    public List<ProjectMember> Members { get; set; } = new List<ProjectMember>();
+    public List<ProjectResource> Items { get; set; } = new List<ProjectResource>();
 
-    public List<ProjectItem> Items { get; set; } = new List<ProjectItem>();
+    public bool IsDeleted { get; set; }
+
+    [NotMapped]
+    public List<ProjectMember> Students => Members.Where(m => m.Type == MemberType.Student).ToList();
+    [NotMapped]
+    public List<ProjectMember> Advisors => Members.Where(m => m.Type == MemberType.Advisor).ToList();
+    [NotMapped]
+    public List<ProjectMember> Liaisons => Members.Where(m => m.Type == MemberType.Liaison).ToList();
 }
 
-[PrimaryKey(nameof(ProjectId), nameof(PersonId))]
-public class ProjectStudent
+// In some rare cases (hi francisco!), someone can be both an advisor and a liaison.
+[PrimaryKey(nameof(ProjectId), nameof(PersonId), nameof(Type))]
+public class ProjectMember
 {
     public int ProjectId { get; set; }
     public Project Project { get; set; }
 
     public int PersonId { get; set; }
     public Person Person { get; set; }
+
+    public Project.MemberType Type { get; set; }
 }
 
-[PrimaryKey(nameof(ProjectId), nameof(PersonId))]
-public class ProjectAdvisor
-{
-    public int ProjectId { get; set; }
-    public Project Project { get; set; }
-
-    public int PersonId { get; set; }
-    public Person Person { get; set; }
-}
-
-[PrimaryKey(nameof(ProjectId), nameof(PersonId))]
-public class ProjectLiaison
-{
-    public int ProjectId { get; set; }
-    public Project Project { get; set; }
-
-    public int PersonId { get; set; }
-    public Person Person { get; set; }
-}
-
-public class ProjectItem
+public class ProjectResource
 {
     public int Id { get; set; }
 
@@ -67,7 +64,7 @@ public class ProjectItem
     public string Name { get; set; }
 
     [MaxLength(10)]
-    public ItemType Type { get; set; }
+    public ResourceType Type { get; set; }
 
     public int? FileId { get; set; }
     public File File { get; set; }

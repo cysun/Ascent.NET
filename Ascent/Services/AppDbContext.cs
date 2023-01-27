@@ -33,15 +33,13 @@ public class AppDbContext : DbContext
     public DbSet<Models.Program> Programs { get; set; }
     public DbSet<ProgramOutcome> ProgramOutcomes { get; set; }
     public DbSet<ProgramModule> ProgramModules { get; set; }
-    public DbSet<ProgramItem> ProgramItems { get; set; }
+    public DbSet<ProgramResource> ProgramResources { get; set; }
     public DbSet<Rubric> Rubrics { get; set; }
     public DbSet<RubricCriterion> RubricCriteria { get; set; }
     public DbSet<RubricRating> RubricRatings { get; set; }
     public DbSet<Project> Projects { get; set; }
-    public DbSet<ProjectStudent> ProjectStudents { get; set; }
-    public DbSet<ProjectAdvisor> ProjectAdvisors { get; set; }
-    public DbSet<ProjectLiaison> ProjectLiaisons { get; set; }
-    public DbSet<ProjectItem> ProjectItems { get; set; }
+    public DbSet<ProjectMember> ProjectMembers { get; set; }
+    public DbSet<ProjectResource> ProjectResources { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,9 +62,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<SurveyAnswer>().HasAlternateKey(a => new { a.ResponseId, a.QuestionId });
         modelBuilder.Entity<ProgramOutcome>().HasIndex(o => new { o.ProgramId, o.Index });
         modelBuilder.Entity<ProgramModule>().HasIndex(m => new { m.ProgramId, m.Index });
-        modelBuilder.Entity<ProgramItem>().Property(i => i.Type).HasConversion<string>();
-        modelBuilder.Entity<ProgramItem>().HasIndex(i => new { i.ModuleId, i.Index });
-        modelBuilder.Entity<ProjectItem>().Property(i => i.Type).HasConversion<string>();
+        modelBuilder.Entity<ProgramResource>().Property(i => i.Type).HasConversion<string>();
+        modelBuilder.Entity<ProgramResource>().HasIndex(i => new { i.ModuleId, i.Index });
+        modelBuilder.Entity<ProjectResource>().Property(i => i.Type).HasConversion<string>();
 
         // We'll create/replace Ranks as a whole instead of adding/removing individual entries, so the
         // ValueComparer is mainly for show (and to shut up the EF Core warning). See

@@ -65,29 +65,29 @@
         <div>
             <div id="m-id-@module.Id" class="card h-100">
                 <div class="card-header">@module.Name</div>
-                @if (ViewBag.Items.ContainsKey(module.Id))
+                @if (ViewBag.Resources.ContainsKey(module.Id))
                 {
                     <ul class="list-group list-group-flush">
                         @{
                             var count = 0;
                         }
-                        @foreach (var item in ViewBag.Items[module.Id])
+                        @foreach (var resource in ViewBag.Resources[module.Id])
                         {
                             if (count++ < maxShowCount)
                             {
                                 <li class="list-group-item list-group-item-action d-flex align-items-center">
-                                    @if (item.Type == ItemType.Page)
+                                    @if (resource.Type == ResourceType.Page)
                                     {
-                                        <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@item.PageId">
-                                            @item.Page.Subject
+                                        <a asp-area="" asp-controller="Page" asp-action="View" asp-route-id="@resource.PageId">
+                                            @resource.Page.Subject
                                         </a>
                                     }
-                                    else if (item.Type == ItemType.File)
+                                    else if (resource.Type == ResourceType.File)
                                     {
-                                        <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.File.Id">
-                                            @item.File.Name
+                                        <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@resource.File.Id">
+                                            @resource.File.Name
                                         </a>
-                                        <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.File.Id"
+                                        <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@resource.File.Id"
                        class="btn btn-outline-primary btn-sm ms-auto">
                                             <i class="bi bi-download"></i>
                                         </a>
@@ -96,7 +96,7 @@
                             }
                         }
                     </ul>
-                    @if (module.ItemCount > maxShowCount)
+                    @if (module.ResourceCount > maxShowCount)
                     {
                         <div class="card-body">
                             <a asp-controller="Module" asp-action="View" asp-route-id="@module.Id" class="btn btn-primary">More</a>

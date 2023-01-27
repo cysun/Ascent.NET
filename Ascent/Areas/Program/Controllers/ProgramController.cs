@@ -39,7 +39,7 @@ namespace Ascent.Areas.Program.Controllers
             if (program == null) return NotFound();
 
             ViewBag.Modules = _programService.GetModules(id);
-            ViewBag.Items = _programService.GetProgramItems(id);
+            ViewBag.Resources = _programService.GetProgramResources(id);
 
             return View(program);
         }

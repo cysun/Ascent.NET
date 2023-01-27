@@ -50,10 +50,10 @@ namespace Ascent.Models
         [Required, MaxLength(64)]
         public string Name { get; set; }
 
-        public int ItemCount { get; set; }
+        public int ResourceCount { get; set; }
     }
 
-    public class ProgramItem
+    public class ProgramResource
     {
         public int Id { get; set; }
 
@@ -63,7 +63,7 @@ namespace Ascent.Models
         public int Index { get; set; }
 
         [MaxLength(10)]
-        public ItemType Type { get; set; }
+        public ResourceType Type { get; set; }
 
         public int? FileId { get; set; }
         public File File { get; set; }

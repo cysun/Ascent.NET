@@ -2,17 +2,15 @@ DROP TRIGGER "ProjectsTsTrigger" ON "Projects";
 DROP FUNCTION "ProjectsTsTriggerFunction"();
 DROP FUNCTION "SearchProjects"(varchar, integer);
 
-DROP TABLE "ProjectItems";
-DROP TABLE "ProjectLiaisons";
-DROP TABLE "ProjectAdvisors";
-DROP TABLE "ProjectStudents";
+DROP TABLE "ProjectResources";
+DROP TABLE "ProjectMembers";
 DROP TABLE "Projects";
 
 DROP TABLE "RubricRatings";
 DROP TABLE "RubricCriteria";
 DROP TABLE "Rubrics";
 
-DROP TABLE "ProgramItems";
+DROP TABLE "ProgramResources";
 DROP TABLE "ProgramModules";
 DROP TABLE "ProgramOutcomes";
 DROP TABLE "Programs";
