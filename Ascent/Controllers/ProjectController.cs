@@ -6,9 +6,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ascent.Areas.Project.Controllers
+namespace Ascent.Controllers
 {
-    [Area("Project")]
     public class ProjectController : Controller
     {
         private readonly ProjectService _projectService;
@@ -65,11 +64,11 @@ namespace Ascent.Areas.Project.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var project = _mapper.Map<Models.Project>(input);
+            var project = _mapper.Map<Project>(input);
             _projectService.AddProject(project);
             _logger.LogInformation("{user} created project {project}", User.Identity.Name, project.Id);
 
-            return RedirectToAction("View", new { id = project.Id });
+            return RedirectToAction("Members", new { id = project.Id });
         }
 
         [HttpGet]
@@ -117,6 +116,42 @@ namespace Ascent.Areas.Project.Controllers
             _logger.LogInformation("{user} deleted project {project}", User.Identity.Name, id);
 
             return RedirectToAction("Index", new { year = project.AcademicYear });
+        }
+
+        public async Task<IActionResult> MembersAsync(int id)
+        {
+            var authResult = await _authorizationService.AuthorizeAsync(User, id, Constants.Policy.CanManageProject);
+            if (!authResult.Succeeded)
+                return Forbid();
+
+            var project = _projectService.GetFullProject(id);
+            if (project == null) return NotFound();
+
+            return View(project);
+        }
+
+        public async Task<IActionResult> AddMemberAsync(int id, int personId, string memberType)
+        {
+            var authResult = await _authorizationService.AuthorizeAsync(User, id, Constants.Policy.CanManageProject);
+            if (!authResult.Succeeded)
+                return Forbid();
+
+            _projectService.AddProjectMember(id, personId, memberType);
+            _logger.LogInformation("{user} added member {member} to project {project}", User.Identity.Name, personId, id);
+
+            return RedirectToAction("Members", new { id });
+        }
+
+        public async Task<IActionResult> RemoveMemberAsync(int id, int personId, string memberType)
+        {
+            var authResult = await _authorizationService.AuthorizeAsync(User, id, Constants.Policy.CanManageProject);
+            if (!authResult.Succeeded)
+                return Forbid();
+
+            _projectService.RemoveProjectMember(id, personId, memberType);
+            _logger.LogInformation("{user} removed member {member} from project {project}", User.Identity.Name, personId, id);
+
+            return RedirectToAction("Members", new { id });
         }
     }
 }

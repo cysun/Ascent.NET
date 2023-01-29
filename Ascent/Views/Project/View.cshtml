@@ -27,16 +27,7 @@
 <div class="row g-2">
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header d-flex align-items-center">
-                <span>Student Team</span>
-                @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, Constants.Policy.CanManageProject)).Succeeded)
-                {
-                    <a asp-controller="Participant" asp-action="Students" asp-route-projectId="@Model.Id"
-                   class="btn btn-outline-primary btn-sm ms-auto" title="Edit Students">
-                        <i class="bi bi-pencil-fill"></i>
-                    </a>
-                }
-            </div>
+            <div class="card-header">Student Team</div>
             <ul class="list-group list-group-flush">
                 @foreach (var student in Model.Students)
                 {
@@ -51,16 +42,7 @@
             <div class="card-body">@Model.Sponsor</div>
         </div>
         <div class="card mb-2">
-            <div class="card-header d-flex align-items-center">
-                <span>Project Liaisons</span>
-                @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, Constants.Policy.CanManageProject)).Succeeded)
-                {
-                    <a asp-controller="Participant" asp-action="Liaisons" asp-route-projectId="@Model.Id"
-                   class="btn btn-outline-primary btn-sm ms-auto" title="Edit Liaisons">
-                        <i class="bi bi-pencil-fill"></i>
-                    </a>
-                }
-            </div>
+            <div class="card-header">Project Liaisons</div>
             <ul class="list-group list-group-flush">
                 @foreach (var liaison in Model.Liaisons)
                 {
@@ -70,16 +52,7 @@
         </div>
 
         <div class="card">
-            <div class="card-header d-flex align-items-center">
-                <span>Faculty Advisors</span>
-                @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, Constants.Policy.CanManageProject)).Succeeded)
-                {
-                    <a asp-controller="Participant" asp-action="Advisors" asp-route-projectId="@Model.Id"
-                   class="btn btn-outline-primary btn-sm ms-auto" title="Edit Liaisons">
-                        <i class="bi bi-pencil-fill"></i>
-                    </a>
-                }
-            </div>
+            <div class="card-header d-flex align-items-center">Faculty Advisors</div>
             <ul class="list-group list-group-flush">
                 @foreach (var advisor in Model.Advisors)
                 {

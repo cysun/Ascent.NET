@@ -1,0 +1,103 @@
+@inject IAuthorizationService AuthorizationService
+@model Project
+@{
+    ViewData["Title"] = "Edit Project Members";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Project</a></li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@Model.Id">@Model.Title</a></li>
+        <li class="breadcrumb-item active">Edit Members</li>
+    </ol>
+</nav>
+
+<div class="input-group mb-3">
+    <div class="input-group-text">
+        <select id="memberType" class="form-select">
+            <option>Student</option>
+            <option>Advisor</option>
+            <option>Liaison</option>
+        </select>
+    </div>
+    <input id="search" type="text" class="form-control" placeholder="Search people to add to the project" />
+</div>
+
+<div class="row g-2">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex align-items-center">Student Team</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var student in Model.Students)
+                {
+                    <li class="list-group-item d-flex">
+                        <span class="me-auto">@student.Person.FullName</span>
+                        <a asp-action="RemoveMember" asp-route-id="@Model.Id" asp-route-personId="@student.Person.Id"
+                       asp-route-memberType="Student" class="btn btn-outline-danger btn-sm stretched-link">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-2">
+            <div class="card-header d-flex align-items-center">Project Liaisons</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var liaison in Model.Liaisons)
+                {
+                    <li class="list-group-item d-flex">
+                        <span class="me-auto">@liaison.Person.FullName</span>
+                        <a asp-action="RemoveMember" asp-route-id="@Model.Id" asp-route-personId="@liaison.Person.Id"
+                       asp-route-memberType="Liaison" class="btn btn-outline-danger btn-sm stretched-link">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex align-items-center">Faculty Advisors</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var advisor in Model.Advisors)
+                {
+                    <li class="list-group-item d-flex">
+                        <span class="me-auto">@advisor.Person.FullName</span>
+                        <a asp-action="RemoveMember" asp-route-id="@Model.Id" asp-route-personId="@advisor.Person.Id"
+                       asp-route-memberType="Advisor" class="btn btn-outline-danger btn-sm stretched-link">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/autocomplete.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            $("#delete").click(function () {
+                if (confirm("Do you want to delete this group?"))
+                    window.location.href = "../removemember/@Model.Id";
+            });
+            const field = document.getElementById("search");
+            const ac = new Autocomplete(field, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/person/autocomplete",
+                        data: { searchText: $("#search").val() },
+                        success: results => ac.setData(results.map(r =>
+                            ({ label: r.campusId + " " + r.fullName, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    var memberType = $("#memberType").val();
+                    window.location.href = `../addmember/@Model.Id?personId=${value}&memberType=${memberType}`;
+                }
+            });
+        });
+    </script>
+}
