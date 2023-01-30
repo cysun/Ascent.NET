@@ -6,8 +6,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ascent.Controllers
+namespace Ascent.Areas.Project.Controllers
 {
+    [Area("Project")]
     public class ProjectController : Controller
     {
         private readonly ProjectService _projectService;
@@ -64,7 +65,7 @@ namespace Ascent.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var project = _mapper.Map<Project>(input);
+            var project = _mapper.Map<Models.Project>(input);
             _projectService.AddProject(project);
             _logger.LogInformation("{user} created project {project}", User.Identity.Name, project.Id);
 
@@ -124,7 +125,7 @@ namespace Ascent.Controllers
             if (!authResult.Succeeded)
                 return Forbid();
 
-            var project = _projectService.GetFullProject(id);
+            var project = _projectService.GetProjectWithMembers(id);
             if (project == null) return NotFound();
 
             return View(project);

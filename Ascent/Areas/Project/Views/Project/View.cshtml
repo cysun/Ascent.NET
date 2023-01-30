@@ -67,32 +67,32 @@
                 <span>Resources</span>
                 @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, Constants.Policy.CanManageProject)).Succeeded)
                 {
-                    <a asp-controller="Item" asp-action="Index" asp-route-projectId="@Model.Id"
+                    <a asp-controller="Resource" asp-action="Index" asp-route-projectId="@Model.Id"
                    class="btn btn-outline-primary btn-sm ms-auto" title="Edit Resources">
                         <i class="bi bi-pencil-fill"></i>
                     </a>
                 }
             </div>
             <ul class="list-group list-group-flush">
-                @foreach (var item in Model.Items)
+                @foreach (var resource in Model.Resources)
                 {
                     <li class="list-group-item d-flex">
-                        @if (item.IsPrivate)
+                        @if (resource.IsPrivate)
                         {
                             <i class="bi bi-lock-fill me-2"></i>
                         }
-                        @switch (item.Type)
+                        @switch (resource.Type)
                         {
                             case ResourceType.Text:
-                                <a asp-controller="Item" asp-action="View" asp-route-id="@item.Id">@item.Name</a>
+                                <text>@resource.Name</text>
                                 break;
                             case ResourceType.Url:
-                                <a href="@item.Url">@item.Name</a>
+                                <a asp-controller="Resource" asp-action="Get" asp-route-id="@resource.Id">@resource.Name</a>
                                 break;
                             case ResourceType.File:
-                                <a asp-area="" asp-controller="File" asp-action="View" asp-route-id="@item.FileId"
-                       class="me-auto" style="z-index: 3">@item.Name</a>
-                                <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@item.FileId"
+                                <a asp-controller="Resource" asp-action="Get" asp-route-id="@resource.Id" asp-route-inline="true"
+                       class="me-auto" style="z-index: 3">@resource.Name</a>
+                                <a asp-controller="Resource" asp-action="Get" asp-route-id="@resource.Id"
                        class="btn btn-outline-primary btn-sm stretched-link">
                                     <i class="bi bi-download"></i>
                                 </a>

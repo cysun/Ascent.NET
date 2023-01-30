@@ -5,17 +5,17 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-action="Index">Project</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Projects</a></li>
         <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@Model.Id">@Model.Title</a></li>
-        <li class="breadcrumb-item active">Edit Members</li>
+        <li class="breadcrumb-item active">Members</li>
     </ol>
 </nav>
 
 <div class="input-group mb-3">
     <div class="input-group-text">
-        <select id="memberType" class="form-select">
-            <option>Student</option>
-            <option>Advisor</option>
+        <select id="resourceType" class="form-select">
+            <option>File</option>
+            <option>Url</option>
             <option>Liaison</option>
         </select>
     </div>

@@ -50,7 +50,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Resource
+                                Resources
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
@@ -60,7 +60,7 @@
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Course" asp-action="Index">Courses</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Section" asp-action="Index">Sections</a></li>
                                 }
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Project" asp-action="Index">Projects</a></li>
+                                <li><a class="dropdown-item" asp-area="Project" asp-controller="Project" asp-action="Index">Projects</a></li>
                                 @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                                 {
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Page" asp-action="Index">Pages</a></li>

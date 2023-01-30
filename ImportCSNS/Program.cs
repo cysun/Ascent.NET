@@ -107,7 +107,7 @@ foreach (var cproject in csnsDb.Projects)
             Name = cresource.Resource.Name,
             IsPrivate = cresource.Resource.Private
         };
-        aproject.Items.Add(item);
+        aproject.Resources.Add(item);
 
         switch (cresource.Resource.Type)
         {

@@ -1,0 +1,36 @@
+@inject IAuthorizationService AuthorizationService
+@model Project
+@{
+    ViewData["Title"] = "Edit Project Resources";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Project" asp-action="Index" asp-route-year="@Model.AcademicYear">Projects</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Project" asp-action="View" asp-route-id="@Model.Id">@Model.Title</a></li>
+        <li class="breadcrumb-item active me-auto">Resources</li>
+        <li>
+            <a asp-action="Add" asp-route-projectId="@Model.Id" class="btn btn-outline-primary btn-sm" title="Add Resource">
+                <i class="bi bi-plus-lg"></i>
+            </a>
+        </li>
+    </ol>
+</nav>
+
+<div class="card">
+    <div class="card-header">Resources</div>
+    <ul class="list-group list-group-flush">
+        @foreach (var resource in Model.Resources)
+        {
+            <li class="list-group-item d-flex">
+                @if (resource.IsPrivate)
+                {
+                    <i class="bi bi-lock-fill me-2"></i>
+                }
+                <a asp-action="Get" asp-route-id="@resource.Id" asp-route-inline="true" class="me-auto" style="z-index: 3">@resource.Name</a>
+                <a asp-action="Edit" asp-route-id="@resource.Id" class="btn btn-outline-primary btn-sm stretched-link">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
+    </ul>
+</div>

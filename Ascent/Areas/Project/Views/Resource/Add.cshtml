@@ -1,0 +1,52 @@
+@model ProjectResourceInputModel
+@{
+    ViewData["Title"] = "Add Project Resource";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Project" asp-action="Index" asp-route-year="@ViewBag.Project.AcademicYear">Projects</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Project" asp-action="View" asp-route-id="@ViewBag.Project.Id">
+                @ViewBag.Project.Title
+            </a>
+        </li>
+        <li class="breadcrumb-item active">New Resource</li>
+    </ol>
+</nav>
+
+<form method="post" enctype="multipart/form-data">
+    <input asp-for="ProjectId" type="hidden">
+    <div class="input-group mb-3">
+        <div class="input-group-text">
+            <select id="Type" name="Type" class="form-select">
+                <option>File</option>
+                <option>Url</option>
+            </select>
+        </div>
+        <input asp-for="Name" class="form-control" placeholder="Name of the resource" required />
+    </div>
+    <div id="fileInput" class="mb-3">
+        <input name="uploadedFile" class="form-control" type="file">
+    </div>
+    <div id="urlInput" class="mb-3">
+        <input asp-for="Url" class="form-control" placeholder="Enter the resource URL">
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="IsPrivate" class="form-check-input">
+        <label asp-for="IsPrivate" class="form-check-label"></label>
+    </div>
+    <a asp-action="Index" asp-route-projectId="@ViewBag.Project.Id" class="btn btn-secondary me-2">Cancel</a>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#urlInput").hide();
+            $("#Type").change(function () {
+                $("#fileInput").toggle();
+                $("#urlInput").toggle();
+            });
+        });
+    </script>
+}

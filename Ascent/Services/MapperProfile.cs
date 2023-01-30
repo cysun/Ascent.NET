@@ -66,6 +66,9 @@ public class MapperProfile : Profile
 
         CreateMap<ProjectInputModel, Project>();
         CreateMap<Project, ProjectInputModel>();
+
+        CreateMap<ProjectResourceInputModel, ProjectResource>();
+        CreateMap<ProjectResource, ProjectResourceInputModel>();
     }
 }
 

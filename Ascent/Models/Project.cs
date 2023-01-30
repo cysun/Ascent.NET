@@ -28,7 +28,7 @@ public class Project
     public string Sponsor { get; set; }
 
     public List<ProjectMember> Members { get; set; } = new List<ProjectMember>();
-    public List<ProjectResource> Items { get; set; } = new List<ProjectResource>();
+    public List<ProjectResource> Resources { get; set; } = new List<ProjectResource>();
 
     public bool IsDeleted { get; set; }
 

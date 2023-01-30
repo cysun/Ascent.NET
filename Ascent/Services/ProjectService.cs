@@ -19,10 +19,18 @@ public class ProjectService
 
     public Project GetProject(int id) => _db.Projects.Find(id);
 
+    public Project GetProjectWithMembers(int id) => _db.Projects.AsNoTracking()
+        .Where(p => p.Id == id).Include(p => p.Members.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
+        .SingleOrDefault();
+
+    public Project GetProjectWithResources(int id) => _db.Projects.AsNoTracking()
+        .Where(p => p.Id == id).Include(p => p.Resources.OrderBy(r => r.Name))
+        .SingleOrDefault();
+
     public Project GetFullProject(int id) => _db.Projects.AsNoTracking()
         .Where(p => p.Id == id)
         .Include(p => p.Members.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
-        .Include(p => p.Items)
+        .Include(p => p.Resources.OrderBy(r => r.Name))
         .SingleOrDefault();
 
     public void AddProject(Project project)
@@ -60,6 +68,22 @@ public class ProjectService
             _db.ProjectMembers.Remove(member);
             _db.SaveChanges();
         }
+    }
+
+    public ProjectResource GetProjectResource(int id) => _db.ProjectResources
+        .Where(r => r.Id == id).Include(r => r.Project)
+        .SingleOrDefault();
+
+    public void AddProjectResource(ProjectResource resource)
+    {
+        _db.ProjectResources.Add(resource);
+        _db.SaveChanges();
+    }
+
+    public void RemoveProjectResource(ProjectResource resource)
+    {
+        _db.ProjectResources.Remove(resource);
+        _db.SaveChanges();
     }
 
     public void SaveChanges() => _db.SaveChanges();
