@@ -3,7 +3,7 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-action="Index">Import</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Import</a></li>
         <li class="breadcrumb-item active">Grades</li>
     </ol>
 </nav>
@@ -48,12 +48,12 @@
 @section Scripts{
     <script src="~/js/autocomplete.js" asp-append-version="true"></script>
     <script>
-        $(function() {
+        $(function () {
             const field1 = document.getElementById("searchPerson");
             const ac1 = new Autocomplete(field1, {
-                onInput: function() {
+                onInput: function () {
                     $.ajax({
-                        url: "../person/autocomplete",
+                        url: "/person/autocomplete",
                         data: { searchText: $("#searchPerson").val() },
                         success: results => ac1.setData(results.map(r =>
                             ({ label: r.campusId + " " + r.fullName, value: r.id })))
@@ -65,9 +65,9 @@
             });
             const field2 = document.getElementById("searchCourse");
             const ac2 = new Autocomplete(field2, {
-                onInput: function() {
+                onInput: function () {
                     $.ajax({
-                        url: "../course/autocomplete",
+                        url: "/course/autocomplete",
                         data: { prefix: $("#searchCourse").val() },
                         success: results => ac2.setData(results.map(r =>
                             ({ label: r.code, value: r.id })))
@@ -77,7 +77,7 @@
                     $("#course").val(value);
                 }
             });
-            $("button").click(function() {
+            $("button").click(function () {
                 if ($("#instructor").val() && $("#course").val() && $("#file").val())
                     $("form").submit();
             });

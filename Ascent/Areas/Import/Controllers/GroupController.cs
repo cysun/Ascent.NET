@@ -38,7 +38,7 @@ namespace Ascent.Areas.Import.Controllers
             return RedirectToAction("View", "Group", new { Area = "", id = groupId });
         }
 
-        public Person GetOrCreatePerson(ExcelReader excelReader)
+        private Person GetOrCreatePerson(ExcelReader excelReader)
         {
             var cin = excelReader.Get("CIN");
             var person = _personService.GetPersonByCampusId(cin);

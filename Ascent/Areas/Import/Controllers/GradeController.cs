@@ -1,7 +1,7 @@
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +27,7 @@ namespace Ascent.Areas.Import.Controllers
         }
 
         [HttpGet]
-        public IActionResult Grades(int? termCode)
+        public IActionResult Import(int? termCode)
         {
             var terms = new List<Term>();
             if (termCode == null)
@@ -50,7 +50,7 @@ namespace Ascent.Areas.Import.Controllers
         }
 
         [HttpPost]
-        public IActionResult Grades(int termCode, int courseId, int instructorId, IFormFile uploadedFile)
+        public IActionResult Import(int termCode, int courseId, int instructorId, IFormFile uploadedFile)
         {
             var section = new Section()
             {
@@ -61,100 +61,40 @@ namespace Ascent.Areas.Import.Controllers
             _sectionService.AddSection(section);
             _logger.LogInformation("{user} created section {section} for grade import", User.Identity.Name, section.Id);
 
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.Load(uploadedFile.OpenReadStream());
-
-            var colLabels = new Dictionary<int, string>();
-            var rows = htmlDoc.DocumentNode.SelectNodes("//tr");
-
-            var rowIndex = 1;
-            foreach (var row in rows)
+            var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
+            while (excelReader.Next())
             {
-                var colIndex = 1;
-
-                if (rowIndex == 1)
+                var person = GetOrCreatePerson(excelReader);
+                var enrollment = new Enrollment()
                 {
-                    foreach (var col in row.SelectNodes(".//th"))
-                        colLabels.Add(colIndex++, col.InnerText);
-                    ++rowIndex;
-                    continue;
-                }
-
-                var record = new ImportedGradeRecord();
-                foreach (var col in row.SelectNodes(".//td"))
-                {
-                    switch (colLabels[colIndex++])
-                    {
-                        case "ID":
-                            record.CampusId = col.InnerText;
-                            break;
-                        case "Name":
-                            record.Name = col.InnerText;
-                            break;
-                        case "Official Grade":
-                            record.GradeSymbol = col.InnerText;
-                            break;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(record.GradeSymbol))
-                {
-                    var student = GetOrCreateStudent(record);
-                    var enrollment = new Enrollment()
-                    {
-                        SectionId = section.Id,
-                        StudentId = student.Id,
-                        GradeSymbol = record.GradeSymbol
-                    };
-                    _enrollmentService.AddEnrollment(enrollment);
-
-                    ++rowIndex;
-                }
-            }
-
-            _logger.LogInformation("{user} imported grades of {students} students", User.Identity.Name, rowIndex - 2);
-
-            return RedirectToAction("View", "Section", new { id = section.Id });
-        }
-
-        public Person GetOrCreateStudent(ImportedGradeRecord record)
-        {
-            var student = _personService.GetPersonByCampusId(record.CampusId);
-
-            if (student == null)
-            {
-                student = new Person()
-                {
-                    CampusId = record.CampusId,
-                    FirstName = record.FirstName,
-                    LastName = record.LastName
+                    SectionId = section.Id,
+                    StudentId = person.Id,
+                    GradeSymbol = excelReader.Get("Official Grade")
                 };
-                _personService.AddPerson(student);
+                _enrollmentService.AddEnrollment(enrollment);
             }
 
-            return student;
+            return RedirectToAction("View", "Section", new { Area = "", id = section.Id });
         }
 
-        public class ImportedGradeRecord
+        private Person GetOrCreatePerson(ExcelReader excelReader)
         {
-            public string CampusId { get; set; }
-
-            private string _firstName, _lastName;
-
-            public string FirstName => _firstName;
-            public string LastName => _lastName;
-
-            public string Name
+            var cin = excelReader.Get("ID");
+            var person = _personService.GetPersonByCampusId(cin);
+            if (person == null)
             {
-                set
+                var tokens = excelReader.Get("Name").Split(',', StringSplitOptions.TrimEntries);
+                var midIndex = tokens[1].IndexOf(' ');
+                person = new Person
                 {
-                    var tokens = value.Split(',');
-                    _lastName = tokens[0];
-                    _firstName = tokens[1];
-                }
+                    CampusId = cin,
+                    LastName = tokens[0],
+                    FirstName = midIndex > 0 ? tokens[1].Substring(0, midIndex) : tokens[1],
+                    MiddleName = midIndex > 0 ? tokens[1].Substring(midIndex + 1) : null
+                };
+                _personService.AddPerson(person);
             }
-
-            public string GradeSymbol { get; set; }
+            return person;
         }
     }
 }
