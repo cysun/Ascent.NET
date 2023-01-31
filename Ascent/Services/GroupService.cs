@@ -18,6 +18,9 @@ public class GroupService
     public List<Group> GetGroups() => _db.Groups.AsNoTracking()
         .OrderBy(g => g.Id).ToList();
 
+    public List<Group> GetRegularGroups() => _db.Groups.AsNoTracking()
+        .Where(g => !g.IsVirtual).OrderBy(g => g.Id).ToList();
+
     public Group GetGroup(int id) => _db.Groups.Find(id);
 
     public void AddGroup(Group group)

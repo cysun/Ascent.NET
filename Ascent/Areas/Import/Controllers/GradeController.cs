@@ -1,4 +1,3 @@
-using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -6,31 +5,25 @@ using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ascent.Controllers
+namespace Ascent.Areas.Import.Controllers
 {
+    [Area("Import")]
     [Authorize(Policy = Constants.Policy.CanWrite)]
-    public class ImportController : Controller
+    public class GradeController : Controller
     {
         private readonly PersonService _personService;
-        private readonly GroupService _groupService;
         private readonly SectionService _sectionService;
         private readonly EnrollmentService _enrollmentService;
 
-        private readonly ILogger<ImportController> _logger;
+        private readonly ILogger<GradeController> _logger;
 
-        public ImportController(PersonService personService, GroupService groupService, SectionService sectionService,
-            EnrollmentService enrollmentService, ILogger<ImportController> logger)
+        public GradeController(PersonService personService, SectionService sectionService,
+            EnrollmentService enrollmentService, ILogger<GradeController> logger)
         {
             _personService = personService;
-            _groupService = groupService;
             _sectionService = sectionService;
             _enrollmentService = enrollmentService;
             _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpGet]
@@ -40,7 +33,7 @@ namespace Ascent.Controllers
             if (termCode == null)
             {
                 var currentTerm = new Term();
-                for (int i = 1; i < 10; ++i)
+                for (var i = 1; i < 10; ++i)
                 {
                     terms.Add(currentTerm);
                     currentTerm = currentTerm.Previous();
@@ -59,7 +52,7 @@ namespace Ascent.Controllers
         [HttpPost]
         public IActionResult Grades(int termCode, int courseId, int instructorId, IFormFile uploadedFile)
         {
-            Section section = new Section()
+            var section = new Section()
             {
                 Term = new Term(termCode),
                 CourseId = courseId,
@@ -77,7 +70,7 @@ namespace Ascent.Controllers
             var rowIndex = 1;
             foreach (var row in rows)
             {
-                int colIndex = 1;
+                var colIndex = 1;
 
                 if (rowIndex == 1)
                 {
@@ -155,58 +148,13 @@ namespace Ascent.Controllers
             {
                 set
                 {
-                    string[] tokens = value.Split(',');
+                    var tokens = value.Split(',');
                     _lastName = tokens[0];
                     _firstName = tokens[1];
                 }
             }
 
             public string GradeSymbol { get; set; }
-        }
-
-        [HttpGet]
-        public IActionResult Group()
-        {
-            return View(_groupService.GetGroups());
-        }
-
-        [HttpPost]
-        public IActionResult Group(int groupId, IFormFile uploadedFile)
-        {
-            var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
-            while (excelReader.Next())
-            {
-                var person = GetOrCreatePerson(excelReader);
-                _groupService.AddMemberToGroup(groupId, person.Id);
-            }
-            return RedirectToAction("View", "Group", new { id = groupId });
-        }
-
-        public Person GetOrCreatePerson(ExcelReader excelReader)
-        {
-            string cin = excelReader.Get("CIN");
-            var person = _personService.GetPersonByCampusId(cin);
-            if (person == null)
-            {
-                person = new Person
-                {
-                    CampusId = cin,
-                    FirstName = excelReader.Get("FirstName"),
-                    LastName = excelReader.Get("LastName")
-                };
-                _personService.AddPerson(person);
-            }
-
-            if (excelReader.HasColumn("Email"))
-            {
-                // There could be multiple emails 
-                string[] emails = excelReader.Get("Email").Split(new string[] { ",", " " }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var email in emails)
-                    person.UpdateEmail(email);
-                _personService.SaveChanges();
-            }
-
-            return person;
         }
     }
 }
