@@ -1,3 +1,5 @@
+DROP TABLE "RubricData";
+
 DROP TRIGGER "ProjectsTsTrigger" ON "Projects";
 DROP FUNCTION "ProjectsTsTriggerFunction"();
 DROP FUNCTION "SearchProjects"(varchar, integer);

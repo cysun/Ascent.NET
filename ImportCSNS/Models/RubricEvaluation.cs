@@ -55,7 +55,7 @@ public class RubricEvaluation
     public long EvaluatorId { get; set; }
     public User Evaluator { get; set; }
 
-    public List<RubricEvaluationRating> ratings { get; set; } = new List<RubricEvaluationRating>();
+    public List<RubricEvaluationRating> Ratings { get; set; } = new List<RubricEvaluationRating>();
 
     [Column("comments")]
     public string Comments { get; set; }

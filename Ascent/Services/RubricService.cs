@@ -15,7 +15,7 @@ public class RubricService
     public Rubric GetRubric(int id) => _db.Rubrics.Find(id);
 
     public List<Rubric> GetRubrics() => _db.Rubrics.AsNoTracking()
-        .Where(s => !s.IsDeleted).OrderByDescending(s => s.TimePublished).ToList();
+        .Where(r => !r.IsDeleted).OrderBy(r => r.Name).ToList();
 
     public void AddRubric(Rubric rubric)
     {

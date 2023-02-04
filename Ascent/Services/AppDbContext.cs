@@ -40,6 +40,7 @@ public class AppDbContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectMember> ProjectMembers { get; set; }
     public DbSet<ProjectResource> ProjectResources { get; set; }
+    public DbSet<RubricDataPoint> RubricData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
