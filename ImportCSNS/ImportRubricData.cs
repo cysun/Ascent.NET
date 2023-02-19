@@ -74,6 +74,19 @@ public partial class Importer
                     continue;
                 }
 
+                var isEvalIncomplete = false;
+                foreach (var rating in cevaluation.Ratings)
+                    if (rating.Rating == -1)
+                    {
+                        isEvalIncomplete = true;
+                        break;
+                    }
+                if (isEvalIncomplete)
+                {
+                    Console.WriteLine($"Incomplete rating in evaluation {cevaluation.Id}");
+                    continue;
+                }
+
                 var acourse = ascentDb.Courses.AsNoTracking()
                     .Where(c => c.Subject + c.Number == cevaluation.Submission.Assignment.Section.Course.Code)
                     .SingleOrDefault();
@@ -89,7 +102,7 @@ public partial class Importer
                     {
                         RubricId = arubric.Id,
                         CriterionId = arubric.Criteria[i].Id,
-                        RatingId = arubric.Criteria[i].Ratings[cevaluation.Ratings[i].Index].Id,
+                        RatingId = arubric.Criteria[i].Ratings[cevaluation.Ratings[i].Rating - 1].Id,
                         EvaluatorId = evaluator.Id,
                         EvaluateeId = evaluatee.Id,
                         AssessmentType = cevaluation.Type == "PEER" ? RubricAssessmentType.Peer : RubricAssessmentType.Instructor,

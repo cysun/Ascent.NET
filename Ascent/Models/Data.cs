@@ -12,7 +12,7 @@ public class RubricDataPoint
     public int Id { get; set; }
 
     public int RubricId { get; set; }
-    public Rubric Rubrice { get; set; }
+    public Rubric Rubric { get; set; }
 
     public int CriterionId { get; set; }
     public RubricCriterion Criterion { get; set; }
