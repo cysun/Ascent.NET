@@ -1,0 +1,27 @@
+@model Dictionary<Course,List<AssessmentSection>>
+@{
+    ViewData["Title"] = "Rubric Assessment Data";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a></li>
+        <li class="breadcrumb-item active">Assessments</li>
+    </ol>
+</nav>
+
+<table class="table">
+    <tr><th>Course</th><th>Sections</th></tr>
+    @foreach (var course in Model.Keys)
+    {
+        <tr>
+            <td>@course.Code</td>
+            <td>
+                @foreach (var term in Model[course])
+                {
+                    <span>@term.Term.ShortName</span>
+                }
+            </td>
+        </tr>
+    }
+</table>

@@ -7,10 +7,19 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Name</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
+        {
+            <li>
+                <a asp-controller="Data" asp-action="Index" asp-route-rubricId="@Model.Id" class="btn btn-outline-primary btn-sm"
+               title="Assessment Results">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                </a>
+            </li>
+        }
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
             <li>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Rubric">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm ms-2" title="Edit Rubric">
                     <i class="bi bi-pencil-fill"></i>
                 </a>
             </li>

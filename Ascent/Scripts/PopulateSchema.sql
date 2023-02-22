@@ -161,3 +161,9 @@ BEGIN
     RETURN;
  END
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE VIEW "RubricDataByPerson" AS
+    SELECT d."Year", d."Term_Code" as "TermCode", d."CourseId", d."AssessmentType", d."EvaluateeId", d."RubricId", d."CriterionId",
+        round(avg(r."Value")) as "AvgRatingValue"
+    FROM "RubricData" d INNER JOIN "RubricRatings" r on d."RatingId" = r."Id"
+    GROUP BY d."Year", d."Term_Code", d."CourseId", d."AssessmentType", d."EvaluateeId", d."RubricId", d."CriterionId";

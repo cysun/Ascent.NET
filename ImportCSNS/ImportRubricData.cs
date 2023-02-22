@@ -98,6 +98,7 @@ public partial class Importer
 
                 for (int i = 0; i < cevaluation.Ratings.Count; i++)
                 {
+                    var term = new Term(cevaluation.Submission.Assignment.Section.TermCode);
                     var dataPoint = new RubricDataPoint
                     {
                         RubricId = arubric.Id,
@@ -106,7 +107,8 @@ public partial class Importer
                         EvaluatorId = evaluator.Id,
                         EvaluateeId = evaluatee.Id,
                         AssessmentType = cevaluation.Type == "PEER" ? RubricAssessmentType.Peer : RubricAssessmentType.Instructor,
-                        Term = new Term(cevaluation.Submission.Assignment.Section.TermCode),
+                        Term = term,
+                        Year = term.Year,
                         CourseId = acourse.Id
                     };
 

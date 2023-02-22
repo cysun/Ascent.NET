@@ -69,6 +69,26 @@ public class Term
         }
     }
 
+    // Academic Year is like 2021-2022. An academic year starts in fall and ends in summer.
+    public string AcademicYear
+    {
+        get
+        {
+            int year = Code / 10 + 1900;
+            return Code % 10 == 9 ? $"{year}-{year + 1}" : $"{year - 1}-{year}";
+        }
+    }
+
+    // A shorthand for academic year showing only the starting year. For example, 2021 means 2021-2022.
+    public int Year
+    {
+        get
+        {
+            int year = Code / 10 + 1900;
+            return Code % 10 == 9 ? year : year - 1;
+        }
+    }
+
     public Term()
     {
         SetCode(DateTime.Now);

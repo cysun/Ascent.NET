@@ -41,6 +41,8 @@ public class AppDbContext : DbContext
     public DbSet<ProjectMember> ProjectMembers { get; set; }
     public DbSet<ProjectResource> ProjectResources { get; set; }
     public DbSet<RubricDataPoint> RubricData { get; set; }
+    public DbSet<RubricDataByPerson> RubricDataByPerson { get; set; }
+    public DbSet<AssessmentSection> AssessmentSections { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,6 +68,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ProgramResource>().Property(i => i.Type).HasConversion<string>();
         modelBuilder.Entity<ProgramResource>().HasIndex(i => new { i.ModuleId, i.Index });
         modelBuilder.Entity<ProjectResource>().Property(i => i.Type).HasConversion<string>();
+        modelBuilder.Entity<RubricDataByPerson>().ToView("RubricDataByPerson");
+
+        // There's no AssessmentSessions view, but without this EF Core will create a table.
+        modelBuilder.Entity<AssessmentSection>().ToView("AssessmentSesions");
 
         // We'll create/replace Ranks as a whole instead of adding/removing individual entries, so the
         // ValueComparer is mainly for show (and to shut up the EF Core warning). See

@@ -46,9 +46,16 @@
                         }
                     </td>
                     <td class="d-none d-lg-table-cell">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
+                        {
+                            <a asp-controller="Data" asp-action="Index" asp-route-rubricId="@rubric.Id" title="Assessment Results"
+                   class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-bar-chart-line-fill"></i>
+                            </a>
+                        }
                         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
                         {
-                            <a asp-action="Edit" asp-route-id="@rubric.Id" title="Edit Rubric" class="btn btn-outline-primary btn-sm">
+                            <a asp-action="Edit" asp-route-id="@rubric.Id" title="Edit Rubric" class="btn btn-outline-primary btn-sm ms-2">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
                         }
