@@ -12,16 +12,12 @@ public class RubricDataService
         _db = db;
     }
 
-    //    public List<Section> GetAssessmentSections(int rubricId) => _db.Sections
-    //        .FromSql($@"SELECT DISTINCT ""Term_Code"" AS ""Term"", ""CourseId"", 1 As ""InstructorId"",
-    //                    DENSE_RANK() OVER (ORDER BY ""CourseId"", ""Term_Code"") AS ""Id""
-    //                    FROM ""RubricData"" WHERE ""RubricId"" = {rubricId}")
-    //        .FromSql($@"select * from ""Sections""")
-    //        .Include(s => s.Course)
-    //        .AsNoTracking().ToList();
-
     public List<AssessmentSection> GetAssessmentSections(int rubricId) => _db.AssessmentSections
         .FromSql($@"SELECT DISTINCT ""CourseId"", ""Term_Code"" FROM ""RubricData"" WHERE ""RubricId"" = {rubricId}")
         .Include(s => s.Course)
+        .ToList();
+
+    public List<RubricDataByPerson> GetDataByPerson(int rubricId, int courseId, int termCode) => _db.RubricDataByPerson
+        .Where(d => d.RubricId == rubricId && d.CourseId == courseId && d.TermCode == termCode)
         .ToList();
 }

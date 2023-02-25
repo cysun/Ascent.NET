@@ -456,7 +456,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20230222181914_InitialSchema', '7.0.3');
+VALUES ('20230224020639_InitialSchema', '7.0.3');
 
 COMMIT;
 

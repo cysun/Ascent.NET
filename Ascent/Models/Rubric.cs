@@ -40,6 +40,18 @@ public class RubricCriterion
     public int Index { get; set; }
 
     public List<RubricRating> Ratings { get; set; }
+
+    // Given a value, find the index of the rating that is closest to the value.
+    public int ValueToRatingIndex(double value)
+    {
+        if (Ratings == null || Ratings.Count == 0) return -1;
+
+        var index = 0;
+        for (int i = 1; i < Ratings.Count; ++i)
+            if (Math.Abs(Ratings[i].Value - value) <= Math.Abs(Ratings[index].Value - value))
+                index = i;
+        return index;
+    }
 }
 
 public class RubricRating

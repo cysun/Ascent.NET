@@ -70,7 +70,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ProjectResource>().Property(i => i.Type).HasConversion<string>();
         modelBuilder.Entity<RubricDataByPerson>().ToView("RubricDataByPerson");
 
-        // There's no AssessmentSessions view, but without this EF Core will create a table.
+        // The following views do not exist, but without these EF Core will create tables.
         modelBuilder.Entity<AssessmentSection>().ToView("AssessmentSesions");
 
         // We'll create/replace Ranks as a whole instead of adding/removing individual entries, so the

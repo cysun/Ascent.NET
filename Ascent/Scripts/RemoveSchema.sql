@@ -1,3 +1,4 @@
+DROP VIEW "RubricDataByPerson";
 DROP TABLE "RubricData";
 
 DROP TRIGGER "ProjectsTsTrigger" ON "Projects";

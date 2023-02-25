@@ -10,8 +10,8 @@
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
         {
             <li>
-                <a asp-controller="Data" asp-action="Index" asp-route-rubricId="@Model.Id" class="btn btn-outline-primary btn-sm"
-               title="Assessment Results">
+                <a asp-controller="Assessment" asp-action="Index" asp-route-rubricId="@Model.Id" class="btn btn-outline-primary btn-sm"
+               title="Assessment Data">
                     <i class="bi bi-bar-chart-line-fill"></i>
                 </a>
             </li>

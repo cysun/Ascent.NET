@@ -1,0 +1,122 @@
+@using System.Text.Json
+@model Dictionary<RubricAssessmentType, object[][]>
+@{
+    ViewData["Title"] = "Rubric Assessment Data";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-route-rubricId="@ViewBag.Rubric.Id">Assessments</a></li>
+        <li class="breadcrumb-item active">@ViewBag.Course.Code, @ViewBag.Term.Name</li>
+    </ol>
+</nav>
+
+<div class="row row-cols-1 g-4">
+    @foreach (var assessmentType in Enum.GetValues<RubricAssessmentType>())
+    {
+        if (Model.ContainsKey(assessmentType))
+        {
+            <div class="col">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <span>@assessmentType.ToString() Assessment</span>
+                        <div class="btn-group ms-auto" role="group">
+                            <a id="chart@(assessmentType)Svg" download="RubricAssessment.svg" title="Save SVG"
+                               class="btn btn-outline-primary btn-sm svg">
+                                <i class="bi bi-filetype-svg"></i>
+                            </a>
+                            <a id="chart@(assessmentType)Png" download="RubricAssessment.png" title="Save PNG"
+                               class="btn btn-outline-primary btn-sm png">
+                                <i class="bi bi-filetype-png"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart@(assessmentType)" style="height: 600px;"></div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Unsatisfactory</th>
+                                    <th>Needs Improvement</th>
+                                    <th>Meets Expectations</th>
+                                    <th>Exceeds Expectations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model[assessmentType])
+                                {
+                                    <tr>
+                                        @foreach (var col in row)
+                                        {
+                                            <td>@col</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+@section HeadScripts{
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+}
+@section Scripts{
+    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var data = @Html.Raw(JsonSerializer.Serialize(Model));
+            google.charts.load('current', { packages: ['corechart'] }).then(function () {
+                var charts = [];
+                for (const property in data) {
+                    let chart = {
+                        name: `chart${property}`, // e.g. chartInstructor
+                        title: "@ViewBag.Rubric.Name, @ViewBag.Course.Code @ViewBag.Term.ShortName"
+                    };
+                    chart.dataTable = new google.visualization.DataTable();
+                    chart.dataTable.addColumn("string", "Criterion");
+                    chart.dataTable.addColumn("number", "Unsatisfactory");
+                    chart.dataTable.addColumn("number", "Needs Improvement");
+                    chart.dataTable.addColumn("number", "Meets Expectations");
+                    chart.dataTable.addColumn("number", "Exceeds Expectations");
+                    chart.dataTable.addRows(data[property]);
+                    charts.push(chart);
+                }
+
+                charts.forEach(c => {
+                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
+                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
+                });
+
+                var drawChart = function (c) {
+                    var options = {
+                        title: c.title,
+                        isStacked: 'percent',
+                        legend: { position: "bottom" },
+                        series: {
+                            0: { color: "red" },
+                            1: { color: "yellow" },
+                            2: { color: "greenyellow" },
+                            3: { color: "green" }
+                        }
+                    };
+                    c.chart.clearChart();
+                    c.chart.draw(c.dataTable, options);
+                }
+
+                var drawCharts = function () {
+                    charts.forEach(c => drawChart(c));
+                };
+
+                window.onresize = drawCharts;
+
+                drawCharts();
+            });
+
+        });
+    </script>
+}

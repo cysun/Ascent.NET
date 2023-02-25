@@ -48,6 +48,7 @@ public class RubricDataByPerson
     public int Year { get; set; }
 
     public int TermCode { get; set; } // Keyless entity cannot have owned entities
+    public Term Term => new Term(TermCode);
 
     public int CourseId { get; set; }
     public Course Course { get; set; }
@@ -63,10 +64,11 @@ public class RubricDataByPerson
     public int CriterionId { get; set; }
     public RubricCriterion Criterion { get; set; }
 
-    public int AvgRatingValue { get; set; }
+    public double AvgRatingValue { get; set; }
 }
 
 // This class serves as the return type of the query "select distinct CourseId, Term_Code from RubricData".
+// There is no view for this class even though we have to say ToView() to prevent EF Core from creating a table.
 [Keyless]
 public class AssessmentSection
 {

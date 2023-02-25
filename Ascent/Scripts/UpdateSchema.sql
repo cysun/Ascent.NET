@@ -35,8 +35,8 @@ CREATE INDEX "IX_RubricData_RubricId" ON "RubricData" ("RubricId");
 DELETE FROM "__EFMigrationsHistory";
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ('20230221182140_InitialSchema', '7.0.3');
 
-CREATE OR REPLACE VIEW "RubricDataByPerson" AS
+CREATE VIEW "RubricDataByPerson" AS
     SELECT d."Year", d."Term_Code" as "TermCode", d."CourseId", d."AssessmentType", d."EvaluateeId", d."RubricId", d."CriterionId",
-        round(avg(r."Value")) as "AvgRatingValue"
+        avg(r."Value") as "AvgRatingValue"
     FROM "RubricData" d INNER JOIN "RubricRatings" r on d."RatingId" = r."Id"
     GROUP BY d."Year", d."Term_Code", d."CourseId", d."AssessmentType", d."EvaluateeId", d."RubricId", d."CriterionId";

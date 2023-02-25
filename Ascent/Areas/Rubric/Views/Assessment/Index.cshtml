@@ -17,9 +17,10 @@
         <tr>
             <td>@course.Code</td>
             <td>
-                @foreach (var term in Model[course])
+                @foreach (var assessmentTerm in Model[course])
                 {
-                    <span>@term.Term.ShortName</span>
+                    <a asp-action="Section" asp-route-rubricId="@ViewBag.Rubric.Id" asp-route-courseId="@course.Id"
+               asp-route-termCode="@assessmentTerm.TermCode">@assessmentTerm.Term.ShortName</a>
                 }
             </td>
         </tr>

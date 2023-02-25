@@ -48,7 +48,7 @@
                     <td class="d-none d-lg-table-cell">
                         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                         {
-                            <a asp-controller="Data" asp-action="Index" asp-route-rubricId="@rubric.Id" title="Assessment Results"
+                            <a asp-controller="Assessment" asp-action="Index" asp-route-rubricId="@rubric.Id" title="Assessment Data"
                    class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-bar-chart-line-fill"></i>
                             </a>
