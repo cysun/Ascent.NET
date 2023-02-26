@@ -1,0 +1,181 @@
+@using System.Text.Json
+@model Dictionary<RubricAssessmentType, object[][]>
+@{
+    ViewData["Title"] = "Rubric Assessment Data";
+}
+<nav class="d-none d-md-block">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-route-rubricId="@ViewBag.Rubric.Id">Assessments</a></li>
+        <li class="breadcrumb-item active">@ViewBag.Course.Code</li>
+    </ol>
+</nav>
+
+<div class="row mb-3">
+    <label class="col-auto col-form-label">From</label>
+    <div class="col-auto">
+        <select id="fromYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.FromYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+    <label class="col-auto col-form-label">To</label>
+    <div class="col-auto">
+        <select id="toYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.ToYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+
+<div class="row row-cols-1 g-4">
+    @foreach (var assessmentType in Enum.GetValues<RubricAssessmentType>())
+    {
+        if (Model.ContainsKey(assessmentType))
+        {
+            for (int i = 0; i < ViewBag.Criteria.Count; ++i)
+            {
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <span>@assessmentType.ToString() Assessment - @ViewBag.Criteria[i].Name</span>
+                            <div class="btn-group ms-auto" role="group">
+                                <a id="chart@(assessmentType)Svg" download="RubricAssessment.svg" title="Save SVG"
+                                   class="btn btn-outline-primary btn-sm svg">
+                                    <i class="bi bi-filetype-svg"></i>
+                                </a>
+                                <a id="chart@(assessmentType)Png" download="RubricAssessment.png" title="Save PNG"
+                                   class="btn btn-outline-primary btn-sm png">
+                                    <i class="bi bi-filetype-png"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="chart@(assessmentType)-@i" style="height: 600px;"></div>
+                            <table class="table table-bordered d-none d-md-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Unsatisfactory</th>
+                                        <th>Needs Improvement</th>
+                                        <th>Meets Expectations</th>
+                                        <th>Exceeds Expectations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int j = 0; j < Model[assessmentType].Length; ++j)
+                                    {
+                                        if (j % ViewBag.Criteria.Count == i)
+                                        {
+                                            <tr>
+                                                @for (int k = 0; k < Model[assessmentType][j].Length; ++k)
+                                                    if (k != 1)
+                                                    {
+                                                        <td>@Model[assessmentType][j][k]</td>
+                                                    }
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+
+@section HeadScripts{
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+}
+@section Scripts{
+    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var data = @Html.Raw(JsonSerializer.Serialize(Model));
+            google.charts.load('current', { packages: ['corechart'] }).then(function () {
+                var charts = [];
+                for (const property in data) {
+
+                    let dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn("string", "Year");
+                    dataTable.addColumn("string", "Criterion");
+                    dataTable.addColumn("number", "Unsatisfactory");
+                    dataTable.addColumn("number", "Needs Improvement");
+                    dataTable.addColumn("number", "Meets Expectations");
+                    dataTable.addColumn("number", "Exceeds Expectations");
+                    dataTable.addRows(data[property]);
+
+                    for (let i = 0; i < @ViewBag.Rubric.CriteriaCount ; ++i) {
+                        let criterion = data[property][i][1];
+                        let chart = {
+                            name: `chart${property}-${i}`, // e.g. chartInstructor-1
+                            title: `@ViewBag.Rubric.Name - ${criterion}, @ViewBag.Course.Code`,
+                            dataView: new google.visualization.DataView(dataTable)
+                        };
+                        chart.dataView.setColumns([0, 2, 3, 4, 5]);
+                        chart.dataView.setRows(dataTable.getFilteredRows(
+                            [{ column: 1, value: criterion }]
+                        ));
+                        charts.push(chart);
+                    }
+                }
+
+                charts.forEach(c => {
+                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
+                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
+                });
+
+                var drawChart = function (c) {
+                    var options = {
+                        title: c.title,
+                        isStacked: 'percent',
+                        legend: { position: "bottom" },
+                        series: {
+                            0: { color: "red" },
+                            1: { color: "yellow" },
+                            2: { color: "greenyellow" },
+                            3: { color: "green" }
+                        }
+                    };
+                    c.chart.clearChart();
+                    c.chart.draw(c.dataView, options);
+                }
+
+                var drawCharts = function () {
+                    charts.forEach(c => drawChart(c));
+                };
+
+                window.onresize = drawCharts;
+
+                drawCharts();
+            });
+            $("select").change(function () {
+                var fromYear = $("#fromYear").val();
+                var toYear = $("#toYear").val();
+                if (fromYear <= toYear)
+                    window.location.href = `course?rubricId=@(ViewBag.Rubric.Id)&courseId=@(ViewBag.Course.Id)&fromYear=${fromYear}&toYear=${toYear}`;
+            });
+        });
+    </script>
+}

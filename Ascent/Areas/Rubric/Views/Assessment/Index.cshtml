@@ -15,7 +15,7 @@
     @foreach (var course in Model.Keys)
     {
         <tr>
-            <td>@course.Code</td>
+            <td><a asp-action="Course" asp-route-rubricId="@ViewBag.Rubric.Id" asp-route-courseId="@course.Id">@course.Code</a></td>
             <td>
                 @foreach (var assessmentTerm in Model[course])
                 {
