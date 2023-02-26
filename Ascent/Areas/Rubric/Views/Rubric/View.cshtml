@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "View Rubric";
 }
-<nav>
+<nav class="d-none d-md-block">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Name</li>
@@ -11,7 +11,7 @@
         {
             <li>
                 <a asp-controller="Assessment" asp-action="Index" asp-route-rubricId="@Model.Id" class="btn btn-outline-primary btn-sm"
-               title="Assessment Data">
+                   title="Assessment Data">
                     <i class="bi bi-bar-chart-line-fill"></i>
                 </a>
             </li>
@@ -27,6 +27,22 @@
     </ol>
 </nav>
 
+<div class="d-grid d-md-none gap-2 d-flex justify-content-end mb-3">
+    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
+    {
+        <a asp-controller="Assessment" asp-action="Index" asp-route-rubricId="@Model.Id" class="btn btn-outline-primary btn-sm"
+           title="Assessment Data">
+            <i class="bi bi-bar-chart-line-fill"></i>
+        </a>
+    }
+    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Rubric">
+            <i class="bi bi-pencil-fill"></i>
+        </a>
+    }
+</div>
+
 @{
     var index = 1;
 }
@@ -35,19 +51,21 @@
     <div class="card mb-2">
         <div class="card-header">@(index++). @criterion.Name</div>
         <div class="card-body">
-            <table class="table table-borderless">
-                <tbody>
-                    <tr>
-                        @foreach (var rating in criterion.Ratings)
-                        {
-                            <td>
-                                <strong>@rating.Name (@rating.Value)</strong><br>
-                                <small>@Html.Raw(@rating.Description)</small>
-                            </td>
-                        }
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            @foreach (var rating in criterion.Ratings)
+                            {
+                                <td>
+                                    <strong>@rating.Name (@rating.Value)</strong><br>
+                                    <small>@Html.Raw(@rating.Description)</small>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 }

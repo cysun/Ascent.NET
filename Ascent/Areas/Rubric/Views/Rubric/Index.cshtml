@@ -27,7 +27,7 @@
                 <th class="d-none d-lg-table-cell">Publish Date</th>
                 @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
                 {
-                    <th class="d-none d-lg-table-cell"></th>
+                    <th class="d-none d-md-table-cell"></th>
                 }
             </tr>
         </thead>
@@ -45,7 +45,7 @@
                             <span class="@color">@rubric.TimePublished?.ToLocalTime().ToString("d")</span>
                         }
                     </td>
-                    <td class="d-none d-lg-table-cell">
+                    <td class="d-none d-md-table-cell">
                         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                         {
                             <a asp-controller="Assessment" asp-action="Index" asp-route-rubricId="@rubric.Id" title="Assessment Data"

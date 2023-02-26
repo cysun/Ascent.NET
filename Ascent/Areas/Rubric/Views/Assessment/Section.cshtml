@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Rubric Assessment Data";
 }
-<nav>
+<nav class="d-none d-md-block">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
         <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a></li>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="card-body">
                         <div id="chart@(assessmentType)" style="height: 600px;"></div>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered d-none d-md-table">
                             <thead>
                                 <tr>
                                     <th></th>
