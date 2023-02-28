@@ -100,6 +100,7 @@ services.AddScoped<SurveyService>();
 services.AddScoped<RubricService>();
 services.AddScoped<ProjectService>();
 services.AddScoped<RubricDataService>();
+services.AddScoped<SurveyDataService>();
 
 // Build App
 

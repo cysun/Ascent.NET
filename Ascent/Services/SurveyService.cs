@@ -105,7 +105,7 @@ public class SurveyService
         .Include(r => r.Answers).ThenInclude(a => a.Question).SingleOrDefault();
 
     public List<SurveyResponse> GetResponses(int surveyId) => _db.SurveyResponses.AsNoTracking()
-        .Where(r => r.SurveyId == surveyId).Include(r => r.Answers.OrderBy(a => a.Question.Index)).ToList();
+        .Where(r => r.SurveyId == surveyId && !r.IsDeleted).Include(r => r.Answers.OrderBy(a => a.Question.Index)).ToList();
 
     public List<SurveyResponse> FindResponses(int questionId, int selection)
     {

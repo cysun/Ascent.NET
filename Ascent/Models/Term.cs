@@ -99,6 +99,11 @@ public class Term
         Code = code;
     }
 
+    public Term(DateTime date)
+    {
+        SetCode(date);
+    }
+
     public Term(int year, string season)
     {
         SetCode(year, season);

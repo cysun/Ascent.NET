@@ -37,7 +37,8 @@
                     </td>
                     <td class="d-none d-lg-table-cell">@outcomeSurvey.Program.Name</td>
                     <td>
-                        <a asp-action="Import" asp-route-id="@outcomeSurvey.Id" title="Import Data" class="btn btn-outline-primary btn-sm">
+                        <a asp-action="ImportData" asp-route-id="@outcomeSurvey.Id" title="Import Data"
+                           class="btn btn-outline-primary btn-sm">
                             @if (outcomeSurvey.DataImportTime.HasValue)
                             {
                                 <span class="badge text-bg-secondary">@outcomeSurvey.DataImportTime?.ToLocalTime().ToString("d")</span>
