@@ -1,0 +1,52 @@
+@model List<OutcomeSurvey>
+@{
+    ViewData["Title"] = "Outcome Surveys";
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item active me-auto">Outcome Surveys</li>
+        @if (ViewBag.ShowAdd)
+        {
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm ms-2" title="Add Outcome Survey">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+@if (Model.Count > 0)
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Survey</th>
+                <th class="d-none d-lg-table-cell">Program</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var outcomeSurvey in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="View" asp-route-id="@outcomeSurvey.Id">@outcomeSurvey.Survey.Name</a>
+                    </td>
+                    <td class="d-none d-lg-table-cell">@outcomeSurvey.Program.Name</td>
+                    <td>
+                        <a asp-action="Import" asp-route-id="@outcomeSurvey.Id" title="Import Data" class="btn btn-outline-primary btn-sm">
+                            @if (outcomeSurvey.DataImportTime.HasValue)
+                            {
+                                <span class="badge text-bg-secondary">@outcomeSurvey.DataImportTime?.ToLocalTime().ToString("d")</span>
+                            }
+                            <i class="bi bi-box-arrow-down"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

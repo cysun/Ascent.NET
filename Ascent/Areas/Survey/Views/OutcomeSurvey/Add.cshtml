@@ -1,0 +1,41 @@
+@model OutcomeSurveyInputModel
+@{
+    ViewData["Title"] = "Create Outcome Survey";
+    var Programs = (List<Program>)ViewBag.Programs;
+    var Surveys = (List<Survey>)ViewBag.Surveys;
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Outcome Surveys</a></li>
+        <li class="breadcrumb-item active">New Outcome Survey</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="form-floating mb-3">
+        <select asp-for="SurveyId" class="form-select">
+            @foreach (var survey in Surveys)
+            {
+                <option value="@survey.Id">@survey.Name</option>
+            }
+        </select>
+        <label asp-for="SurveyId"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <select asp-for="ProgramId" class="form-select">
+            @foreach (var program in Programs)
+            {
+                <option value="@program.Id">@program.Name</option>
+            }
+        </select>
+        <label asp-for="ProgramId"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <select asp-for="ConstituencyType" class="form-select" asp-items="Html.GetEnumSelectList<ConstituencyType>()"></select>
+        <label asp-for="ConstituencyType"></label>
+    </div>
+    <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

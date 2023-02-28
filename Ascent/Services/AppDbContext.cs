@@ -43,6 +43,8 @@ public class AppDbContext : DbContext
     public DbSet<RubricDataPoint> RubricData { get; set; }
     public DbSet<RubricDataByPerson> RubricDataByPerson { get; set; }
     public DbSet<AssessmentSection> AssessmentSections { get; set; }
+    public DbSet<OutcomeSurvey> OutcomeSurveys { get; set; }
+    public DbSet<SurveyDataPoint> SurveyData { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

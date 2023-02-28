@@ -10,7 +10,12 @@
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {
             <li>
-                <a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Survey">
+                <a asp-controller="OutcomeSurvey" asp-action="Index" class="btn btn-outline-primary btn-sm" title="Outcome Surveys">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </a>
+            </li>
+            <li>
+                <a asp-action="Add" class="btn btn-outline-primary btn-sm ms-2" title="Add Survey">
                     <i class="bi bi-plus-lg"></i>
                 </a>
             </li>
@@ -56,7 +61,7 @@
                     </td>
                     <td>
                         <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@survey.Id" title="Response Summary"
-                   class="btn btn-outline-primary btn-sm ms-auto @(survey.ResponseCount == 0 ? "disabled" : "")">
+                           class="btn btn-outline-primary btn-sm ms-auto @(survey.ResponseCount == 0 ? "disabled" : "")">
                             <span class="badge text-bg-secondary">@survey.ResponseCount</span>
                         </a>
                     </td>

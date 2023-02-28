@@ -143,4 +143,3 @@ namespace Ascent.Models
         public bool IsClosed => TimeClosed.HasValue && TimeClosed < DateTime.UtcNow;
     }
 }
-

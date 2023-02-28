@@ -134,5 +134,22 @@ public class SurveyService
             return new List<SurveyResponse>();
     }
 
+    public List<OutcomeSurvey> GetOutcomeSurveys() => _db.OutcomeSurveys.AsNoTracking()
+        .Include(s => s.Survey).Include(s => s.Program)
+        .ToList();
+
+    public OutcomeSurvey GetOutcomeSurvey(int id) => _db.OutcomeSurveys.Find(id);
+
+    public OutcomeSurvey GetOutcomeSurveyWithProgram(int id) => _db.OutcomeSurveys.AsNoTracking()
+        .Where(s => s.Id == id).Include(s => s.Survey)
+        .Include(s => s.Program).ThenInclude(p => p.Outcomes)
+        .SingleOrDefault();
+
+    public void AddOutcomeSurvey(OutcomeSurvey outcomeSurvey)
+    {
+        _db.OutcomeSurveys.Add(outcomeSurvey);
+        _db.SaveChanges();
+    }
+
     public void SaveChanges() => _db.SaveChanges();
 }

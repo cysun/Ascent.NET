@@ -1,3 +1,6 @@
+DROP TABLE "SurveyData";
+DROP TABLE "OutcomeSurveys";
+
 DROP VIEW "RubricDataByPerson";
 DROP TABLE "RubricData";
 

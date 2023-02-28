@@ -35,26 +35,19 @@
             </div>
         </div>
     </div>
-    <div class="col">
+    <div class="col-12 col-md-6">
         <div class="card h-100">
-            <div class="card-header text-bg-info">Responses</div>
+            <div class="card-header text-bg-info">Operations</div>
             <div class="card-body">
                 @if (Model.ResponseCount > 0)
                 {
                     <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Id" title="Response Summary"
-                   class="btn btn-outline-primary btn-sm me-2">
+                       class="btn btn-outline-primary btn-sm me-2">
                         <span class="badge text-bg-secondary">@Model.ResponseCount</span>
                     </a>
                     <a asp-controller="Response" asp-action="Excel" asp-route-surveyId="@Model.Id" title="Export Responses"
-                   class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-spreadsheet-fill"></i></a>
+                       class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-file-earmark-spreadsheet-fill"></i></a>
                 }
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card h-100">
-            <div class="card-header text-bg-info">Operations</div>
-            <div class="card-body">
                 @if (Model.IsPublished && !Model.IsClosed)
                 {
                     <button class="btn btn-outline-primary btn-sm me-2 link" title="Copy Survey Link">

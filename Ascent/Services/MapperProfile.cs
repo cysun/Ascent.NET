@@ -44,6 +44,9 @@ public class MapperProfile : Profile
         CreateMap<SurveyQuestionInputModel, SurveyQuestion>();
         CreateMap<SurveyQuestion, SurveyQuestionInputModel>();
 
+        CreateMap<OutcomeSurveyInputModel, OutcomeSurvey>();
+        CreateMap<OutcomeSurvey, OutcomeSurveyInputModel>();
+
         CreateMap<ProgramOutcome, string>().ConvertUsing(new OutcomeToStringConverter());
         CreateMap<ProgramInputModel, Models.Program>()
             .ForMember(dest => dest.Outcomes, opt => opt.Ignore()); // Handled in controller

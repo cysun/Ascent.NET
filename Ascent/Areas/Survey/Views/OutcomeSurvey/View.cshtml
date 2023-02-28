@@ -1,0 +1,53 @@
+@model OutcomeSurvey
+@{
+    ViewData["Title"] = "View Outcome Survey";
+    var Questions = (List<SurveyQuestion>)ViewBag.Questions;
+    var questionIdToOutcomeIndex = Model.QuestionIds.Select((id, index) => new { id, index }).ToDictionary(x => x.id, x => x.index + 1);
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="OutcomeSurvey" asp-action="Index">Outcome Surveys</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.Survey.Name</li>
+        <li>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Outcome Survey">
+                <i class="bi bi-pencil-fill"></i>
+            </a>
+        </li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-9">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.Program.Name</span>
+            <label>Program</label>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-floating mb-3">
+            <span class="form-control">@Model.ConstituencyType.ToString()</span>
+            <label>Constituency</label>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr><th>Outcome</th><th>Question</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var question in Questions)
+        {
+            <tr>
+                <td class="text-center align-middle">
+                    @if (questionIdToOutcomeIndex.ContainsKey(question.Id))
+                    {
+                        <text>@questionIdToOutcomeIndex[question.Id]</text>
+                    }
+                </td>
+                <td>@Html.Raw(question.Description)</td>
+            </tr>
+        }
+    </tbody>
+</table>

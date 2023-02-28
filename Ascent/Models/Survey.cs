@@ -180,3 +180,29 @@ public class SurveyAnswer
             return Text;
     }
 }
+
+public enum ConstituencyType
+{
+    Student = 0,
+    Faculty = 1,
+    Alumni = 2,
+    IAB = 3
+}
+
+public class OutcomeSurvey
+{
+    public int Id { get; set; }
+
+    public ConstituencyType ConstituencyType { get; set; }
+
+    public int SurveyId { get; set; }
+    public Survey Survey { get; set; }
+
+    public int ProgramId { get; set; }
+    public Program Program { get; set; }
+
+    // A list of questions, each mapped to a program outcome.
+    public int[] QuestionIds { get; set; }
+
+    public DateTime? DataImportTime { get; set; }
+}
