@@ -1,0 +1,168 @@
+@using System.Text.Json
+@model Dictionary<ConstituencyType, object[][]>
+@{
+    ViewData["Title"] = "Outcome Survey Charts - Outcome";
+    var Outcome = (ProgramOutcome)ViewBag.Outcome;
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-none d-md-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-md-block"><a asp-controller="OutcomeSurvey" asp-action="Index">Outcome Surveys</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Charts</a></li>
+        <li class="breadcrumb-item active">@Outcome.Program.Name - Outcome #@(Outcome.Index + 1)</li>
+    </ol>
+</nav>
+
+<div class="row mb-3">
+    <label class="col-auto col-form-label">From</label>
+    <div class="col-auto">
+        <select id="fromYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.FromYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+    <label class="col-auto col-form-label">To</label>
+    <div class="col-auto">
+        <select id="toYear" class="form-select">
+            @foreach (var year in ViewBag.Years)
+            {
+                if (year == ViewBag.ToYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+
+<div class="row row-cols-1 g-4">
+    @foreach (var constituencyType in Enum.GetValues<ConstituencyType>())
+    {
+        if (Model.ContainsKey(constituencyType))
+        {
+            <div class="col">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <span>@constituencyType.ToString() Survey</span>
+                        <div class="btn-group ms-auto" role="group">
+                            <a id="chart@(constituencyType)Svg" download="OutcomeSurvey.svg" title="Save SVG"
+                               class="btn btn-outline-primary btn-sm svg">
+                                <i class="bi bi-filetype-svg"></i>
+                            </a>
+                            <a id="chart@(constituencyType)Png" download="OutcomeSurvey.png" title="Save PNG"
+                               class="btn btn-outline-primary btn-sm png">
+                                <i class="bi bi-filetype-png"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart@(constituencyType)" style="height: 600px;"></div>
+                        <table class="table table-bordered d-none d-md-table">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Strongly Disagree</th>
+                                    <th>Disagree</th>
+                                    <th>Neither Agree or Disagree</th>
+                                    <th>Agree</th>
+                                    <th>Strongly Agree</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model[constituencyType])
+                                {
+                                    <tr>
+                                        @foreach (var col in row)
+                                        {
+                                            <td>@col</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section HeadScripts{
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+}
+@section Scripts{
+    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var data = @Html.Raw(JsonSerializer.Serialize(Model));
+            google.charts.load('current', { packages: ['corechart'] }).then(function () {
+                var charts = [];
+                for (const property in data) {
+                    let chart = {
+                        name: `chart${property}`, // e.g. chartInstructor
+                        title: "@Outcome.Program.Name Survey, Outcome #@(Outcome.Index + 1)"
+                    };
+                    chart.dataTable = new google.visualization.DataTable();
+                    chart.dataTable.addColumn("string", "Year");
+                    chart.dataTable.addColumn("number", "Strongly Disagree");
+                    chart.dataTable.addColumn("number", "Disagree");
+                    chart.dataTable.addColumn("number", "Neither Agree or Disagree");
+                    chart.dataTable.addColumn("number", "Agree");
+                    chart.dataTable.addColumn("number", "Strongly Agree");
+                    chart.dataTable.addRows(data[property]);
+                    charts.push(chart);
+                }
+
+                charts.forEach(c => {
+                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
+                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
+                });
+
+                var drawChart = function (c) {
+                    var options = {
+                        title: c.title,
+                        isStacked: 'percent',
+                        legend: { position: "bottom" },
+                        series: {
+                            0: { color: "red" },
+                            1: { color: "orange" },
+                            2: { color: "yellow" },
+                            3: { color: "greenyellow" },
+                            4: { color: "green" }
+                        }
+                    };
+                    c.chart.clearChart();
+                    c.chart.draw(c.dataTable, options);
+                }
+
+                var drawCharts = function () {
+                    charts.forEach(c => drawChart(c));
+                };
+
+                window.onresize = drawCharts;
+
+                drawCharts();
+            });
+
+            $("select").change(function () {
+                var fromYear = $("#fromYear").val();
+                var toYear = $("#toYear").val();
+                if (fromYear <= toYear)
+                    window.location.href = `outcome/@(Outcome.Id)?fromYear=${fromYear}&toYear=${toYear}`;
+            });
+        });
+    </script>
+}

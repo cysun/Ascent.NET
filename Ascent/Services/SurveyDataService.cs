@@ -17,9 +17,13 @@ public class SurveyDataService
         .OrderBy(y => y)
         .ToList();
 
-    public List<SurveyDataPoint> GetSurveyData(int programId, int year) => _db.SurveyData.AsNoTracking()
+    public List<SurveyDataPoint> GetSurveyDataByProgram(int programId, int year) => _db.SurveyData.AsNoTracking()
         .Where(d => d.ProgramId == programId && d.Year == year)
         .ToList();
+
+    public List<SurveyDataPoint> GetSurveyDataByOutcome(int outcomeId, int fromYear, int toYear) => _db.SurveyData.AsNoTracking()
+    .Where(d => d.OutcomeId == outcomeId && fromYear <= d.Year && d.Year <= toYear)
+    .ToList();
 
     // Unlike all the other AddXXX() methods, this one does NOT do _db.SaveChanges() so we can batch all the inserts together.
     public void AddData(SurveyDataPoint dataPoint) => _db.SurveyData.Add(dataPoint);

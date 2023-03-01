@@ -24,6 +24,10 @@ public class ProgramService
         _db.SaveChanges();
     }
 
+    public ProgramOutcome GetProgramOutcome(int id) => _db.ProgramOutcomes.AsNoTracking()
+        .Where(o => o.Id == id).Include(o => o.Program)
+        .SingleOrDefault();
+
     public ProgramModule GetModule(int id) => _db.ProgramModules.Find(id);
 
     public ProgramModule GetModule(int programId, int index) => _db.ProgramModules

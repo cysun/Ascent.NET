@@ -22,7 +22,7 @@
                 <td>
                     @for (int i = 0; i < program.Outcomes.Count; ++i)
                     {
-                        <a asp-action="Chart" asp-route-outcomeId="@program.Outcomes[i].Id" class="btn btn-outline-primary btn-sm ms-2">
+                        <a asp-action="Outcome" asp-route-id="@program.Outcomes[i].Id" class="btn btn-outline-primary btn-sm ms-2">
                             @(i + 1)
                         </a>
                     }
