@@ -1,0 +1,33 @@
+@model List<Program>
+@{
+    ViewData["Title"] = "Outcome Survey Charts";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-none d-md-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-md-block"><a asp-controller="OutcomeSurvey" asp-action="Index">Outcome Surveys</a></li>
+        <li class="breadcrumb-item active">Charts</li>
+    </ol>
+</nav>
+
+<table class="table align-middle">
+    <thead>
+        <tr><th>Program</th><th>Outcomes</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var program in Model)
+        {
+            <tr>
+                <td><a asp-action="Program" asp-route-id="@program.Id">@program.Name</a></td>
+                <td>
+                    @for (int i = 0; i < program.Outcomes.Count; ++i)
+                    {
+                        <a asp-action="Chart" asp-route-outcomeId="@program.Outcomes[i].Id" class="btn btn-outline-primary btn-sm ms-2">
+                            @(i + 1)
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,51 +1,68 @@
 @using System.Text.Json
-@model Dictionary<RubricAssessmentType, object[][]>
+@model Dictionary<ConstituencyType, object[][]>
 @{
-    ViewData["Title"] = "Rubric Assessment Data";
+    ViewData["Title"] = "Outcome Survey Charts - Program";
 }
-<nav class="d-none d-md-block">
+<nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="Index">Rubrics</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Rubric" asp-action="View" asp-route-id="@ViewBag.Rubric.Id">@ViewBag.Rubric.Name</a></li>
-        <li class="breadcrumb-item"><a asp-action="Index" asp-route-rubricId="@ViewBag.Rubric.Id">Assessments</a></li>
-        <li class="breadcrumb-item active">@ViewBag.Course.Code, @ViewBag.Term.Name</li>
+        <li class="breadcrumb-item d-none d-md-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-md-block"><a asp-controller="OutcomeSurvey" asp-action="Index">Outcome Surveys</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Charts</a></li>
+        <li class="breadcrumb-item active">@ViewBag.Program.Name</li>
     </ol>
 </nav>
 
+<form id="yearSelect" method="get" class="d-inline-flex mb-3">
+    <select name="year" class="form-select">
+        @foreach (var year in ViewBag.Years)
+        {
+            if (year == ViewBag.Year)
+            {
+                <option selected>@year</option>
+            }
+            else
+            {
+                <option>@year</option>
+            }
+        }
+    </select>
+</form>
+
 <div class="row row-cols-1 g-4">
-    @foreach (var assessmentType in Enum.GetValues<RubricAssessmentType>())
+    @foreach (var constituencyType in Enum.GetValues<ConstituencyType>())
     {
-        if (Model.ContainsKey(assessmentType))
+        if (Model.ContainsKey(constituencyType))
         {
             <div class="col">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <span>@assessmentType.ToString() Assessment</span>
+                        <span>@constituencyType.ToString() Survey</span>
                         <div class="btn-group ms-auto" role="group">
-                            <a id="chart@(assessmentType)Svg" download="RubricAssessment.svg" title="Save SVG"
+                            <a id="chart@(constituencyType)Svg" download="OutcomeSurvey.svg" title="Save SVG"
                                class="btn btn-outline-primary btn-sm svg">
                                 <i class="bi bi-filetype-svg"></i>
                             </a>
-                            <a id="chart@(assessmentType)Png" download="RubricAssessment.png" title="Save PNG"
+                            <a id="chart@(constituencyType)Png" download="OutcomeSurvey.png" title="Save PNG"
                                class="btn btn-outline-primary btn-sm png">
                                 <i class="bi bi-filetype-png"></i>
                             </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="chart@(assessmentType)" style="height: 600px;"></div>
+                        <div id="chart@(constituencyType)" style="height: 600px;"></div>
                         <table class="table table-bordered d-none d-md-table">
                             <thead>
                                 <tr>
-                                    <th>Criterion</th>
-                                    <th>Unsatisfactory</th>
-                                    <th>Needs Improvement</th>
-                                    <th>Meets Expectations</th>
-                                    <th>Exceeds Expectations</th>
+                                    <th>Outcome</th>
+                                    <th>Strongly Disagree</th>
+                                    <th>Disagree</th>
+                                    <th>Neither Agree or Disagree</th>
+                                    <th>Agree</th>
+                                    <th>Strongly Agree</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var row in Model[assessmentType])
+                                @foreach (var row in Model[constituencyType])
                                 {
                                     <tr>
                                         @foreach (var col in row)
@@ -76,14 +93,15 @@
                 for (const property in data) {
                     let chart = {
                         name: `chart${property}`, // e.g. chartInstructor
-                        title: "@ViewBag.Rubric.Name, @ViewBag.Course.Code @ViewBag.Term.ShortName"
+                        title: "@ViewBag.Program.Name Outcome Survey, @ViewBag.Year"
                     };
                     chart.dataTable = new google.visualization.DataTable();
-                    chart.dataTable.addColumn("string", "Criterion");
-                    chart.dataTable.addColumn("number", "Unsatisfactory");
-                    chart.dataTable.addColumn("number", "Needs Improvement");
-                    chart.dataTable.addColumn("number", "Meets Expectations");
-                    chart.dataTable.addColumn("number", "Exceeds Expectations");
+                    chart.dataTable.addColumn("string", "Outcome");
+                    chart.dataTable.addColumn("number", "Strongly Disagree");
+                    chart.dataTable.addColumn("number", "Disagree");
+                    chart.dataTable.addColumn("number", "Neither Agree or Disagree");
+                    chart.dataTable.addColumn("number", "Agree");
+                    chart.dataTable.addColumn("number", "Strongly Agree");
                     chart.dataTable.addRows(data[property]);
                     charts.push(chart);
                 }
@@ -100,9 +118,10 @@
                         legend: { position: "bottom" },
                         series: {
                             0: { color: "red" },
-                            1: { color: "yellow" },
-                            2: { color: "greenyellow" },
-                            3: { color: "green" }
+                            1: { color: "orange" },
+                            2: { color: "yellow" },
+                            3: { color: "greenyellow" },
+                            4: { color: "green" }
                         }
                     };
                     c.chart.clearChart();
@@ -116,6 +135,10 @@
                 window.onresize = drawCharts;
 
                 drawCharts();
+            });
+
+            $("#yearSelect").change(function () {
+                window.location.href = "program/@(ViewBag.Program.Id)?year=" + $("#yearSelect").val();
             });
         });
     </script>

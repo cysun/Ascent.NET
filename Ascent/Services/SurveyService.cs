@@ -136,6 +136,7 @@ public class SurveyService
 
     public List<OutcomeSurvey> GetOutcomeSurveys() => _db.OutcomeSurveys.AsNoTracking()
         .Include(s => s.Survey).Include(s => s.Program)
+        .OrderBy(s => s.Program.Id)
         .ToList();
 
     public OutcomeSurvey GetOutcomeSurvey(int id) => _db.OutcomeSurveys.Find(id);
