@@ -9,7 +9,7 @@
     </ol>
 </nav>
 
-<form method="post" enctype="multipart/form-data">
+<form method="post">
     <div class="row">
         <div class="col-6 col-sm-3">
             <div class="form-floating mb-3">
@@ -43,10 +43,6 @@
     <div class="form-floating mb-3">
         <textarea asp-for="CatalogDescription" class="form-control" style="height: 150px"></textarea>
         <label asp-for="CatalogDescription"></label>
-    </div>
-    <div class="input-group mb-3">
-        <input id="file" name="uploadedFile" type="file" class="form-control">
-        <label class="input-group-text" for="file">ABET Syllabus</label>
     </div>
     <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
     <button type="submit" class="btn btn-primary">Add</button>

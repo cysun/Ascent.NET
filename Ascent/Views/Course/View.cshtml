@@ -76,16 +76,6 @@
             <div class="form-control" style="height: auto;">@Model.CatalogDescription</div>
             <label>Catalog Description</label>
         </div>
-        @if (Model.AbetDescriptionId != null)
-        {
-            <div class="btn-group mt-3" role="group">
-                <label class="btn btn-secondary">ABET Syllabus</label>
-                <a asp-controller="File" asp-action="View" asp-route-id="@Model.AbetDescriptionId"
-               class="btn btn-outline-primary">View</a>
-                <a asp-controller="File" asp-action="Download" asp-route-id="@Model.AbetDescriptionId"
-               class="btn btn-outline-primary">Download</a>
-            </div>
-        }
     </div>
 </div>
 

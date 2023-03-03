@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ascent.Models;
 
@@ -24,11 +25,50 @@ public class Course
 
     public string CatalogDescription { get; set; }
 
-    // ABET Course Description, AKA ABET Syllabus
-    public int? AbetDescriptionId { get; set; }
-    public File AbetDescription { get; set; }
+    // Should points to the lastest course journal
+    public int? CourseJournalId { get; set; }
+    [ForeignKey("CourseJournalId")]
+    public CourseJournal CourseJournal { get; set; }
 
     public bool IsObsolete { get; set; }
 
     public bool IsGraduateCourse => Number.StartsWith("5");
+}
+
+public class CourseJournal
+{
+    public int Id { get; set; }
+
+    public int CourseId { get; set; }
+    [ForeignKey("CourseId")]
+    public Course Course { get; set; }
+
+    public Term Term { get; set; }
+
+    public int InstructorId { get; set; }
+    public Person Instructor { get; set; }
+
+    [Required, MaxLength(255)]
+    public string CourseUrl { get; set; }
+
+    [Required, MaxLength(255)]
+    public string SyllabusUrl { get; set; }
+
+    public List<StudentSample> StudentSamples { get; set; }
+}
+
+[Table("StudentSamples")]
+public class StudentSample
+{
+    public int Id { get; set; }
+
+    public int CourseJournalId { get; set; }
+    public CourseJournal courseJournal { get; set; }
+
+    [Required, MaxLength(255)]
+    public string Name { get; set; }
+    [Required, MaxLength(255)]
+    public string Url { get; set; }
+    [MaxLength(255)]
+    public string Grade { get; set; }
 }

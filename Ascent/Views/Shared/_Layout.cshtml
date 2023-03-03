@@ -42,7 +42,7 @@
                                 @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                                 {
                                     <li><a class="dropdown-item" asp-area="Survey" asp-controller="Survey" asp-action="Index">Surveys</a></li>
-                                    <li><a class="dropdown-item" href="#">Course Journals</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="CourseJournal" asp-action="Index">Course Journals</a></li>
                                     <li><a class="dropdown-item" asp-area="Mft" asp-controller="Home" asp-action="Index">Major Field Test</a></li>
                                 }
                             </ul>

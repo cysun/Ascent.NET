@@ -1,0 +1,99 @@
+@inject IAuthorizationService AuthorizationService
+@model CourseJournalInputModel
+@{
+    ViewData["Title"] = "New Course Journal";
+    var currentTerm = new Term();
+    var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous() };
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Course Journals</a></li>
+        <li class="breadcrumb-item active">Course Journals</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-floating mb-3">
+                <select id="term" class="form-select" name="TermCode">
+                    @foreach (var term in terms)
+                    {
+                        <option value="@term.Code">@term.Name</option>
+                    }
+                </select>
+                <label for="term">Term</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-floating mb-3">
+                <input id="searchCourse" name="prefix" class="form-control">
+                <label for="searchCourse">Course</label>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="form-floating mb-3">
+                <input id="searchPerson" name="searchText" class="form-control">
+                <label for="searchPerson">Instructor</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="CourseUrl" class="form-control">
+                <label asp-for="CourseUrl"></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <input asp-for="SyllabusUrl" class="form-control">
+                <label asp-for="SyllabusUrl"></label>
+            </div>
+        </div>
+        <div class="col-12">
+            <input id="course" type="hidden" name="CourseId" />
+            <input id="instructor" type="hidden" name="InstructorId" />
+            <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <script src="~/js/autocomplete.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            const field1 = document.getElementById("searchPerson");
+            const ac1 = new Autocomplete(field1, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/person/autocomplete",
+                        data: { searchText: $("#searchPerson").val() },
+                        success: results => ac1.setData(results.map(r =>
+                            ({ label: r.campusId + " " + r.fullName, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    $("#instructor").val(value);
+                }
+            });
+            const field2 = document.getElementById("searchCourse");
+            const ac2 = new Autocomplete(field2, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/course/autocomplete",
+                        data: { prefix: $("#searchCourse").val() },
+                        success: results => ac2.setData(results.map(r =>
+                            ({ label: r.code, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    $("#course").val(value);
+                }
+            });
+            $("button").click(function () {
+                if ($("#instructor").val() && $("#course").val() && $("#file").val())
+                    $("form").submit();
+            });
+        });
+    </script>
+}

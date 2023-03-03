@@ -10,16 +10,13 @@ namespace Ascent.Controllers
 {
     public class CourseController : Controller
     {
-        private readonly FileService _fileService;
         private readonly CourseService _courseService;
 
         private readonly IMapper _mapper;
         private readonly ILogger<CourseController> _logger;
 
-        public CourseController(FileService fileService, CourseService courseService,
-            IMapper mapper, ILogger<CourseController> logger)
+        public CourseController(CourseService courseService, IMapper mapper, ILogger<CourseController> logger)
         {
-            _fileService = fileService;
             _courseService = courseService;
             _mapper = mapper;
             _logger = logger;
@@ -52,17 +49,11 @@ namespace Ascent.Controllers
 
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public async Task<IActionResult> AddAsync(CourseInputModel input, IFormFile uploadedFile)
+        public IActionResult Add(CourseInputModel input)
         {
             if (!ModelState.IsValid) return View(input);
 
             var course = _mapper.Map<Course>(input);
-            if (uploadedFile != null)
-            {
-                var folder = _fileService.GetFolder("Courses/ABET Syllabi");
-                course.AbetDescription = await _fileService.UploadFileAsync(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
-            }
-
             _courseService.AddCourse(course);
             _logger.LogInformation("{user} added course {course}", User.Identity.Name, course.Code);
 
@@ -83,7 +74,7 @@ namespace Ascent.Controllers
 
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public async Task<IActionResult> EditAsync(int id, CourseInputModel input, IFormFile uploadedFile)
+        public IActionResult Edit(int id, CourseInputModel input)
         {
             if (!ModelState.IsValid) return View(input);
 
@@ -91,12 +82,6 @@ namespace Ascent.Controllers
             if (course == null) return NotFound();
 
             _mapper.Map(input, course);
-            if (uploadedFile != null)
-            {
-                var folder = _fileService.GetFolder("Courses/ABET Syllabi");
-                course.AbetDescription = await _fileService.UploadFileAsync(folder.Id, uploadedFile, true, $"{course.Code} ABET Syllabus");
-            }
-
             _courseService.SaveChanges();
             _logger.LogInformation("{user} edited course {course}", User.Identity.Name, course.Code);
 
@@ -144,10 +129,6 @@ namespace Ascent.Models
 
         [Display(Name = "Catalog Description")]
         public string CatalogDescription { get; set; }
-
-        // ABET Course Description, AKA ABET Syllabus
-        public int? AbetDescriptionId { get; set; }
-        public File AbetDescription { get; set; }
 
         [Display(Name = "Obsolete")]
         public bool IsObsolete { get; set; }

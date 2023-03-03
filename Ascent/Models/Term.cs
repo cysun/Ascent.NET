@@ -194,7 +194,7 @@ public class Term
         return new Term(yearCode * 10 + termSuffix);
     }
 
-    public Term next()
+    public Term Next()
     {
         int yearCode = Code / 10;
         int termSuffix = Code % 10;
