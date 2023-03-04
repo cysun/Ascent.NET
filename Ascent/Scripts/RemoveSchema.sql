@@ -51,7 +51,7 @@ ALTER TABLE "Courses" DROP CONSTRAINT "FK_Courses_CourseJournals_CourseJournalId
 DROP TABLE "Enrollments";
 DROP TABLE "Sections";
 DROP TABLE "Grades";
-DROP TABLE "StudentSamples";
+DROP TABLE "SampleStudents";
 DROP TABLE "CourseJournals";
 DROP TABLE "Courses";
 DROP TABLE "Messages";

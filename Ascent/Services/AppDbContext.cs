@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Course> Courses { get; set; }
     public DbSet<CourseJournal> CourseJournals { get; set; }
+    public DbSet<SampleStudent> SampleStudents { get; set; }
     public DbSet<Section> Sections { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
     public DbSet<Grade> Grades { get; set; }

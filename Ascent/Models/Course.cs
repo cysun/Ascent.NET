@@ -54,11 +54,10 @@ public class CourseJournal
     [Required, MaxLength(255)]
     public string SyllabusUrl { get; set; }
 
-    public List<StudentSample> StudentSamples { get; set; }
+    public List<SampleStudent> SampleStudents { get; set; } = new List<SampleStudent>();
 }
 
-[Table("StudentSamples")]
-public class StudentSample
+public class SampleStudent
 {
     public int Id { get; set; }
 
@@ -67,8 +66,10 @@ public class StudentSample
 
     [Required, MaxLength(255)]
     public string Name { get; set; }
-    [Required, MaxLength(255)]
-    public string Url { get; set; }
+
     [MaxLength(255)]
     public string Grade { get; set; }
+
+    [Required, MaxLength(255)]
+    public string Url { get; set; }
 }

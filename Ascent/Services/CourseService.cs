@@ -39,11 +39,30 @@ public class CourseService
         .OrderBy(c => c.Number)
         .Select(c => c.CourseJournal).ToList();
 
+    public CourseJournal GetCourseJournal(int id) => _db.CourseJournals.AsNoTracking()
+        .Where(j => j.Id == id)
+        .Include(j => j.Course).Include(j => j.Instructor).Include(j => j.SampleStudents)
+        .SingleOrDefault();
+
     public void AddCourseJournal(CourseJournal courseJournal)
     {
         var course = GetCourse(courseJournal.CourseId);
         course.CourseJournal = courseJournal;
         _db.CourseJournals.Add(courseJournal);
+        _db.SaveChanges();
+    }
+
+    public SampleStudent GetSampleStudent(int id) => _db.SampleStudents.Find(id);
+
+    public void AddSampleStudent(SampleStudent student)
+    {
+        _db.SampleStudents.Add(student);
+        _db.SaveChanges();
+    }
+
+    public void RemoveSampleStudent(SampleStudent student)
+    {
+        _db.SampleStudents.Remove(student);
         _db.SaveChanges();
     }
 

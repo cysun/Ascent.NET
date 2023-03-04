@@ -20,6 +20,8 @@ public class MapperProfile : Profile
 
         CreateMap<CourseJournalInputModel, CourseJournal>().ForMember(dest => dest.Term, opt => opt.MapFrom(src => new Term(src.TermCode)));
         CreateMap<CourseJournal, CourseJournalInputModel>().ForMember(dest => dest.TermCode, opt => opt.MapFrom(src => src.Term.Code));
+        CreateMap<SampleStudentInputModel, SampleStudent>();
+        CreateMap<SampleStudent, SampleStudentInputModel>();
 
         CreateMap<PageInputModel, Page>();
         CreateMap<Page, PageInputModel>();
