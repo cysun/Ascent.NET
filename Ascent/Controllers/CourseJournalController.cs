@@ -29,6 +29,7 @@ namespace Ascent.Controllers
 
         public IActionResult View(int id)
         {
+            ViewBag.Courses = _courseService.GetCoursesWithJournal();
             return View(_courseService.GetCourseJournal(id));
         }
 
@@ -51,6 +52,18 @@ namespace Ascent.Controllers
                 User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
 
             return RedirectToAction("SampleStudents", new { id = courseJournal.Id });
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var courseJournal = _courseService.GetCourseJournal(id);
+            if (courseJournal == null) return NotFound();
+
+            _courseService.DeleteCourseJournal(courseJournal);
+            _logger.LogInformation("{user} deleted course journal {journal} for {course}",
+                User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
+
+            return RedirectToAction("Index");
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]

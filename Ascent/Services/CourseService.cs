@@ -33,11 +33,16 @@ public class CourseService
 
     // Instead of all course journals, we only want the current ones.
     public List<CourseJournal> GetCourseJournals() => _db.Courses.AsNoTracking()
-        .Where(c => c.CourseJournalId != null)
+        .Where(c => c.CourseJournalId != null && !c.IsObsolete)
         .Include(c => c.CourseJournal).ThenInclude(j => j.Instructor)
         .Include(c => c.CourseJournal).ThenInclude(j => j.Course)
         .OrderBy(c => c.Number)
         .Select(c => c.CourseJournal).ToList();
+
+    public List<Course> GetCoursesWithJournal() => _db.Courses.AsNoTracking()
+        .Where(c => c.CourseJournalId != null && !c.IsObsolete)
+        .OrderBy(c => c.Number)
+        .ToList();
 
     public CourseJournal GetCourseJournal(int id) => _db.CourseJournals.AsNoTracking()
         .Where(j => j.Id == id)
@@ -49,6 +54,13 @@ public class CourseService
         var course = GetCourse(courseJournal.CourseId);
         course.CourseJournal = courseJournal;
         _db.CourseJournals.Add(courseJournal);
+        _db.SaveChanges();
+    }
+
+    public void DeleteCourseJournal(CourseJournal courseJournal)
+    {
+        _db.CourseJournals.Remove(courseJournal);
+        courseJournal.Course.CourseJournalId = null;
         _db.SaveChanges();
     }
 

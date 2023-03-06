@@ -1,0 +1,127 @@
+@model CourseJournal
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "View Course Journal";
+    var Courses = (List<Course>)ViewBag.Courses;
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Course Journals</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.Course.Code, @Model.Term.ShortName</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div id="sidebar" class="d-none d-md-block col-md-2 col-lg-4" style="max-height: 80vh; overflow-y: auto;">
+        <div class="d-flex flex-column align-items-stretch flex-shrink-0">
+            <div class="list-group list-group-flush border-bottom">
+                @foreach (var course in Courses)
+                {
+                    <a asp-action="View" asp-route-id="@course.CourseJournalId"
+                       class="list-group-item list-group-item-action py-3 lh-sm @(course.CourseJournalId == Model.Id ? "active" : "")">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1">@course.Code</strong>
+                        </div>
+                        <div class="small d-none d-lg-block">@course.Title</div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="form-floating">
+                    <div class="form-control">@Model.Course.Subject</div>
+                    <label>Subject</label>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="form-floating">
+                    <div class="form-control">@Model.Course.Number</div>
+                    <label>Number</label>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="form-floating">
+                    <div class="form-control">@Model.Course.MinUnits</div>
+                    <label>Min Units</label>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="form-floating">
+                    <div class="form-control">@Model.Course.MaxUnits</div>
+                    <label>Max Units</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <div class="form-control" style="height: auto;">@Model.Course.Title</div>
+                    <label>Title</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <div class="form-control" style="height: auto;">@Model.Course.CatalogDescription</div>
+                    <label>Catalog Description</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <div class="form-control">@Model.Term.Name</div>
+                    <label>Term</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <div class="form-control">@Model.Instructor.FullName</div>
+                    <label>Instructor</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating">
+                    <div class="form-control">
+                        <a href="@Model.CourseUrl" target="_blank">@Model.CourseUrl</a>
+                    </div>
+                    <label>Course URL</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating">
+                    <div class="form-control">
+                        <a href="@Model.SyllabusUrl" target="_blank">@Model.SyllabusUrl</a>
+                    </div>
+                    <label>Syllabus URL</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <div class="form-control" style="height: auto;">
+                        @for (int i = 0; i < Model.SampleStudents.Count; ++i)
+                        {
+                            var student = Model.SampleStudents[i];
+                            if (i < Model.SampleStudents.Count - 1)
+                            {
+                                <a href="@student.Url" target="_blank">@student.Name (@student.Grade), </a>
+                            }
+                            else
+                            {
+                                <a href="@student.Url" target="_blank">@student.Name (@student.Grade)</a>
+                            }
+                        }
+                    </div>
+                    <label>Sample Students</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            var top = $("a.active").offset().top;
+            $("#sidebar").scrollTop(top - 200);
+        });
+    </script>
+}

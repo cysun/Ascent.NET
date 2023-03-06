@@ -31,7 +31,7 @@
                 @foreach (var course in ViewBag.Courses)
                 {
                     <a asp-action="View" asp-route-id="@course.Id"
-                   class="list-group-item list-group-item-action py-3 lh-sm @(course.Id == Model.Id ? "active" : "")">
+                       class="list-group-item list-group-item-action py-3 lh-sm @(course.Id == Model.Id ? "active" : "")">
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <strong class="mb-1">@course.Subject @course.Number</strong>
                         </div>
@@ -42,46 +42,50 @@
         </div>
     </div>
     <div class="col">
-        <div class="row">
+        <div class="row g-3">
             <div class="col-6 col-md-3">
-                <div class="form-floating mb-3">
+                <div class="form-floating">
                     <div class="form-control">@Model.Subject</div>
                     <label>Subject</label>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="form-floating mb-3">
+                <div class="form-floating">
                     <div class="form-control">@Model.Number</div>
                     <label>Number</label>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="form-floating mb-3">
+                <div class="form-floating">
                     <div class="form-control">@Model.MinUnits</div>
                     <label>Min Units</label>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="form-floating mb-3">
+                <div class="form-floating">
                     <div class="form-control">@Model.MaxUnits</div>
                     <label>Max Units</label>
                 </div>
             </div>
-        </div>
-        <div class="form-floating mb-3">
-            <div class="form-control" style="height: auto;">@Model.Title</div>
-            <label>Title</label>
-        </div>
-        <div class="form-floating">
-            <div class="form-control" style="height: auto;">@Model.CatalogDescription</div>
-            <label>Catalog Description</label>
+            <div class="col-12">
+                <div class="form-floating">
+                    <div class="form-control" style="height: auto;">@Model.Title</div>
+                    <label>Title</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <div class="form-control" style="height: auto;">@Model.CatalogDescription</div>
+                    <label>Catalog Description</label>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts{
     <script>
-        $(function() {
+        $(function () {
             var top = $("a.active").offset().top;
             $("#sidebar").scrollTop(top - 200);
         });
