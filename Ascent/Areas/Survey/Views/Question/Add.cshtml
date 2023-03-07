@@ -96,16 +96,10 @@
     </div>
 </form>
 
-@section StyleSheets{
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.css"
-      integrity="sha512-ngQ4IGzHQ3s/Hh8kMyG4FC74wzitukRMIcTOoKT3EyzFZCILOPF0twiXOQn75eDINUfKBYmzYn2AA8DkAk8veQ=="
-      crossorigin="anonymous" referrerpolicy="no-referrer" />
-}
-    @section Scripts{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-bs5.min.js"
-        integrity="sha512-6F1RVfnxCprKJmfulcxxym1Dar5FsT/V2jiEUvABiaEiFWoQ8yHvqRM/Slf0qJKiwin6IDQucjXuolCfCKnaJQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="~/js/summernote-options.js"></script>
+@section Scripts{
+    <script src="https://cdn.tiny.cloud/1/4jeuqf3mhgytuk82mowljcxt0pbcbem4ivn5xorph63kjcfg/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
+    <script src="~/js/tinymce-options.js"></script>
     <script>
         function toggleRows() {
             var mappings = [
@@ -116,7 +110,7 @@
             mappings.forEach(m => $("#Type option:selected").text() == m.type ? $(m.row).show() : $(m.row).hide());
         }
         $(function () {
-            $("#Description").summernote(summernoteOptions.standard);
+            tinymce.init(tinymceOptions.standard("textarea#Description"));
             toggleRows();
             $("#Type").change(toggleRows);
             $("#numOfChoices").change(function () {
@@ -125,12 +119,12 @@
                 if (newNumOfChoices > oldNumOfChoices) {
                     for (var i = oldNumOfChoices; i < newNumOfChoices; ++i)
                         $("#choiceRow").append(`
-                                                    <div class="col-12">
-                                                        <div class="input-group mb-3">
-                                                            <span class="input-group-text">${i + 1}</span>
-                                                            <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
-                                                        </div>
-                                                    </div>`);
+                            <div class="col-12">
+                              <div class="input-group mb-3">
+                                <span class="input-group-text">${i + 1}</span>
+                                <input class="form-control" type="text" id="Choices_${i}_" name="Choices[${i}]" value="">
+                              </div>
+                            </div>`);
                 }
                 if (newNumOfChoices < oldNumOfChoices) {
                     for (var i = newNumOfChoices; i < oldNumOfChoices; ++i)
