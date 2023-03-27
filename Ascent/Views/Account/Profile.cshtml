@@ -1,6 +1,19 @@
+@using Microsoft.AspNetCore.Authentication;
+@{
+    ViewData["Title"] = "Profile";
+    var canvasTokens = await CanvasTokens.FromHttpContextAsync(Context);
+}
+<p>Account Claims</p>
 <ul>
     @foreach (var claim in User.Claims)
     {
         <li>@claim.Type: @claim.Value</li>
     }
+</ul>
+<p>Canvas Tokens</p>
+<ul>
+    <li>Access Token: @canvasTokens?.AccessToken</li>
+    <li>Refresh Token: @canvasTokens?.RefreshToken</li>
+    <li>Token Type: @canvasTokens?.TokenType</li>
+    <li>Expires: @canvasTokens?.ExpiresAt</li>
 </ul>

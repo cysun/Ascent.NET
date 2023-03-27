@@ -7,13 +7,18 @@
     "ClientId": "ascent-webapp",
     "ClientSecret": "********"
   },
+  "Canvas": {
+    "Domain": "https://calstatela.instructure.com",
+    "ClientId": "10000000000001",
+    "ClientSecret": "********"
+  },
   "Email": {
     "Host": "localhost",
     "Port": 25,
     "RequireAuthentication": true,
     "Username": "cysun@localhost.localdomain",
     "Password": "abcd",
-    "SenderName":  "Ascent Mail",
+    "SenderName": "Ascent Mail",
     "SenderEmail": "ascent@cysun.org"
   },
   "Minio": {

@@ -1,5 +1,6 @@
 using Ascent.Security;
 using Ascent.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -32,17 +33,27 @@ services.AddControllersWithViews();
 services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
+var canvasSettings = configuration.GetSection("Canvas").Get<CanvasSettings>();
 services.AddAuthentication(options =>
 {
-    options.DefaultScheme = "Cookies";
-    options.DefaultChallengeScheme = "oidc";
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = Constants.AuthenticationScheme.Oidc;
 })
 .AddCookie(opt =>
 {
     opt.AccessDeniedPath = "/Home/AccessDenied";
     opt.Cookie.MaxAge = TimeSpan.FromDays(90);
 })
-.AddOpenIdConnect("oidc", options =>
+.AddCookie(Constants.AuthenticationScheme.CanvasCookie, opt =>
+{
+    opt.AccessDeniedPath = "/Home/AccessDenied";
+    opt.Cookie.MaxAge = TimeSpan.FromDays(90);
+
+    opt.Events.OnValidatePrincipal = CanvasUtils.ProxyEvent(
+        CanvasUtils.OnValidatePrincipal(canvasSettings),
+        opt.Events.OnValidatePrincipal);
+})
+.AddOpenIdConnect(Constants.AuthenticationScheme.Oidc, options =>
 {
     configuration.Bind("OIDC", options);
     options.ResponseType = "code";
@@ -58,6 +69,16 @@ services.AddAuthentication(options =>
             return Task.FromResult(0);
         }
     };
+})
+.AddOAuth(Constants.AuthenticationScheme.Canvas, options =>
+{
+    options.AuthorizationEndpoint = canvasSettings.AuthorizationEndpoint;
+    options.TokenEndpoint = canvasSettings.TokenEndpoint;
+    options.ClientId = canvasSettings.ClientId;
+    options.ClientSecret = canvasSettings.ClientSecret;
+    options.SignInScheme = Constants.AuthenticationScheme.CanvasCookie;
+    options.CallbackPath = new PathString("/signin-canvas");
+    options.SaveTokens = true;
 });
 
 services.AddAuthorization(options =>
