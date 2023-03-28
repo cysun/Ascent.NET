@@ -123,6 +123,13 @@ services.AddScoped<ProjectService>();
 services.AddScoped<RubricDataService>();
 services.AddScoped<SurveyDataService>();
 
+// Services for Canvas API
+services.AddHttpContextAccessor();
+services.AddScoped<CanvasHttpMessageHandler>();
+services.AddHttpClient("CanvasAPI", client => client.BaseAddress = new Uri(canvasSettings.ApiBaseUrl))
+    .AddHttpMessageHandler<CanvasHttpMessageHandler>();
+services.AddScoped<CanvasApiService>();
+
 // Build App
 
 var app = builder.Build();
@@ -135,8 +142,6 @@ if (!environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Exception");
 }
-
-app.UseSerilogRequestLogging();
 
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 app.UseStaticFiles();

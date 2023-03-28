@@ -13,6 +13,8 @@ public class CanvasSettings
 
     public string AuthorizationEndpoint => $"{Domain}/login/oauth2/auth";
     public string TokenEndpoint => $"{Domain}/login/oauth2/token";
+
+    public string ApiBaseUrl => $"{Domain}/api/v1/";
 }
 
 public class CanvasTokens
