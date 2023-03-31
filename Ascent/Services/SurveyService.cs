@@ -15,7 +15,7 @@ public class SurveyService
     public Survey GetSurvey(int id) => _db.Surveys.Find(id);
 
     public List<Survey> GetSurveys() => _db.Surveys.AsNoTracking().Where(s => !s.IsDeleted)
-        .OrderByDescending(s => s.TimeClosed).ThenByDescending(s => s.TimePublished).ThenByDescending(s => s.TimeCreated)
+        .OrderByDescending(s => s.TimeClosed).ThenBy(s => s.Name)
         .ToList();
 
     public void AddSurvey(Survey survey)

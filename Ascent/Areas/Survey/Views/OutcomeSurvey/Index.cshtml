@@ -30,6 +30,7 @@
             <tr>
                 <th>Survey</th>
                 <th class="d-none d-lg-table-cell">Program</th>
+                <th class="d-none d-lg-table-cell">Constituency</th>
                 <th>Data Import</th>
             </tr>
         </thead>
@@ -41,6 +42,7 @@
                         <a asp-action="View" asp-route-id="@outcomeSurvey.Id">@outcomeSurvey.Survey.Name</a>
                     </td>
                     <td class="d-none d-lg-table-cell">@outcomeSurvey.Program.Name</td>
+                    <td class="d-none d-lg-table-cell">@outcomeSurvey.ConstituencyType</td>
                     <td>
                         <a asp-action="ImportData" asp-route-id="@outcomeSurvey.Id" title="Import Data"
                            class="btn btn-outline-primary btn-sm">
