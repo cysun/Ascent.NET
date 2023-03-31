@@ -1,24 +1,43 @@
-@model List<Ascent.Areas.Canvas.Models.Course>
 @{
-    ViewData["Title"] = "Canvas Functions";
+    ViewData["Title"] = "Canvas";
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Canvas Functions</li>
+        <li class="breadcrumb-item active">Canvas</li>
     </ol>
 </nav>
 
-<table class="table align-middle">
-    <thead>
-        <tr><th>Course</th><th>Term</th></tr>
-    </thead>
-    <tbody>
-        @foreach (var course in Model)
-        {
-            <tr>
-                <td>@course.Name</td>
-                <td>@course.Term.Name</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header">Course Templates</div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text flex-grow-1">
+                    A <em>course template</em> may include a number of pre-defined assignments and rubrics. It is
+                    used to quickly create the assignments and rubrics in a Canvas course for assessment purposes.
+                </p>
+                <div>
+                    <a class="btn btn-primary" asp-controller="CourseTemplate" asp-action="Index">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header">Courses</div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text">
+                    The Canvas courses that you are teaching. For each course, you may create assginments and
+                    rubrics using a course template. You may also import assessment results from a Canvas course.
+                </p>
+                <p>
+                    Note that to use this function, you will be redirected to Canvas to authorize this app to
+                    access your courses.
+                </p>
+                <div>
+                    <a class="btn btn-primary" asp-controller="Course" asp-action="Index">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

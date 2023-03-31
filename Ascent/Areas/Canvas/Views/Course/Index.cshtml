@@ -1,0 +1,25 @@
+@model List<Ascent.Areas.Canvas.Models.Course>
+@{
+    ViewData["Title"] = "Canvas Courses";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Canvas</a></li>
+        <li class="breadcrumb-item active">Courses</li>
+    </ol>
+</nav>
+
+<table class="table align-middle">
+    <thead>
+        <tr><th>Course</th><th>Term</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.Name</td>
+                <td>@course.Term.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
