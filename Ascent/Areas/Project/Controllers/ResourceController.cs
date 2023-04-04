@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ascent.Areas.Project.Controllers
 {
     [Area("Project")]
+    [Authorize] // The default policy is CanRead; here we only need Authenticated for the operations that check CanManageProject.
     public class ResourceController : Controller
     {
         private readonly FileService _fileService;
@@ -137,6 +138,7 @@ namespace Ascent.Areas.Project.Controllers
             return RedirectToAction("Index", new { projectId = resource.ProjectId });
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> GetAsync(int id, bool inline = false)
         {
             var resource = _projectService.GetProjectResource(id);

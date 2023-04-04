@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ascent.Controllers;
 
+[Authorize]
 public class AccountController : Controller
 {
     [AllowAnonymous]

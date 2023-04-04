@@ -5,7 +5,10 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item d-none d-lg-block"><a asp-action="Index">Pages</a></li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
+        {
+            <li class="breadcrumb-item d-none d-lg-block"><a asp-action="Index">Pages</a></li>
+        }
         <li class="breadcrumb-item active me-auto">@Model.Subject</li>
         @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
         {

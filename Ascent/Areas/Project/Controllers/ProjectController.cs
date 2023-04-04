@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ascent.Areas.Project.Controllers
 {
     [Area("Project")]
+    [Authorize] // The default policy is CanRead; here we only need Authenticated for the operations that check CanManageProject.
     public class ProjectController : Controller
     {
         private readonly ProjectService _projectService;
@@ -119,36 +120,27 @@ namespace Ascent.Areas.Project.Controllers
             return RedirectToAction("Index", new { year = project.AcademicYear });
         }
 
-        public async Task<IActionResult> MembersAsync(int id)
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Members(int id)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, id, Constants.Policy.CanManageProject);
-            if (!authResult.Succeeded)
-                return Forbid();
-
             var project = _projectService.GetProjectWithMembers(id);
             if (project == null) return NotFound();
 
             return View(project);
         }
 
-        public async Task<IActionResult> AddMemberAsync(int id, int personId, string memberType)
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult AddMember(int id, int personId, string memberType)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, id, Constants.Policy.CanManageProject);
-            if (!authResult.Succeeded)
-                return Forbid();
-
             _projectService.AddProjectMember(id, personId, memberType);
             _logger.LogInformation("{user} added member {member} to project {project}", User.Identity.Name, personId, id);
 
             return RedirectToAction("Members", new { id });
         }
 
-        public async Task<IActionResult> RemoveMemberAsync(int id, int personId, string memberType)
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult RemoveMember(int id, int personId, string memberType)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, id, Constants.Policy.CanManageProject);
-            if (!authResult.Succeeded)
-                return Forbid();
-
             _projectService.RemoveProjectMember(id, personId, memberType);
             _logger.LogInformation("{user} removed member {member} from project {project}", User.Identity.Name, personId, id);
 
