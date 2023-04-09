@@ -47,6 +47,8 @@ public class AppDbContext : DbContext
     public DbSet<AssessmentSection> AssessmentSections { get; set; }
     public DbSet<OutcomeSurvey> OutcomeSurveys { get; set; }
     public DbSet<SurveyDataPoint> SurveyData { get; set; }
+    public DbSet<CourseTemplate> CourseTemplates { get; set; }
+    public DbSet<AssignmentTemplate> AssignmentTemplates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

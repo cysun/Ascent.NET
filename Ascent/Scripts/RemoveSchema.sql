@@ -1,3 +1,6 @@
+DROP TABLE "AssignmentTemplates";
+DROP TABLE "CourseTemplates";
+
 DROP TABLE "SurveyData";
 DROP TABLE "OutcomeSurveys";
 

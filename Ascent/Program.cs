@@ -122,6 +122,8 @@ services.AddScoped<RubricService>();
 services.AddScoped<ProjectService>();
 services.AddScoped<RubricDataService>();
 services.AddScoped<SurveyDataService>();
+services.AddScoped<CourseTemplateService>();
+services.AddScoped<AssignmentTemplateService>();
 
 // Services for Canvas API
 services.AddHttpContextAccessor();
