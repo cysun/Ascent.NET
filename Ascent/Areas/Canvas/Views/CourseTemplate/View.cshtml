@@ -1,0 +1,54 @@
+@inject IAuthorizationService AuthorizationService
+@model CourseTemplate
+@{
+    ViewData["Title"] = "View Course Template";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Canvas</a></li>
+        <li class="breadcrumb-item"><a asp-controller="CourseTemplate" asp-action="Index">Course Templates</a></li>
+        <li class="breadcrumb-item active me-auto">@Model.Course.Code</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-controller="AssignmentTemplate" asp-action="Add" asp-route-courseTemplateId="@Model.Id"
+                   class="btn btn-outline-primary btn-sm" title="Add Assignment Template">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </li>
+        }
+    </ol>
+</nav>
+
+<div class="row row-cols-1 row-cols-lg-2 g-4">
+    @foreach (var assignmentTemplate in Model.AssignmentTemplates)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <span>@assignmentTemplate.Name</span>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+                    {
+                        <a asp-controller="AssignmentTemplate" asp-action="Edit" asp-route-id="@assignmentTemplate.Id"
+                           title="Edit Assignment Template" class="btn btn-outline-primary btn-sm ms-auto">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @Html.Raw(@assignmentTemplate.Description)
+                    @if (assignmentTemplate.Rubric != null)
+                    {
+                        <p class="card-text border rounded p-2">
+                            Rubric: @assignmentTemplate.Rubric.Name
+                            @if (assignmentTemplate.IsPeerReviewed)
+                            {
+                                <span class="badge text-bg-info">Peer Review</span>
+                            }
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

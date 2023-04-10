@@ -1,0 +1,59 @@
+@model AssignmentTemplateInputModel
+@{
+    ViewData["Title"] = "New Assignment Template";
+    var Rubrics = ((List<Rubric>)ViewBag.Rubrics).Select(r => new SelectListItem(r.Name, r.Id.ToString()));
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Canvas</a></li>
+        <li class="breadcrumb-item"><a asp-controller="CourseTemplate" asp-action="Index">Course Templates</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="CourseTemplate" asp-action="View" asp-route-id="@ViewBag.CourseTemplate.Id">
+                @ViewBag.CourseTemplate.Course.Code
+            </a>
+        </li>
+        <li class="breadcrumb-item active">New Assignment Template</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="form-floating mb-3">
+        <input asp-for="Name" class="form-control" placeholder="Name" required>
+        <label asp-for="Name"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <textarea asp-for="Description" class="form-control" placeholder="Description"></textarea>
+        <label asp-for="Description"></label>
+    </div>
+    <div class="form-floating mb-3">
+        <select asp-for="RubricId" asp-items="Rubrics" class="form-select">
+            <option></option>
+        </select>
+        <label asp-for="RubricId"></label>
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="IsPeerReviewed" class="form-check-input" />
+        <label asp-for="IsPeerReviewed" class="form-check-label"></label>
+        <div class="form-text">
+            Students within a project group will assess each other. The Canvas course must have at leat one group set.
+            If the course has more than one group set, the group set with the name "Project Groups" will be used.
+        </div>
+    </div>
+    <a class="btn btn-secondary me-2" asp-controller="CourseTemplate" asp-action="View" asp-route-id="@ViewBag.CourseTemplate.Id">Cancel</a>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+@section Scripts{
+    <script src="https://cdn.tiny.cloud/1/4jeuqf3mhgytuk82mowljcxt0pbcbem4ivn5xorph63kjcfg/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
+    <script src="~/js/tinymce-options.js"></script>
+    <script>
+        $(function () {
+            tinymce.init(tinymceOptions.minimal("textarea#Description", 400));
+            $("#IsPeerReviewed").prop("disabled", true);
+            $("#RubricId").change(function () {
+                $("#IsPeerReviewed").prop("disabled", !$(this).val());
+            });
+        });
+    </script>
+}

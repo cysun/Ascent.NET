@@ -78,6 +78,9 @@ public class MapperProfile : Profile
 
         CreateMap<ProjectResourceInputModel, ProjectResource>();
         CreateMap<ProjectResource, ProjectResourceInputModel>();
+
+        CreateMap<AssignmentTemplateInputModel, AssignmentTemplate>();
+        CreateMap<AssignmentTemplate, AssignmentTemplateInputModel>();
     }
 }
 

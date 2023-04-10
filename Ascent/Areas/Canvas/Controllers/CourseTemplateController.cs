@@ -37,12 +37,20 @@ namespace Ascent.Areas.Canvas.Controllers
             _courseTemplateService.AddCourseTemplate(courseTemplate);
             _logger.LogInformation("{user} added course template {courseTemplate}", User.Identity.Name, courseTemplate.Id);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("View", new { id = courseTemplate.Id });
         }
 
         public IActionResult View(int id)
         {
-            return View(_courseTemplateService.GetCourseTemplate(id));
+            return View(_courseTemplateService.GetFullCourseTemplate(id));
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Delete(int id)
+        {
+            _courseTemplateService.DeleteCourseTemplate(id);
+            _logger.LogInformation("{user} deleted course template {courseTemplate}", User.Identity.Name, id);
+            return RedirectToAction("Index");
         }
     }
 }

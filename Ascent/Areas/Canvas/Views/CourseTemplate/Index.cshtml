@@ -6,51 +6,42 @@
 <nav>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Canvas</a></li>
-        <li class="breadcrumb-item active me-auto">Course Templates</li>
+        <li class="breadcrumb-item active">Course Templates</li>
     </ol>
 </nav>
 
-@if (Model.Count > 0)
-{
-    <table class="table table-hover align-middle">
-        <tbody>
-            @foreach (var courseTemplate in Model)
-            {
-                <tr>
-                    <td>
+<div class="row g-3">
+    @if (Model.Count > 0)
+    {
+        <div class="col-lg-6">
+            <ul class="list-group">
+                @foreach (var courseTemplate in Model)
+                {
+                    <li class="list-group-item">
                         <a asp-action="View" asp-route-id="@courseTemplate.Id">@courseTemplate.Course.Code @courseTemplate.Course.Title</a>
-                    </td>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-                    {
-                        <td>
-
-                            <a asp-action="Edit" asp-route-id="@courseTemplate.Id" title="Edit CourseTemplate"
-                               class="btn btn-outline-primary btn-sm ms-2">
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-{
-    <form method="post" asp-action="Add">
-        <div class="row">
-            <div class="col-auto">
-                <input id="searchCourse" name="prefix" class="form-control" placeholder="Search course to add">
-            </div>
-            <div class="col-auto">
-                <input id="courseId" name="courseId" type="hidden" />
-                <button type="reset" class="btn btn-secondary me-2">Cancel</button>
-                <button type="submit" class="btn btn-primary">Add</button>
-            </div>
+                    </li>
+                }
+            </ul>
         </div>
-    </form>
-}
+    }
+    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+    {
+        <div class="col-lg-6">
+            <form method="post" asp-action="Add">
+                <div class="row">
+                    <div class="col-auto">
+                        <input id="searchCourse" name="prefix" class="form-control" placeholder="Search course to add">
+                    </div>
+                    <div class="col-auto">
+                        <input id="courseId" name="courseId" type="hidden" />
+                        <button type="reset" class="btn btn-secondary me-2">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+</div>
 
 @section Scripts{
     <script src="~/js/autocomplete.js" asp-append-version="true"></script>

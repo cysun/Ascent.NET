@@ -14,8 +14,14 @@ public class CourseTemplateService
         .Include(t => t.Course)
         .SingleOrDefault();
 
+    public CourseTemplate GetFullCourseTemplate(int id) => _db.CourseTemplates
+        .Where(t => t.Id == id)
+        .Include(t => t.Course)
+        .Include(t => t.AssignmentTemplates.OrderBy(a => a.Name)).ThenInclude(a => a.Rubric)
+        .SingleOrDefault();
+
     public List<CourseTemplate> GetCourseTemplates() => _db.CourseTemplates.AsNoTracking()
-        .Include(t => t.Course).Include(t => t.AssignmentTemplates)
+        .Include(t => t.Course)
         .OrderBy(t => t.Course.Subject).ThenBy(t => t.Course.Number)
         .ToList();
 
@@ -24,6 +30,9 @@ public class CourseTemplateService
         _db.CourseTemplates.Add(courseTemplate);
         _db.SaveChanges();
     }
+
+    public void DeleteCourseTemplate(int id) => _db.CourseTemplates
+        .Where(t => t.Id == id).ExecuteDelete();
 
     public bool IsCourseTemplateExists(int courseId) => _db.CourseTemplates.Any(t => t.CourseId == courseId);
 

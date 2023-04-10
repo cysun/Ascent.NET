@@ -17,5 +17,17 @@ public class AssignmentTemplateService
         .Include(a => a.Rubric).OrderBy(a => a.Name)
         .ToList();
 
+    public void AddAssignmentTemplate(AssignmentTemplate assignmentTemplate)
+    {
+        _db.AssignmentTemplates.Add(assignmentTemplate);
+        _db.SaveChanges();
+    }
+
+    public void DeleteAssignmentTemplate(AssignmentTemplate assignmentTemplate)
+    {
+        _db.AssignmentTemplates.Remove(assignmentTemplate);
+        _db.SaveChanges();
+    }
+
     public void SaveChanges() => _db.SaveChanges();
 }
