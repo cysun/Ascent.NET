@@ -51,7 +51,7 @@
                     <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div class="me-auto">@(i + 1). @Model.Outcomes[i].Text</div>
                         <a asp-action="Outcome" asp-route-id="@Model.Id" asp-route-index="@i" title="Details"
-                       class="btn btn-outline-primary btn-sm ms-2">
+                           class="btn btn-outline-primary btn-sm ms-2 stretched-link">
                             <i class="bi bi-three-dots"></i>
                         </a>
                     </li>
@@ -88,7 +88,7 @@
                                             @resource.File.Name
                                         </a>
                                         <a asp-area="" asp-controller="File" asp-action="Download" asp-route-id="@resource.File.Id"
-                       class="btn btn-outline-primary btn-sm ms-auto">
+                                           class="btn btn-outline-primary btn-sm ms-auto">
                                             <i class="bi bi-download"></i>
                                         </a>
                                     }
