@@ -29,6 +29,27 @@
     </div>
     <div class="col">
         <div class="card h-100">
+            <div class="card-header">Rubric Data</div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text flex-grow-1">
+                    Import rubric data from an Excel file. The Excel file is expected to have the following columns:
+                </p>
+                <ul>
+                    <li>Name</li>
+                    <li>CIN</li>
+                    <li>One criterion per column, with column name C1, C2, and so on.</li>
+                </ul>
+                <p class="card-text">
+                    The first row should be column names, followed by one assessment of a student per row.
+                </p>
+                <div>
+                    <a asp-controller="RubricData" asp-action="Import" class="btn btn-primary stretched-link">Import</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
             <div class="card-header">Group</div>
             <div class="card-body d-flex flex-column">
                 <p class="card-text flex-grow-1">

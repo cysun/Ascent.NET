@@ -33,4 +33,8 @@ public class RubricDataService
     public List<RubricDataByPerson> GetDataByPerson(int rubricId, int courseId, int termCode) => _db.RubricDataByPerson
         .Where(d => d.RubricId == rubricId && d.CourseId == courseId && d.TermCode == termCode)
         .ToList();
+
+    public void AddRubricDataPoint(RubricDataPoint dataPoint) => _db.RubricData.Add(dataPoint);
+
+    public void SaveChanges() => _db.SaveChanges();
 }
