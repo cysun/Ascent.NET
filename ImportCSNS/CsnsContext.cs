@@ -35,5 +35,8 @@ public class CsnsDbContext : DbContext
         modelBuilder.Entity<ProjectResource>().HasKey(p => new { p.ProjectId, p.ResourceOrder });
         modelBuilder.Entity<RubricIndicatorCriterion>().HasKey(c => new { c.RubricIndicatorId, c.Index });
         modelBuilder.Entity<RubricEvaluationRating>().HasKey(r => new { r.EvaluationId, r.Index });
+        modelBuilder.Entity<QuestionChoice>().HasKey(c => new { c.QuestionId, c.Index });
+        modelBuilder.Entity<QuestionCorrectSelection>().HasKey(s => new { s.QuestionId, s.Selection });
+        modelBuilder.Entity<AnswerSelection>().HasKey(s => new { s.AnswerId, s.Selection });
     }
 }
