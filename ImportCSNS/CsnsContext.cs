@@ -26,6 +26,12 @@ public class CsnsDbContext : DbContext
     public DbSet<RubricAssignment> RubricAssignments { get; set; }
     public DbSet<RubricSubmission> RubricSubmissions { get; set; }
     public DbSet<RubricEvaluation> RubricEvaluations { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<QuestionSheet> questionSheets { get; set; }
+    public DbSet<Answer> Answers { get; set; }
+    public DbSet<AnswerSheet> AnswerSheets { get; set; }
+    public DbSet<Survey> Surveys { get; set; }
+    public DbSet<SurveyResponse> SurveyResponses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

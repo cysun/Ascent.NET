@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ImportCSNS.Models;
 
+[Table("answer_sheets")]
 public class AnswerSheet
 {
     [Column("id")]
@@ -11,16 +12,17 @@ public class AnswerSheet
     public long QuestionSheetId { get; set; }
     public QuestionSheet QuestionSheet { get; set; }
 
-    public List<AnswerSection> sections { get; set; }
+    public List<AnswerSection> Sections { get; set; }
 
     [Column("author_id")]
-    public long UserId { get; set; }
+    public long? UserId { get; set; }
     public User User { get; set; }
 
     [Column("date")]
     public DateTime Date { get; set; }
 }
 
+[Table("answer_sections")]
 public class AnswerSection
 {
     [Column("id")]
@@ -30,22 +32,27 @@ public class AnswerSection
     public long AnswerSheetId { get; set; }
 
     [Column("section_index")]
-    public int Index { get; set; }
+    public int SectionIndex { get; set; }
 
-    public List<Answer> Answer { get; set; }
+    public List<Answer> Answers { get; set; }
 }
 
+[Table("answers")]
 public class Answer
 {
     [Column("id")]
     public long Id { get; set; }
 
     [Column("question_id")]
-    public int QuestionId { get; set; }
+    public long QuestionId { get; set; }
     public Question Question { get; set; }
 
-    [Column("index")]
-    public int Index { get; set; }
+    [Column("answer_section_id")]
+    public long AnswerSectionId { get; set; }
+    public AnswerSection AnswerSection { get; set; }
+
+    [Column("answer_index")]
+    public int AnswerIndex { get; set; }
 
     [Column("answer_type")]
     public string Type { get; set; }
@@ -61,7 +68,7 @@ public class Answer
 
     // Text Answer Properties
 
-    [Column("Text")]
+    [Column("text")]
     public string Text { get; set; }
 }
 

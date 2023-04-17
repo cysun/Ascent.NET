@@ -5,10 +5,11 @@ namespace ImportCSNS.Models;
 public static class QuestionType
 {
     public const string Choice = "CHOICE";
-    public const string Rating = "Rating";
+    public const string Rating = "RATING";
     public const string Text = "TEXT";
 }
 
+[Table("question_sheets")]
 public class QuestionSheet
 {
     [Column("id")]
@@ -22,6 +23,7 @@ public class QuestionSheet
     public List<AnswerSheet> AnswerSheets { get; set; }
 }
 
+[Table("question_sections")]
 public class QuestionSection
 {
     [Column("id")]
@@ -30,9 +32,17 @@ public class QuestionSection
     [Column("description")]
     public string Description { get; set; }
 
+    [Column("question_sheet_id")]
+    public long QuestionSheetId { get; set; }
+    public QuestionSheet QuestionSheet { get; set; }
+
+    [Column("section_index")]
+    public int SectionIndex { get; set; }
+
     public List<Question> questions { get; set; }
 }
 
+[Table("questions")]
 public class Question
 {
     [Column("id")]
@@ -43,6 +53,13 @@ public class Question
 
     [Column("point_value")]
     public int PointValue { get; set; }
+
+    [Column("question_section_id")]
+    public long QuestionSectionId { get; set; }
+    public QuestionSection QuestionSection { get; set; }
+
+    [Column("question_index")]
+    public int QuestionIndex { get; set; }
 
     public List<Answer> Answers { get; set; }
 
