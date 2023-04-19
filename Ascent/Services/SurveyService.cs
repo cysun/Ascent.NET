@@ -97,12 +97,25 @@ public class SurveyService
         return survey.Id;
     }
 
-    public List<SurveyAnswer> GetAnswers(int surveyId) => _db.SurveyAnswers.AsNoTracking()
-        .Where(a => a.Question.SurveyId == surveyId).ToList();
+    public List<SurveyAnswer> GetAnswers(int surveyId, DateTime? startTime = null, DateTime? endTime = null)
+    {
+        var query = _db.SurveyAnswers.AsNoTracking().Where(a => a.Question.SurveyId == surveyId);
+
+        if (startTime != null)
+            query = query.Where(a => a.Response.TimeSubmitted >= startTime);
+        if (endTime != null)
+            query = query.Where(a => a.Response.TimeSubmitted <= endTime);
+
+        return query.ToList();
+    }
 
     public SurveyResponse GetResponse(string id) => _db.SurveyResponses.AsNoTracking()
         .Where(r => r.Id == Guid.Parse(id)).Include(r => r.Survey)
         .Include(r => r.Answers).ThenInclude(a => a.Question).SingleOrDefault();
+
+    public List<DateTime> GetResponseTimes(int surveyId) => _db.SurveyResponses.AsNoTracking()
+        .Where(r => r.SurveyId == surveyId && !r.IsDeleted && r.TimeSubmitted != null)
+        .Select(r => (DateTime)r.TimeSubmitted).ToList();
 
     public List<SurveyResponse> GetResponses(int surveyId) => _db.SurveyResponses.AsNoTracking()
         .Where(r => r.SurveyId == surveyId && !r.IsDeleted).Include(r => r.Answers.OrderBy(a => a.Question.Index)).ToList();

@@ -1,0 +1,30 @@
+@model Dictionary<string,int>
+@{
+    ViewData["Title"] = "Survey Responses";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
+        <li class="breadcrumb-item d-none d-lg-block">
+            <a asp-controller="Survey" asp-action="View" asp-route-id="@ViewBag.Survey.Id">@ViewBag.Survey.Name</a>
+        </li>
+        <li class="breadcrumb-item active">Responses</li>
+    </ol>
+</nav>
+
+<div class="row row-cols-auto g-3">
+    @foreach (var responseCount in Model.OrderByDescending(r => r.Key))
+    {
+        <div class="col">
+            <div class="card">
+                <div class="card-header text-center">@responseCount.Key</div>
+                <div class="card-body text-center display-6">
+                    <div class="card-text ">
+                        <a asp-action="Summary" asp-route-surveyId="@ViewBag.Survey.Id" asp-route-academicYear="@responseCount.Key"
+                           class="link-primary stretched-link text-decoration-none">@responseCount.Value</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

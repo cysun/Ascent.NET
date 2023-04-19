@@ -60,7 +60,7 @@
                         }
                     </td>
                     <td>
-                        <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@survey.Id" title="Response Summary"
+                        <a asp-controller="Response" asp-action="Index" asp-route-surveyId="@survey.Id" title="Responses"
                            class="btn btn-outline-primary btn-sm ms-auto @(survey.ResponseCount == 0 ? "disabled" : "")">
                             <span class="badge text-bg-secondary">@survey.ResponseCount</span>
                         </a>

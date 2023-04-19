@@ -100,6 +100,9 @@
 </form>
 
 @section Scripts{
+    <script src="https://cdn.tiny.cloud/1/4jeuqf3mhgytuk82mowljcxt0pbcbem4ivn5xorph63kjcfg/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
+    <script src="~/js/tinymce-options.js"></script>
     <script>
         $(function () {
             var highlight = "text-bg-success";
@@ -117,6 +120,7 @@
                     $(this).closest("li").removeClass(highlight);
                 }
             });
+            tinymce.init(tinymceOptions.minimal("textarea", 200));
         });
     </script>
 }

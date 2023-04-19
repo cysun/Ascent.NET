@@ -41,7 +41,7 @@
             <div class="card-body">
                 @if (Model.ResponseCount > 0)
                 {
-                    <a asp-controller="Response" asp-action="Summary" asp-route-surveyId="@Model.Id" title="Response Summary"
+                    <a asp-controller="Response" asp-action="Index" asp-route-surveyId="@Model.Id" title="Responses"
                        class="btn btn-outline-primary btn-sm me-2">
                         <span class="badge text-bg-secondary">@Model.ResponseCount</span>
                     </a>

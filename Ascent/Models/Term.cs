@@ -89,6 +89,31 @@ public class Term
         }
     }
 
+    public DateTime StartTime
+    {
+        get
+        {
+            int year = Code / 10 + 1900;
+
+            // https://stackoverflow.com/questions/5664862/whats-the-simplest-way-to-calculate-the-monday-in-the-first-week-of-the-year
+            Calendar calendar = new CultureInfo("en-US").Calendar;
+            var firstDay = new DateTime(year, 1, 1, calendar);
+            var winterStartTime = (new DateTime(year, 1, (8 - (int)firstDay.DayOfWeek) % 7 + 1, calendar)).ToUniversalTime();
+
+            switch (Code % 10)
+            {
+                case 1: // Winter term: week 1-3
+                    return winterStartTime;
+                case 3: // Spring term: week 4-21
+                    return winterStartTime.AddDays(4 * 7);
+                case 6: // Summer term: week 22-33
+                    return winterStartTime.AddDays(22 * 7);
+                default:// Fall term: week 34-
+                    return winterStartTime.AddDays(34 * 7);
+            }
+        }
+    }
+
     public Term()
     {
         SetCode(DateTime.Now);

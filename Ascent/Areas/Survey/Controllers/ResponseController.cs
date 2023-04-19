@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -21,9 +22,15 @@ namespace Ascent.Areas.Survey.Controllers
             _logger = logger;
         }
 
-        public List<SurveyResponse> Find(int questionId, int selection)
+        public List<SurveyResponse> Find(int questionId, int selection, string academicYear)
         {
-            return _surveyService.FindResponses(questionId, selection);
+            var responses = _surveyService.FindResponses(questionId, selection);
+
+            var (startTime, endTime) = Utils.AcademicYear(academicYear);
+            if (startTime != null)
+                responses = responses.Where(r => startTime <= r.TimeSubmitted && r.TimeSubmitted <= endTime).ToList();
+
+            return responses;
         }
 
         [HttpGet]
@@ -99,13 +106,28 @@ namespace Ascent.Areas.Survey.Controllers
             return RedirectToAction("Summary", new { surveyId });
         }
 
-        public IActionResult Summary(int surveyId)
+        public IActionResult Index(int surveyId)
+        {
+            var survey = _surveyService.GetSurvey(surveyId);
+            if (survey == null) return NotFound();
+
+            ViewBag.Survey = survey;
+            var responseCounts = _surveyService.GetResponseTimes(surveyId)
+                .GroupBy(t => new Term(t).AcademicYear)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            return View(responseCounts);
+        }
+
+        public IActionResult Summary(int surveyId, string academicYear)
         {
             var survey = _surveyService.GetSurvey(surveyId);
             if (survey == null) return NotFound();
 
             ViewBag.Questions = _surveyService.GetQuestions(surveyId);
-            var answersByQuestion = _surveyService.GetAnswers(surveyId)
+
+            var (startTime, endTime) = Utils.AcademicYear(academicYear);
+            var answersByQuestion = _surveyService.GetAnswers(surveyId, startTime, endTime)
                 .GroupBy(a => a.QuestionId).ToDictionary(g => g.Key, g => g.ToList());
             if (answersByQuestion.Count == survey.QuestionCount)
                 ViewBag.AnswersByQuestion = answersByQuestion;

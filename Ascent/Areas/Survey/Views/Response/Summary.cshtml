@@ -7,7 +7,8 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="Index">Surveys</a></li>
         <li class="breadcrumb-item d-none d-lg-block"><a asp-controller="Survey" asp-action="View" asp-route-id="@Model.Id">@Model.Name</a></li>
-        <li class="breadcrumb-item active">Response Summary</li>
+        <li class="breadcrumb-item"><a asp-controller="Response" asp-action="Index" asp-route-surveyId="@Model.Id">Responses</a></li>
+        <li class="breadcrumb-item active">Summary</li>
     </ol>
 </nav>
 
@@ -77,8 +78,8 @@
                                 {
                                     <li class="list-group-item">
                                         <a asp-controller="Response" asp-action="View" asp-route-id="@answer.ResponseId"
-                   class="me-2"><i class="bi bi-card-checklist"></i></a>
-                                        @answer.Text
+                                           class="me-2"><i class="bi bi-card-checklist"></i></a>
+                                        @Html.Raw(answer.Text)
                                     </li>
                                 }
                             }
@@ -110,7 +111,8 @@
                     url: "/survey/response/find",
                     data: {
                         questionId: $(this).attr("data-question"),
-                        selection: $(this).attr("data-selection")
+                        selection: $(this).attr("data-selection"),
+                        academicYear: "@Context.Request.Query["academicYear"]"
                     },
                     success: function (results) {
                         var items = results.map(res => $("<li class='list-group-item'><a href='/survey/response/view/"
