@@ -2,6 +2,7 @@ using Ascent.Models;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 
 namespace Ascent.Services;
@@ -30,7 +31,7 @@ public class EmailSender
         _logger = logger;
     }
 
-    public bool Send(Message message, List<(string Name, string Email)> recipients)
+    public bool Send(Message message, List<(string Name, string Email)> recipients, string senderName = null)
     {
         List<MimeMessage> messages = new List<MimeMessage>();
 
@@ -40,7 +41,7 @@ public class EmailSender
             if (i % _settings.MaxRecipientsPerMessage == 0)
             {
                 msg = new MimeMessage();
-                msg.From.Add(new MailboxAddress(_settings.SenderName, _settings.SenderEmail));
+                msg.From.Add(new MailboxAddress(senderName ?? _settings.SenderName, _settings.SenderEmail));
                 msg.ReplyTo.Add(new MailboxAddress(message.Author.Name, message.Author.Email));
                 msg.To.Add(new MailboxAddress(message.Author.Name, message.Author.Email));
                 msg.Subject = message.Subject;
@@ -73,7 +74,11 @@ public class EmailSender
                 client.Authenticate(_settings.Username, _settings.Password);
 
             foreach (var msg in messages)
+            {
                 client.Send(msg);
+                _logger.LogInformation("Message [{subject}] sent to {receipients}", msg.Subject, msg.Bcc.IsNullOrEmpty() ? msg.To : msg.Bcc);
+            }
+
 
             client.Disconnect(true);
         }

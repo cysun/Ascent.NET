@@ -16,49 +16,44 @@
     </ol>
 </nav>
 
-<div class="row g-4">
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header">Undergraduate Courses</div>
-            <div class="card-body">
-                <table class="table table-striped align-middle">
-                    <thead>
-                        <tr><th>Code</th><th>Title</th><th>Units</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var course in ViewBag.UndergraduateCourses)
-                        {
-                            <tr>
-                                <td>@course.Code</td>
-                                <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
-                                <td>@course.Units</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="card mb-3">
+    <div class="card-header">Undergraduate Courses</div>
+    <div class="card-body">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr><th>Code</th><th>Title</th><th>Units</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var course in ViewBag.UndergraduateCourses)
+                {
+                    <tr>
+                        <td>@course.Code</td>
+                        <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
+                        <td>@course.Units</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header">Graduate Courses</div>
-            <div class="card-body">
-                <table class="table table-striped align-middle">
-                    <thead>
-                        <tr><th>Code</th><th>Title</th><th>Units</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var course in ViewBag.GraduateCourses)
-                        {
-                            <tr>
-                                <td>@course.Code</td>
-                                <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
-                                <td>@course.Units</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Graduate Courses</div>
+    <div class="card-body">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr><th>Code</th><th>Title</th><th>Units</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var course in ViewBag.GraduateCourses)
+                {
+                    <tr>
+                        <td>@course.Code</td>
+                        <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
+                        <td>@course.Units</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

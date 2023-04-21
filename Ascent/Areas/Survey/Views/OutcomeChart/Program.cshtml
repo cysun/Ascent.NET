@@ -138,7 +138,7 @@
             });
 
             $("#yearSelect").change(function () {
-                window.location.href = "program/@(ViewBag.Program.Id)?year=" + $("#yearSelect").val();
+                window.location.href = "../program/@(ViewBag.Program.Id)?year=" + $("select").val();
             });
         });
     </script>
