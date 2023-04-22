@@ -1,0 +1,57 @@
+@inject IAuthorizationService AuthorizationService
+@model Course
+@{
+    ViewData["Title"] = "Edit Course Coordinators";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Courses</a></li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@Model.Id">@Model.Code</a></li>
+        <li class="breadcrumb-item active">Coordinators</li>
+    </ol>
+</nav>
+
+<div class="row g-2">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex align-items-center">Coordinators</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var coordinator in Model.Coordinators)
+                {
+                    <li class="list-group-item d-flex">
+                        <span class="me-auto">@coordinator.Person.FullName</span>
+                        <a asp-action="RemoveCoordinator" asp-route-id="@Model.Id" asp-route-personId="@coordinator.Person.Id"
+                           class="btn btn-outline-danger btn-sm stretched-link">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <input id="search" type="text" class="form-control" placeholder="Search people to add as coordinator" />
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/autocomplete.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            const field = document.getElementById("search");
+            const ac = new Autocomplete(field, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/person/autocomplete",
+                        data: { searchText: $("#search").val() },
+                        success: results => ac.setData(results.map(r =>
+                            ({ label: r.campusId + " " + r.fullName, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    window.location.href = `../addcoordinator/@Model.Id?personId=${value}`;
+                }
+            });
+        });
+    </script>
+}

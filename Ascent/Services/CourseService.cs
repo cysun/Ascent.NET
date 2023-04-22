@@ -9,10 +9,14 @@ public class CourseService
 
     public CourseService(AppDbContext db) { _db = db; }
 
-    public Course GetCourse(int id) => _db.Courses.Find(id);
+    public Course GetCourse(int id) => _db.Courses
+        .Where(c => c.Id == id)
+        .Include(c => c.Coordinators.OrderBy(c => c.Person.LastName)).ThenInclude(c => c.Person)
+        .SingleOrDefault();
 
     public List<Course> GetCourses() => _db.Courses.AsNoTracking()
         .Where(c => !c.IsObsolete)
+        .Include(c => c.Coordinators.OrderBy(c => c.Person.LastName)).ThenInclude(c => c.Person)
         .OrderBy(c => c.Number)
         .ToList();
 
@@ -29,6 +33,30 @@ public class CourseService
     {
         _db.Courses.Add(course);
         _db.SaveChanges();
+    }
+
+    public void AddCoordinator(int id, int personId)
+    {
+        var coordinator = _db.CourseCoordinators.Where(c => c.CourseId == id && c.PersonId == personId).SingleOrDefault();
+        if (coordinator == null)
+        {
+            _db.CourseCoordinators.Add(new CourseCoordinator()
+            {
+                CourseId = id,
+                PersonId = personId,
+            });
+            _db.SaveChanges();
+        }
+    }
+
+    public void RemoveCoordinator(int id, int personId)
+    {
+        var coordinator = _db.CourseCoordinators.Where(c => c.CourseId == id && c.PersonId == personId).SingleOrDefault();
+        if (coordinator != null)
+        {
+            _db.CourseCoordinators.Remove(coordinator);
+            _db.SaveChanges();
+        }
     }
 
     // Instead of all course journals, we only want the current ones.

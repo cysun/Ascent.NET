@@ -56,6 +56,7 @@ DROP TABLE "Sections";
 DROP TABLE "Grades";
 DROP TABLE "SampleStudents";
 DROP TABLE "CourseJournals";
+DROP TABLE "CourseCoordinators";
 DROP TABLE "Courses";
 DROP TABLE "Messages";
 DROP TABLE "GroupMembers";

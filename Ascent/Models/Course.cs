@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ascent.Models;
 
@@ -25,6 +26,8 @@ public class Course
 
     public string CatalogDescription { get; set; }
 
+    public List<CourseCoordinator> Coordinators { get; set; } = new List<CourseCoordinator>();
+
     // Should points to the lastest course journal
     public int? CourseJournalId { get; set; }
     [ForeignKey("CourseJournalId")]
@@ -33,6 +36,16 @@ public class Course
     public bool IsObsolete { get; set; }
 
     public bool IsGraduateCourse => Number.StartsWith("5");
+}
+
+[PrimaryKey(nameof(CourseId), nameof(PersonId))]
+public class CourseCoordinator
+{
+    public int CourseId { get; set; }
+    public Course Course { get; set; }
+
+    public int PersonId { get; set; }
+    public Person Person { get; set; }
 }
 
 public class CourseJournal

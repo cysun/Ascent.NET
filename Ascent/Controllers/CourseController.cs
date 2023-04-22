@@ -22,6 +22,7 @@ namespace Ascent.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var courses = _courseService.GetCourses();
@@ -31,6 +32,7 @@ namespace Ascent.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult View(int id)
         {
             var course = _courseService.GetCourse(id);
@@ -99,6 +101,33 @@ namespace Ascent.Controllers
             _logger.LogInformation("{user} deleted course {course}", User.Identity.Name, id);
 
             return RedirectToAction("Index");
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Coordinators(int id)
+        {
+            var course = _courseService.GetCourse(id);
+            if (course == null) return NotFound();
+
+            return View(course);
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult AddCoordinator(int id, int personId)
+        {
+            _courseService.AddCoordinator(id, personId);
+            _logger.LogInformation("{user} added coordinator {coordinator} to course {course}", User.Identity.Name, personId, id);
+
+            return RedirectToAction("Coordinators", new { id });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult RemoveCoordinator(int id, int personId)
+        {
+            _courseService.RemoveCoordinator(id, personId);
+            _logger.LogInformation("{user} removed coordinator {coordinator} from course {course}", User.Identity.Name, personId, id);
+
+            return RedirectToAction("Coordinators", new { id });
         }
 
         public List<Course> Autocomplete(string prefix)
