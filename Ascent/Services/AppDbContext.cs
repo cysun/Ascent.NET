@@ -16,7 +16,6 @@ public class AppDbContext : DbContext
     public DbSet<Course> Courses { get; set; }
     public DbSet<CourseCoordinator> CourseCoordinators { get; set; }
     public DbSet<CourseJournal> CourseJournals { get; set; }
-    public DbSet<SampleStudent> SampleStudents { get; set; }
     public DbSet<Section> Sections { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
     public DbSet<Grade> Grades { get; set; }
@@ -58,8 +57,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Group>().Property(g => g.EmailPreference).HasConversion<string>();
         modelBuilder.Entity<GroupMember>().HasKey(m => new { m.GroupId, m.PersonId });
         modelBuilder.Entity<Course>().HasAlternateKey(c => new { c.Subject, c.Number });
-        modelBuilder.Entity<Course>().HasOne(c => c.CourseJournal).WithOne();
-        modelBuilder.Entity<CourseJournal>().HasOne(j => j.Course).WithMany();
         modelBuilder.Entity<Enrollment>().HasAlternateKey(e => new { e.SectionId, e.StudentId });
         modelBuilder.Entity<PageRevision>().HasKey(r => new { r.PageId, r.Version });
         modelBuilder.Entity<FileRevision>().HasKey(r => new { r.FileId, r.Version });

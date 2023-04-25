@@ -49,12 +49,9 @@ DROP TRIGGER "SectionsTsTrigger" ON "Sections";
 DROP FUNCTION "SectionsTsTriggerFunction"();
 DROP FUNCTION "SearchSections"(varchar, integer);
 
-ALTER TABLE "Courses" DROP CONSTRAINT "FK_Courses_CourseJournals_CourseJournalId";
-
 DROP TABLE "Enrollments";
 DROP TABLE "Sections";
 DROP TABLE "Grades";
-DROP TABLE "SampleStudents";
 DROP TABLE "CourseJournals";
 DROP TABLE "CourseCoordinators";
 DROP TABLE "Courses";

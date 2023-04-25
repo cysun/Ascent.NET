@@ -11,26 +11,33 @@ namespace Ascent.Controllers
     public class CourseJournalController : Controller
     {
         private readonly CourseService _courseService;
+        private readonly CourseJournalService _courseJournalService;
 
         private readonly IMapper _mapper;
         private readonly ILogger<CourseJournalController> _logger;
 
-        public CourseJournalController(CourseService courseService, IMapper mapper, ILogger<CourseJournalController> logger)
+        public CourseJournalController(CourseService courseService, CourseJournalService courseJournalService,
+            IMapper mapper, ILogger<CourseJournalController> logger)
         {
             _courseService = courseService;
+            _courseJournalService = courseJournalService;
             _mapper = mapper;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View(_courseService.GetCourseJournals());
+            return View(_courseService.GetJournalCourses());
         }
 
         public IActionResult View(int id)
         {
-            ViewBag.Courses = _courseService.GetCoursesWithJournal();
-            return View(_courseService.GetCourseJournal(id));
+            var courseJournals = _courseJournalService.GetCourseJournals();
+            var courseJournal = courseJournals.Where(j => j.Id == id).FirstOrDefault();
+            if (courseJournal == null) return NotFound();
+
+            ViewBag.CourseJournals = courseJournals;
+            return View(courseJournal);
         }
 
         [HttpGet]
@@ -47,58 +54,50 @@ namespace Ascent.Controllers
             if (!ModelState.IsValid) return View(input);
 
             var courseJournal = _mapper.Map<CourseJournal>(input);
-            _courseService.AddCourseJournal(courseJournal);
-            _logger.LogInformation("{user} added course journal {journal} for {course}",
+            courseJournal = _courseJournalService.AddOrUpdateCourseJournal(courseJournal);
+            _logger.LogInformation("{user} added/updated course journal {journal} for {course}",
                 User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
 
-            return RedirectToAction("SampleStudents", new { id = courseJournal.Id });
+            return RedirectToAction("View", new { id = courseJournal.Id });
         }
 
-        public IActionResult Delete(int id)
+        [HttpGet]
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Edit(int id)
         {
-            var courseJournal = _courseService.GetCourseJournal(id);
+            var courseJournal = _courseJournalService.GetCourseJournal(id);
             if (courseJournal == null) return NotFound();
 
-            _courseService.DeleteCourseJournal(courseJournal);
-            _logger.LogInformation("{user} deleted course journal {journal} for {course}",
-                User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
-
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult SampleStudents(int id)
-        {
-            ViewBag.CourseJournal = _courseService.GetCourseJournal(id);
-            return View(new SampleStudentInputModel());
+            ViewBag.CourseJournal = courseJournal;
+            return View(_mapper.Map<CourseJournalInputModel>(courseJournal));
         }
 
         [HttpPost]
         [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult AddStudent(SampleStudentInputModel input)
+        public IActionResult Edit(int id, CourseJournalInputModel input)
         {
-            if (!ModelState.IsValid)
-                return RedirectToAction("SampleStudents", new { id = input.CourseJournalId });
+            if (!ModelState.IsValid) return View(input);
 
-            var sampleStudent = _mapper.Map<SampleStudent>(input);
-            _courseService.AddSampleStudent(sampleStudent);
-            _logger.LogInformation("{user} added sample student {student} to course journal {journal}",
-                User.Identity.Name, sampleStudent.Id, sampleStudent.CourseJournalId);
+            var courseJournal = _courseJournalService.GetCourseJournal(id);
+            if (courseJournal == null) return NotFound();
 
-            return RedirectToAction("SampleStudents", new { id = sampleStudent.CourseJournalId });
+            _mapper.Map(input, courseJournal);
+            _courseJournalService.SaveChanges();
+            _logger.LogInformation("{user} edited course journal {courseJournal}", User.Identity.Name, id);
+
+            return RedirectToAction("View", new { id });
         }
 
-        [Authorize(Policy = Constants.Policy.CanWrite)]
-        public IActionResult RemoveStudent(int id)
+        public IActionResult Delete(int id)
         {
-            var sampleStudent = _courseService.GetSampleStudent(id);
-            if (sampleStudent == null) return NotFound();
+            var courseJournal = _courseJournalService.GetCourseJournal(id);
+            if (courseJournal == null) return NotFound();
 
-            _courseService.RemoveSampleStudent(sampleStudent);
-            _logger.LogInformation("{user} removed sample student {student} from course journal {journal}",
-                User.Identity.Name, sampleStudent.Id, sampleStudent.CourseJournalId);
+            _courseJournalService.DeleteCourseJournal(courseJournal);
+            _logger.LogInformation("{user} deleted course journal {journal} for {course}",
+                User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
 
-            return RedirectToAction("SampleStudents", new { id = sampleStudent.CourseJournalId });
+            return RedirectToAction("Index");
         }
     }
 }
@@ -109,6 +108,7 @@ namespace Ascent.Models
     {
         public int CourseId { get; set; }
 
+        [Display(Name = "Term")]
         public int TermCode { get; set; }
 
         public int InstructorId { get; set; }
@@ -118,19 +118,12 @@ namespace Ascent.Models
 
         [Required, MaxLength(255), Display(Name = "Syllabus URL")]
         public string SyllabusUrl { get; set; }
-    }
 
-    public class SampleStudentInputModel
-    {
-        public int CourseJournalId { get; set; }
-
-        [Required, MaxLength(255)]
-        public string Name { get; set; }
-
-        [MaxLength(255)]
-        public string Grade { get; set; }
-
-        [Required, MaxLength(255)]
-        public string Url { get; set; }
+        [Required, MaxLength(255), Display(Name = "Sample Student A URL")]
+        public string SampleStudentAUrl { get; set; }
+        [Required, MaxLength(255), Display(Name = "Sample Student B URL")]
+        public string SampleStudentBUrl { get; set; }
+        [Required, MaxLength(255), Display(Name = "Sample Student C URL")]
+        public string SampleStudentCUrl { get; set; }
     }
 }

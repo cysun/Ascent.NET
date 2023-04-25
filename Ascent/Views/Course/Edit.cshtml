@@ -15,7 +15,7 @@
     </ol>
 </nav>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-6 col-sm-3">
             <div class="form-floating mb-3">
@@ -52,6 +52,12 @@
         <div class="form-floating mb-3">
             <textarea asp-for="CatalogDescription" class="form-control" style="height: 150px"></textarea>
             <label asp-for="CatalogDescription"></label>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <label for="uploadedFile" class="input-group-text">ABET Syllabus</label>
+            <input id="uploadedFile" name="uploadedFile" class="form-control" type="file">
         </div>
     </div>
     <div class="col-12 d-flex">

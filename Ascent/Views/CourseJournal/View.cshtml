@@ -2,12 +2,20 @@
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "View Course Journal";
-    var Courses = (List<Course>)ViewBag.Courses;
+    var courseJournals = (List<CourseJournal>)ViewBag.CourseJournals;
 }
 <nav>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-action="Index">Course Journals</a></li>
         <li class="breadcrumb-item active me-auto">@Model.Course.Code, @Model.Term.ShortName</li>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+        {
+            <li>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm" title="Edit Course Journal">
+                    <i class="bi bi-pencil-fill"></i>
+                </a>
+            </li>
+        }
     </ol>
 </nav>
 
@@ -15,14 +23,14 @@
     <div id="sidebar" class="d-none d-md-block col-md-2 col-lg-4" style="max-height: 80vh; overflow-y: auto;">
         <div class="d-flex flex-column align-items-stretch flex-shrink-0">
             <div class="list-group list-group-flush border-bottom">
-                @foreach (var course in Courses)
+                @foreach (var courseJournal in courseJournals)
                 {
-                    <a asp-action="View" asp-route-id="@course.CourseJournalId"
-                       class="list-group-item list-group-item-action py-3 lh-sm @(course.CourseJournalId == Model.Id ? "active" : "")">
+                    <a asp-action="View" asp-route-id="@courseJournal.Id"
+                       class="list-group-item list-group-item-action py-3 lh-sm @(courseJournal.Id == Model.Id ? "active" : "")">
                         <div class="d-flex w-100 align-items-center justify-content-between">
-                            <strong class="mb-1">@course.Code</strong>
+                            <strong class="mb-1">@courseJournal.Course.Code</strong>
                         </div>
-                        <div class="small d-none d-lg-block">@course.Title</div>
+                        <div class="small d-none d-lg-block">@courseJournal.Course.Title</div>
                     </a>
                 }
             </div>
@@ -42,16 +50,26 @@
                     <label>Number</label>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-4 col-md-2">
                 <div class="form-floating">
-                    <div class="form-control">@Model.Course.MinUnits</div>
-                    <label>Min Units</label>
+                    <div class="form-control">@Model.Course.Units</div>
+                    <label>Units</label>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-8 col-md-4">
                 <div class="form-floating">
-                    <div class="form-control">@Model.Course.MaxUnits</div>
-                    <label>Max Units</label>
+                    @if (Model.Course.AbetSyllabusId != null)
+                    {
+                        <div class="form-control">
+                            <a asp-controller="File" asp-action="View" asp-route-id="@Model.Course.AbetSyllabusId" class="me-2">View</a>
+                            <a asp-controller="File" asp-action="Download" asp-route-id="@Model.Course.AbetSyllabusId">Download</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-control"></div>
+                    }
+                    <label>ABET Syllabus</label>
                 </div>
             </div>
             <div class="col-12">
@@ -96,19 +114,10 @@
             </div>
             <div class="col-12">
                 <div class="form-floating">
-                    <div class="form-control" style="height: auto;">
-                        @for (int i = 0; i < Model.SampleStudents.Count; ++i)
-                        {
-                            var student = Model.SampleStudents[i];
-                            if (i < Model.SampleStudents.Count - 1)
-                            {
-                                <a href="@student.Url" target="_blank">@student.Name (@student.Grade), </a>
-                            }
-                            else
-                            {
-                                <a href="@student.Url" target="_blank">@student.Name (@student.Grade)</a>
-                            }
-                        }
+                    <div class="form-control">
+                        <a href="@Model.SampleStudentAUrl" target="_blank">Student A</a>,
+                        <a href="@Model.SampleStudentBUrl" target="_blank">Student B</a>,
+                        <a href="@Model.SampleStudentCUrl" target="_blank">Student C</a>
                     </div>
                     <label>Sample Students</label>
                 </div>

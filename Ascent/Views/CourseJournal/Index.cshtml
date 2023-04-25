@@ -1,5 +1,5 @@
 @inject IAuthorizationService AuthorizationService
-@model List<CourseJournal>
+@model List<Course>
 @{
     ViewData["Title"] = "Course Journals";
 }
@@ -21,16 +21,29 @@
 {
     <table class="table table-striped align-middle">
         <thead>
-            <tr><th>Course</th><th>Term</th><th class="d-none d-md-table-cell">Instructor</th></tr>
+            <tr><th>Code</th><th>Title</th><th>Term</th><th class="d-none d-md-table-cell">Instructor</th></tr>
         </thead>
         <tbody>
-            @foreach (var journal in Model)
+            @foreach (var course in Model)
             {
-                <tr>
-                    <td><a asp-action="View" asp-route-id="@journal.Id">@journal.Course.Code @journal.Course.Title</a></td>
-                    <td>@journal.Term.Name</td>
-                    <td class="d-none d-md-table-cell">@journal.Instructor.FullName</td>
-                </tr>
+                if (course.CourseJournal != null)
+                {
+                    <tr>
+                        <td>@course.Code</td>
+                        <td><a asp-action="View" asp-route-id="@course.CourseJournal.Id">@course.Title</a></td>
+                        <td>@course.CourseJournal.Term.Name</td>
+                        <td class="d-none d-md-table-cell">@course.CourseJournal.Instructor.FullName</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@course.Code</td>
+                        <td>@course.Title</td>
+                        <td></td>
+                        <td class="d-none d-md-table-cell"></td>
+                    </tr>
+                }
             }
         </tbody>
     </table>

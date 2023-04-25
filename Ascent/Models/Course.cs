@@ -26,11 +26,13 @@ public class Course
 
     public string CatalogDescription { get; set; }
 
+    public int? AbetSyllabusId { get; set; }
+    public File AbetSyllabus { get; set; }
+
     public List<CourseCoordinator> Coordinators { get; set; } = new List<CourseCoordinator>();
 
-    // Should points to the lastest course journal
-    public int? CourseJournalId { get; set; }
-    [ForeignKey("CourseJournalId")]
+    // Course is the "principal" side (no foreign key) of the one-to-one relationship.
+    // See https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-one
     public CourseJournal CourseJournal { get; set; }
 
     public bool IsObsolete { get; set; }
@@ -67,22 +69,10 @@ public class CourseJournal
     [Required, MaxLength(255)]
     public string SyllabusUrl { get; set; }
 
-    public List<SampleStudent> SampleStudents { get; set; } = new List<SampleStudent>();
-}
-
-public class SampleStudent
-{
-    public int Id { get; set; }
-
-    public int CourseJournalId { get; set; }
-    public CourseJournal courseJournal { get; set; }
-
     [Required, MaxLength(255)]
-    public string Name { get; set; }
-
-    [MaxLength(255)]
-    public string Grade { get; set; }
-
+    public string SampleStudentAUrl { get; set; }
     [Required, MaxLength(255)]
-    public string Url { get; set; }
+    public string SampleStudentBUrl { get; set; }
+    [Required, MaxLength(255)]
+    public string SampleStudentCUrl { get; set; }
 }

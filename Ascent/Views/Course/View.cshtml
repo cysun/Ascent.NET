@@ -25,7 +25,7 @@
 </nav>
 
 <div class="row">
-    <div id="sidebar" class="col-4" style="max-height: 80vh; overflow-y: auto;">
+    <div id="sidebar" class="d-none d-sm-block col-3 col-lg-4" style="max-height: 80vh; overflow-y: auto;">
         <div class="d-flex flex-column align-items-stretch flex-shrink-0">
             <div class="list-group list-group-flush border-bottom">
                 @foreach (var course in ViewBag.Courses)
@@ -55,16 +55,26 @@
                     <label>Number</label>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-4 col-md-2">
                 <div class="form-floating">
-                    <div class="form-control">@Model.MinUnits</div>
-                    <label>Min Units</label>
+                    <div class="form-control">@Model.Units</div>
+                    <label>Units</label>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-8 col-md-4">
                 <div class="form-floating">
-                    <div class="form-control">@Model.MaxUnits</div>
-                    <label>Max Units</label>
+                    @if (Model.AbetSyllabusId != null)
+                    {
+                        <div class="form-control">
+                            <a asp-controller="File" asp-action="View" asp-route-id="@Model.AbetSyllabusId" class="me-2">View</a>
+                            <a asp-controller="File" asp-action="Download" asp-route-id="@Model.AbetSyllabusId">Download</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-control"></div>
+                    }
+                    <label>ABET Syllabus</label>
                 </div>
             </div>
             <div class="col-12">
@@ -81,7 +91,7 @@
             </div>
             <div class="col-12">
                 <div class="form-floating">
-                    <div class="form-control" style="height: auto;">
+                    <div class="form-control">
                         @for (int i = 0; i < Model.Coordinators.Count; ++i)
                         {
                             var coordinator = Model.Coordinators[i];

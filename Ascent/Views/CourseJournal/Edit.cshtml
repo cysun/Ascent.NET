@@ -1,14 +1,24 @@
 @inject IAuthorizationService AuthorizationService
 @model CourseJournalInputModel
 @{
-    ViewData["Title"] = "New Course Journal";
+    ViewData["Title"] = "Edit Course Journal";
+    var courseJournal = (CourseJournal)ViewBag.CourseJournal;
     var currentTerm = new Term();
     var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous() };
+    if (!terms.Select(t => t.Code).ToHashSet().Contains(Model.TermCode))
+        terms.Add(new Term(Model.TermCode));
+    var selectItems = terms.Select(t => new SelectListItem(t.Name, t.Code.ToString())).ToList();
 }
 <nav>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-action="Index">Course Journals</a></li>
-        <li class="breadcrumb-item active">New Course Journal</li>
+        <li class="breadcrumb-item"><a asp-action="View" asp-route-id="@courseJournal.Id">@courseJournal.Course.Code</a></li>
+        <li class="breadcrumb-item active me-auto">Edit</li>
+        <li>
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Course Journal">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </li>
     </ol>
 </nav>
 
@@ -16,25 +26,20 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-floating mb-3">
-                <select id="term" class="form-select" name="TermCode">
-                    @foreach (var term in terms)
-                    {
-                        <option value="@term.Code">@term.Name</option>
-                    }
-                </select>
-                <label for="term">Term</label>
+                <select asp-for="TermCode" asp-items="selectItems" class="form-select"></select>
+                <label asp-for="TermCode"></label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-floating mb-3">
-                <input id="searchCourse" name="prefix" class="form-control">
+                <input id="searchCourse" name="prefix" class="form-control" value="@courseJournal.Course.Code">
                 <label for="searchCourse">Course</label>
                 <div id="searchCourseHelp" class="form-text">Type the course number (e.g. 2011) to search for the course.</div>
             </div>
         </div>
         <div class="col-md-5">
             <div class="form-floating mb-3">
-                <input id="searchPerson" name="searchText" class="form-control">
+                <input id="searchPerson" name="searchText" class="form-control" value="@courseJournal.Instructor.FullName">
                 <label for="searchPerson">Instructor</label>
                 <div id="searchPersonHelp" class="form-text">Type the instructor's name (e.g. Raj) to search for the instructor.</div>
             </div>
@@ -73,10 +78,10 @@
             </div>
         </div>
         <div class="col-12">
-            <input id="course" type="hidden" name="CourseId" />
-            <input id="instructor" type="hidden" name="InstructorId" />
-            <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
-            <button type="submit" class="btn btn-primary">Add</button>
+            <input id="course" type="hidden" name="CourseId" value="@Model.CourseId" />
+            <input id="instructor" type="hidden" name="InstructorId" value="@Model.InstructorId" />
+            <a class="btn btn-secondary me-2" asp-action="View" asp-route-id="@ViewBag.CourseJournal.Id">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save</button>
         </div>
     </div>
 </form>
@@ -85,6 +90,10 @@
     <script src="~/js/autocomplete.js" asp-append-version="true"></script>
     <script>
         $(function () {
+            $("#delete").click(function () {
+                if (confirm("Do you want to delete this course journal?"))
+                    window.location.href = "../delete/@ViewBag.CourseJournal.Id";
+            });
             const field1 = document.getElementById("searchPerson");
             const ac1 = new Autocomplete(field1, {
                 onInput: function () {

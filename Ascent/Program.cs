@@ -113,6 +113,7 @@ services.AddScoped<PersonService>();
 services.AddScoped<MessageService>();
 services.AddScoped<GroupService>();
 services.AddScoped<CourseService>();
+services.AddScoped<CourseJournalService>();
 services.AddScoped<SectionService>();
 services.AddScoped<EnrollmentService>();
 services.AddScoped<MftService>();
