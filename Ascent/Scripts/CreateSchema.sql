@@ -169,6 +169,9 @@ CREATE TABLE "Courses" (
     "MaxUnits" integer NOT NULL,
     "CatalogDescription" text NULL,
     "AbetSyllabusId" integer NULL,
+    "IsRequired" boolean NOT NULL,
+    "IsElective" boolean NOT NULL,
+    "IsService" boolean NOT NULL,
     "IsObsolete" boolean NOT NULL,
     CONSTRAINT "PK_Courses" PRIMARY KEY ("Id"),
     CONSTRAINT "AK_Courses_Subject_Number" UNIQUE ("Subject", "Number"),
@@ -550,7 +553,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20230425040808_InitialSchema', '7.0.5');
+VALUES ('20230425231139_InitialSchema', '7.0.5');
 
 COMMIT;
 

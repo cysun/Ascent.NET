@@ -177,6 +177,15 @@ namespace Ascent.Models
         [Display(Name = "Catalog Description")]
         public string CatalogDescription { get; set; }
 
+        [Display(Name = "Required Course")]
+        public bool IsRequired { get; set; }
+
+        [Display(Name = "Elective Course")]
+        public bool IsElective { get; set; }
+
+        [Display(Name = "Service Course")]
+        public bool IsService { get; set; }
+
         [Display(Name = "Obsolete")]
         public bool IsObsolete { get; set; }
     }

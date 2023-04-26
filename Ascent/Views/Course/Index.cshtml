@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Courses";
     var undergraduateCourses = (List<Course>)ViewBag.UndergraduateCourses;
-    var graduateCourses = (List<Course>)ViewBag.GraduateCoureses;
+    var graduateCourses = (List<Course>)ViewBag.GraduateCourses;
 }
 <nav>
     <ol class="breadcrumb">
@@ -18,70 +18,109 @@
     </ol>
 </nav>
 
-<div class="card mb-3">
-    <div class="card-header">Undergraduate Courses</div>
-    <div class="card-body">
-        <table class="table table-striped align-middle">
-            <thead>
-                <tr><th>Code</th><th>Title</th><th class="d-none d-md-table-cell">Coordinator</th></tr>
-            </thead>
-            <tbody>
-                @foreach (var course in undergraduateCourses)
-                {
-                    <tr>
-                        <td>@course.Code</td>
-                        <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
-                        <td class="d-none d-md-table-cell">
-                            @for (int i = 0; i < course.Coordinators.Count; ++i)
-                            {
-                                var coordinator = course.Coordinators[i];
-                                if (i < course.Coordinators.Count - 1)
-                                {
-                                    <text>@coordinator.Person.FullName, </text>
-                                }
-                                else
-                                {
-                                    <text>@coordinator.Person.FullName</text>
-                                }
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<div class="row g-3">
+    <div class="col-lg-9">
+        <div class="card mb-3">
+            <div class="card-header">Undergraduate Courses</div>
+            <div class="card-body">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr><th>Code</th><th>Title</th><th class="d-none d-md-table-cell">Coordinator</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var course in undergraduateCourses)
+                        {
+                            <tr data-required="@course.IsRequired" data-elective="@course.IsElective" data-service="@course.IsService"
+                                data-other="@(!course.IsRequired && !course.IsElective && !course.IsService)">
+                                <td>@course.Code</td>
+                                <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
+                                <td class="d-none d-md-table-cell">
+                                    @for (int i = 0; i < course.Coordinators.Count; ++i)
+                                    {
+                                        var coordinator = course.Coordinators[i];
+                                        if (i < course.Coordinators.Count - 1)
+                                        {
+                                            <text>@coordinator.Person.FullName, </text>
+                                        }
+                                        else
+                                        {
+                                            <text>@coordinator.Person.FullName</text>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Graduate Courses</div>
+            <div class="card-body">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr><th>Code</th><th>Title</th><th class="d-none d-md-table-cell">Coordinator</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var course in graduateCourses)
+                        {
+                            <tr>
+                                <td>@course.Code</td>
+                                <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
+                                <td class="d-none d-md-table-cell">
+                                    @for (int i = 0; i < course.Coordinators.Count; ++i)
+                                    {
+                                        var coordinator = course.Coordinators[i];
+                                        if (i < course.Coordinators.Count - 1)
+                                        {
+                                            <text>@coordinator.Person.FullName,</text>
+                                        }
+                                        else
+                                        {
+                                            <text>@coordinator.Person.FullName</text>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-3">
+        <div class="card">
+            <div class="card-header">Filters</div>
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="required" id="requiredCheck">
+                    <label class="form-check-label" for="requiredCheck">Required Courses</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="elective" id="electiveCheck">
+                    <label class="form-check-label" for="electiveCheck">Elective Courses</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="service" id="serviceCheck">
+                    <label class="form-check-label" for="serviceCheck">Service Courses</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="other" id="otherCheck">
+                    <label class="form-check-label" for="otherCheck">Other Courses</label>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">Graduate Courses</div>
-    <div class="card-body">
-        <table class="table table-striped align-middle">
-            <thead>
-                <tr><th>Code</th><th>Title</th><th class="d-none d-md-table-cell">Coordinator</th></tr>
-            </thead>
-            <tbody>
-                @foreach (var course in ViewBag.GraduateCourses)
-                {
-                    <tr>
-                        <td>@course.Code</td>
-                        <td><a asp-action="View" asp-route-id="@course.Id">@course.Title</a></td>
-                        <td class="d-none d-md-table-cell">
-                            @for (int i = 0; i < course.Coordinators.Count; ++i)
-                            {
-                                var coordinator = course.Coordinators[i];
-                                if (i < course.Coordinators.Count - 1)
-                                {
-                                    <text>@coordinator.Person.FullName,</text>
-                                }
-                                else
-                                {
-                                    <text>@coordinator.Person.FirstName</text>
-                                }
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+@section Scripts{
+    <script>
+        $(function () {
+            $("input[type='checkbox']").prop("checked", true).change(function () {
+                var courseType = $(this).val();
+                $(`tr[data-${courseType}='True']`).toggle();
+            });
+        });
+    </script>
+}

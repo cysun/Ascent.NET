@@ -108,6 +108,20 @@
                     <label>Coordinators</label>
                 </div>
             </div>
+            <div class="col-12">
+                @if (Model.IsRequired)
+                {
+                    <span class="badge text-bg-primary">Required Course</span>
+                }
+                else if (Model.IsElective)
+                {
+                    <span class="badge text-bg-success">Elective Course</span>
+                }
+                else if (Model.IsService)
+                {
+                    <span class="badge text-bg-secondary">Service Course</span>
+                }
+            </div>
         </div>
     </div>
 </div>

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Ascent.Models;
 
@@ -34,6 +35,13 @@ public class Course
     // Course is the "principal" side (no foreign key) of the one-to-one relationship.
     // See https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-one
     public CourseJournal CourseJournal { get; set; }
+
+    // Certain courses like Directed Study and Cooperative Education are considered neither required nor elective.
+    public bool IsRequired { get; set; }
+    public bool IsElective { get; set; }
+
+    // Whether the course is a "service" course, i.e. not in CS BS/MS curriculum
+    public bool IsService { get; set; }
 
     public bool IsObsolete { get; set; }
 

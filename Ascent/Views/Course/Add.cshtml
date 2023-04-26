@@ -11,43 +11,76 @@
 
 <form method="post" enctype="multipart/form-data">
     <div class="row">
-        <div class="col-6 col-sm-3">
-            <div class="form-floating mb-3">
+        <div class="col-6 col-sm-3 mb-3">
+            <div class="form-floating">
                 <input asp-for="Subject" class="form-control" required>
                 <label asp-for="Subject"></label>
             </div>
         </div>
-        <div class="col-6 col-sm-3">
-            <div class="form-floating mb-3">
+        <div class="col-6 col-sm-3 mb-3">
+            <div class="form-floating">
                 <input asp-for="Number" class="form-control" required>
                 <label asp-for="Number"></label>
             </div>
         </div>
-        <div class="col-6 col-sm-3">
-            <div class="form-floating mb-3">
+        <div class="col-6 col-sm-3 mb-3">
+            <div class="form-floating">
                 <input asp-for="MinUnits" class="form-control" required>
                 <label asp-for="MinUnits"></label>
             </div>
         </div>
-        <div class="col-6 col-sm-3">
-            <div class="form-floating mb-3">
+        <div class="col-6 col-sm-3 mb-3">
+            <div class="form-floating">
                 <input asp-for="MaxUnits" class="form-control" required>
                 <label asp-for="MaxUnits"></label>
             </div>
         </div>
+        <div class="col-12 mb-3">
+            <div class="form-floating">
+                <input asp-for="Title" class="form-control">
+                <label asp-for="Title"></label>
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <div class="form-floating">
+                <textarea asp-for="CatalogDescription" class="form-control" style="height: 150px"></textarea>
+                <label asp-for="CatalogDescription"></label>
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <div class="input-group">
+                <label for="uploadedFile" class="input-group-text">ABET Syllabus</label>
+                <input id="uploadedFile" name="uploadedFile" class="form-control" type="file">
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <div class="form-check form-check-inline">
+                <input asp-for="IsRequired" class="form-check-input">
+                <label asp-for="IsRequired" class="form-check-label"></label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input asp-for="IsElective" class="form-check-input">
+                <label asp-for="IsElective" class="form-check-label"></label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input asp-for="IsService" class="form-check-input">
+                <label asp-for="IsService" class="form-check-label"></label>
+            </div>
+        </div>
+        <div class="col-12">
+            <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
     </div>
-    <div class="form-floating mb-3">
-        <input asp-for="Title" class="form-control">
-        <label asp-for="Title"></label>
-    </div>
-    <div class="form-floating mb-3">
-        <textarea asp-for="CatalogDescription" class="form-control" style="height: 150px"></textarea>
-        <label asp-for="CatalogDescription"></label>
-    </div>
-    <div class="input-group mb-3">
-        <label for="uploadedFile" class="input-group-text">ABET Syllabus</label>
-        <input id="uploadedFile" name="uploadedFile" class="form-control" type="file">
-    </div>
-    <a class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
-    <button type="submit" class="btn btn-primary">Add</button>
 </form>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("input[type='checkbox']").change(function () {
+                if ($(this).prop("checked"))
+                    $("input[type='checkbox']").not(this).prop("checked", false);
+            });
+        });
+    </script>
+}
