@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "MFT - Add Scores";
+    var currentYear = DateTime.Now.Year;
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">MFT</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Score" asp-action="Index">Scores</a></li>
+        <li class="breadcrumb-item active">Add Scores</li>
+    </ol>
+</nav>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row g-3">
+        <div class="col-md-2">
+            <select name="year" class="form-select">
+                <option>@currentYear</option>
+                <option>@(currentYear - 1)</option>
+            </select>
+        </div>
+        <div class="col">
+            <input name="uploadedFile" class="form-control" type="file">
+        </div>
+        <div class="col-12">
+            <div class="form-text">
+                Download <em>Department Roster Report</em> as an Excel file from MFT under the Reports menu. The downloaded file
+                is actually an HTML file with a .xls suffix. Open it in MS Excel, edit it to remove the irrelevent rows at the
+                beginning <em>and at the end</em> so that the first row contains the column names STUDENT NAME, STUDENT ID,
+                AUTHORIZATION, and TOTAL SCORE. Save the file as an actual Excel file and upload it here.
+            </div>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+    </div>
+    <a id="cancel" class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+    <button id="add" type="submit" class="btn btn-primary">Add</button>
+</form>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#add").click(function () {
+                $("#cancel").addClass("disabled");
+                $(this).prop("disabled", true);
+                $(this).html("Add <span class='spinner-border spinner-border-sm'></span>");
+                $("form").submit();
+            });
+        });
+    </script>
+}

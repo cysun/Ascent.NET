@@ -116,7 +116,7 @@ namespace Ascent.Models
 {
     public class MftIndicatorInputModel
     {
-        public int Year { get; set; }
+        public int Year { get; set; } = DateTime.Now.Year;
 
         [Display(Name = "Students")]
         public int NumOfStudents { get; set; }
