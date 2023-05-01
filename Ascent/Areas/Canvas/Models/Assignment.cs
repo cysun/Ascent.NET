@@ -26,14 +26,17 @@ public class Assignment
     public string Description { get; set; }
 
     [JsonPropertyName("grade_group_students_individually")]
-    public bool GradeGroupStudentsIndividually;
+    public bool GradeGroupStudentsIndividually { get; set; }
 
     [JsonPropertyName("peer_reviews")]
-    public bool PeerReviews;
+    public bool PeerReviews { get; set; }
 
     [JsonPropertyName("group_category_id")]
     public int? GroupCategoryId { get; set; } // for group assignment
 
     [JsonPropertyName("submission_types")]
     public string[] SubmissionTypes { get; set; } = { "none" };
+
+    [JsonPropertyName("rubric_settings")]
+    public RubricSettings RubricSettings { get; set; }
 }

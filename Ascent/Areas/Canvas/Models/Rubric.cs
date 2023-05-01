@@ -47,6 +47,16 @@ public class Rubric
     public List<RubricAssessment> Assessments { get; set; }
 }
 
+// If an assignment has an associated rubric, the Assignment object includes a RubricSettings object.
+public class RubricSettings
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; }
+}
+
 public class RubricCriterion
 {
     [JsonPropertyName("id")]

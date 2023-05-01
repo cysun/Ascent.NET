@@ -1,0 +1,44 @@
+@model List< Ascent.Areas.Canvas.Models.Assignment>
+@{
+    ViewData["Title"] = "View Course";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Canvas</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Course" asp-action="Index">Courses</a></li>
+        <li class="breadcrumb-item active">@ViewBag.Course.Name</li>
+    </ol>
+</nav>
+
+<div class="row row-cols-1 row-cols-lg-2 g-4">
+    @foreach (var assignment in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center">
+                    <span>@assignment.Name</span>
+                    @if (assignment.PeerReviews)
+                    {
+                        <a asp-controller="Assignment" asp-action="AssignPeerReview" asp-route-id="@assignment.Id"
+                           title="Assign Peer Review" class="btn btn-outline-primary btn-sm ms-auto">
+                            <i class="bi bi-people-fill"></i>
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @Html.Raw(@assignment.Description)
+                    @if (assignment.RubricSettings != null)
+                    {
+                        <p class="card-text border rounded p-2">
+                            Rubric: @assignment.RubricSettings.Title
+                            @if (assignment.PeerReviews)
+                            {
+                                <span class="badge text-bg-info ms-3">Peer Review</span>
+                            }
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

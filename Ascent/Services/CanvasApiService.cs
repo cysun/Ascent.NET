@@ -44,4 +44,9 @@ public class CanvasApiService
         var queryString = await (new FormUrlEncodedContent(parameters)).ReadAsStringAsync();
         return await _httpClient.GetFromJsonAsync<List<Course>>($"courses?{queryString}");
     }
+
+    public async Task<List<Assignment>> GetAssignments(int courseId)
+    {
+        return await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{courseId}/assignments");
+    }
 }

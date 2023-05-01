@@ -17,7 +17,7 @@
         @foreach (var course in Model)
         {
             <tr>
-                <td>@course.Name</td>
+                <td><a asp-action="View" asp-route-Id="@course.Id">@course.Name</a></td>
                 <td>@course.Term.Name</td>
             </tr>
         }
