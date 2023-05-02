@@ -38,8 +38,11 @@ public class CanvasApiService
         // we may have multiple parameters with the same name/key, e.g. include[].
         var parameters = new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string,string>("enrollment_type", enrollmentType),
-            new KeyValuePair<string,string>("include[]", "term")
+            new KeyValuePair<string, string>("enrollment_type", enrollmentType),
+            new KeyValuePair<string, string>("enrollment_state", "active"),
+            new KeyValuePair<string, string>("state", "available"),
+            new KeyValuePair<string, string>("include[]", "term"),
+            new KeyValuePair<string, string>("per_page", "20")
         };
         var queryString = await (new FormUrlEncodedContent(parameters)).ReadAsStringAsync();
         return await _httpClient.GetFromJsonAsync<List<Course>>($"courses?{queryString}");
@@ -48,8 +51,15 @@ public class CanvasApiService
     public async Task<List<Assignment>> GetAssignments(int courseId) =>
         await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{courseId}/assignments");
 
-    public async Task<List<Group>> GetGroups(int courseId) =>
-        await _httpClient.GetFromJsonAsync<List<Group>>($"courses/{courseId}/groups");
+    public async Task<List<Group>> GetGroups(int courseId)
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            { "per_page", "20"}
+        };
+        var queryString = await (new FormUrlEncodedContent(parameters)).ReadAsStringAsync();
+        return await _httpClient.GetFromJsonAsync<List<Group>>($"courses/{courseId}/groups?{queryString}");
+    }
 
     public async Task<List<GroupMembership>> GetGroupMemberships(int groupId) =>
         await _httpClient.GetFromJsonAsync<List<GroupMembership>>($"groups/{groupId}/memberships");
