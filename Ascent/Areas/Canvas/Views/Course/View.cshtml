@@ -19,8 +19,8 @@
                     <span>@assignment.Name</span>
                     @if (assignment.PeerReviews)
                     {
-                        <a asp-controller="Assignment" asp-action="AssignPeerReview" asp-route-id="@assignment.Id"
-                           title="Assign Peer Review" class="btn btn-outline-primary btn-sm ms-auto">
+                        <a asp-action="AssignPeerReviews" asp-route-id="@ViewBag.Course.Id" asp-route-assignmentId="@assignment.Id"
+                           title="Assign Peer Reviews" class="btn btn-outline-primary btn-sm ms-auto">
                             <i class="bi bi-people-fill"></i>
                         </a>
                     }

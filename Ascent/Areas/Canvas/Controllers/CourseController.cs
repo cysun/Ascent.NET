@@ -50,6 +50,35 @@ namespace Ascent.Areas.Canvas.Controllers
             return View(assignments);
         }
 
+        public async Task<IActionResult> AssignPeerReviewsAsync(int id, int assignmentId)
+        {
+            var groups = await _canvasApiService.GetGroups(id);
+            _logger.LogInformation("{groups} groups retrieved from course {course}", groups.Count, id);
+
+            foreach (var group in groups)
+            {
+                var members = await _canvasApiService.GetGroupMemberships(group.Id);
+                _logger.LogInformation("{members}/{memberCount} members retrieved from group {group}",
+                    members.Count, group.MemberCount, group.Id);
+
+                var memberIds = members.Select(m => m.UserId).ToList();
+                foreach (var memberId in memberIds)
+                {
+                    var submission = await _canvasApiService.GetSubmission(id, assignmentId, memberId);
+                    foreach (var otherId in memberIds)
+                    {
+                        if (memberId == otherId) continue;
+                        var success = await _canvasApiService.CreatePeerReview(id, assignmentId, submission.Id, otherId);
+                        if (!success)
+                            _logger.LogError("Failed to create peer review for submission {submission}", submission.Id);
+                    }
+                    _logger.LogInformation("Finshed creating peers reviews for user {memberId}", memberId);
+                }
+            }
+
+            return RedirectToAction("View", new { id });
+        }
+
         private Dictionary<int, Course> GetCoursesFromCache()
         {
             if (!_memoryCache.TryGetValue(CoursesCacheKey, out Dictionary<int, Course> courses))

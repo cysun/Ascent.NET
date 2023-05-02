@@ -45,8 +45,27 @@ public class CanvasApiService
         return await _httpClient.GetFromJsonAsync<List<Course>>($"courses?{queryString}");
     }
 
-    public async Task<List<Assignment>> GetAssignments(int courseId)
+    public async Task<List<Assignment>> GetAssignments(int courseId) =>
+        await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{courseId}/assignments");
+
+    public async Task<List<Group>> GetGroups(int courseId) =>
+        await _httpClient.GetFromJsonAsync<List<Group>>($"courses/{courseId}/groups");
+
+    public async Task<List<GroupMembership>> GetGroupMemberships(int groupId) =>
+        await _httpClient.GetFromJsonAsync<List<GroupMembership>>($"groups/{groupId}/memberships");
+
+    public async Task<Submission> GetSubmission(int courseId, int assignmentId, int userId) =>
+        await _httpClient.GetFromJsonAsync<Submission>($"courses/{courseId}/assignments/{assignmentId}/submissions/{userId}");
+
+    public async Task<bool> CreatePeerReview(int courseId, int assignmentId, int submissionId, int userId)
     {
-        return await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{courseId}/assignments");
+        var parameters = new Dictionary<string, string>
+        {
+            { "user_id", userId.ToString()}
+        };
+        var response = await _httpClient.PostAsync($"courses/{courseId}/assignments/{assignmentId}/submissions/{submissionId}/peer_reviews",
+            new FormUrlEncodedContent(parameters));
+
+        return response.IsSuccessStatusCode;
     }
 }

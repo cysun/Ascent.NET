@@ -40,3 +40,30 @@ public class Assignment
     [JsonPropertyName("rubric_settings")]
     public RubricSettings RubricSettings { get; set; }
 }
+
+public class Submission
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("assignment_id")]
+    public int AssignmentId { get; set; }
+}
+
+public class PeerReview
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("asset_type")]
+    public string AssetType { get; set; } // Submission
+
+    [JsonPropertyName("asset_id")]
+    public int AssetId { get; set; } // Submission Id
+
+    [JsonPropertyName("user_id")]
+    public int UserId { get; set; } // Id of the owner of the asset (i.e. the user to be assessed)
+
+    [JsonPropertyName("assessor_id")]
+    public int AssessorId { get; set; } // Id of the assessor
+}
