@@ -1,3 +1,4 @@
+using Ascent.Areas.Canvas.Services;
 using Ascent.Security;
 using Ascent.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -132,6 +133,7 @@ services.AddScoped<CanvasHttpMessageHandler>();
 services.AddHttpClient("CanvasAPI", client => client.BaseAddress = new Uri(canvasSettings.ApiBaseUrl))
     .AddHttpMessageHandler<CanvasHttpMessageHandler>();
 services.AddScoped<CanvasApiService>();
+services.AddScoped<CanvasCacheService>();
 
 // Build App
 

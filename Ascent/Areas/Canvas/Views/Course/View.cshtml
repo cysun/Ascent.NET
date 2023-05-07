@@ -28,7 +28,8 @@
                     {
                         <p class="card-text border rounded d-flex justify-content-between align-items-center p-2">
                             <span>Rubric: @assignment.RubricSettings.Title</span>
-                            <a asp-action="ImportData" asp-route-id="@assignment.Id" title="Import Data"
+                            <a asp-controller="Assignment" asp-action="ImportRubricAssessments" asp-route-id="@assignment.Id"
+                       asp-route-courseId="@ViewBag.Course.Id" title="Import Rubric Assessments"
                                class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-box-arrow-down"></i>
                             </a>

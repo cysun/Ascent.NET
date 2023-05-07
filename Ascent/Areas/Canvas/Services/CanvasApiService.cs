@@ -3,7 +3,7 @@ using Ascent.Areas.Canvas.Models;
 using Ascent.Security;
 using Microsoft.AspNetCore.Authentication;
 
-namespace Ascent.Services;
+namespace Ascent.Areas.Canvas.Services;
 
 // TokenHandler from https://github.com/auth0-blog/refresh-token-aspnet-core
 public class CanvasHttpMessageHandler : DelegatingHandler
@@ -44,8 +44,18 @@ public class CanvasApiService
             new KeyValuePair<string, string>("include[]", "term"),
             new KeyValuePair<string, string>("per_page", "20")
         };
-        var queryString = await (new FormUrlEncodedContent(parameters)).ReadAsStringAsync();
+        var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
         return await _httpClient.GetFromJsonAsync<List<Course>>($"courses?{queryString}");
+    }
+
+    public async Task<Course> GetCourse(int id)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new KeyValuePair<string, string>("include[]", "term")
+        };
+        var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
+        return await _httpClient.GetFromJsonAsync<Course>($"courses/{id}?{queryString}");
     }
 
     public async Task<List<Assignment>> GetAssignments(int courseId) =>
@@ -57,7 +67,7 @@ public class CanvasApiService
         {
             { "per_page", "20"}
         };
-        var queryString = await (new FormUrlEncodedContent(parameters)).ReadAsStringAsync();
+        var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
         return await _httpClient.GetFromJsonAsync<List<Group>>($"courses/{courseId}/groups?{queryString}");
     }
 
