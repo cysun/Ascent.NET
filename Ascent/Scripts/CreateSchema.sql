@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
     "MigrationId" character varying(150) NOT NULL,
     "ProductVersion" character varying(32) NOT NULL,
     CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
@@ -121,6 +121,7 @@ CREATE TABLE "Persons" (
     "PersonalEmail" character varying(255) NULL,
     "BgTerm_Code" integer NULL,
     "MgTerm_Code" integer NULL,
+    "CanvasId" integer NULL,
     "IsDeleted" boolean NOT NULL,
     CONSTRAINT "PK_Persons" PRIMARY KEY ("Id")
 );
@@ -441,6 +442,7 @@ CREATE TABLE "RubricData" (
     "RubricId" integer NOT NULL,
     "CriterionId" integer NOT NULL,
     "RatingId" integer NOT NULL,
+    "Comments" text NULL,
     CONSTRAINT "PK_RubricData" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_RubricData_Courses_CourseId" FOREIGN KEY ("CourseId") REFERENCES "Courses" ("Id") ON DELETE CASCADE,
     CONSTRAINT "FK_RubricData_Persons_EvaluateeId" FOREIGN KEY ("EvaluateeId") REFERENCES "Persons" ("Id") ON DELETE CASCADE,
@@ -498,6 +500,8 @@ CREATE INDEX "IX_OutcomeSurveys_SurveyId" ON "OutcomeSurveys" ("SurveyId");
 
 CREATE UNIQUE INDEX "IX_Persons_CampusId" ON "Persons" ("CampusId");
 
+CREATE UNIQUE INDEX "IX_Persons_CanvasId" ON "Persons" ("CanvasId");
+
 CREATE INDEX "IX_ProgramModules_ProgramId_Index" ON "ProgramModules" ("ProgramId", "Index");
 
 CREATE INDEX "IX_ProgramOutcomes_DescriptionId" ON "ProgramOutcomes" ("DescriptionId");
@@ -553,7 +557,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20230425231139_InitialSchema', '7.0.5');
+VALUES ('20230506220419_InitialSchema', '7.0.5');
 
 COMMIT;
 

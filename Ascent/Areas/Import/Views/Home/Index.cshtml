@@ -11,13 +11,13 @@
         <div class="card h-100">
             <div class="card-header">Grades</div>
             <div class="card-body d-flex flex-column">
-                <p class="card-text flex-grow-1">
+                <p class="card-text">
                     Grades for each class section can be downloaded from GET at Curriculum Management -&gt;
                     Class/Attendance/Grade Roster -&gt; Grade Roster. Select a term and enter "CS" for subject
                     area in the search form. For each section in the results, go to the Grade Roster tab and
                     select Download to Excel.
                 </p>
-                <p class="card-text">
+                <p class="card-text flex-grow-1">
                     Note that the grade sheet must have the <em>Official Grade</em> column populated, not
                     just the <em>Roster Grade</em> column.
                 </p>
@@ -52,11 +52,11 @@
         <div class="card h-100">
             <div class="card-header">Group</div>
             <div class="card-body d-flex flex-column">
-                <p class="card-text flex-grow-1">
+                <p class="card-text">
                     Import members to a group from an Excel file. The first row of the Excel file must
-                    contain column name:
+                    contain column names:
                 </p>
-                <ul>
+                <ul class="flex-grow-1">
                     <li>CIN</li>
                     <li>FirstName</li>
                     <li>LastName</li>
@@ -64,6 +64,33 @@
                 </ul>
                 <div>
                     <a asp-controller="Group" asp-action="Import" class="btn btn-primary stretched-link">Import</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header">Canvas Students</div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text">
+                    Import students from Canvas. This is mainly used to get Canvas student ID (which is needed for
+                    importing rubric assessment data from Canvas), but it can also be used to get the students'
+                    school email addresses.
+                </p>
+                <p class="card-text">
+                    In a Canvas course, go to Grades, and the in the Actions menu, select Export Entire Gradebook.
+                    The exported file is a CSV file. Open it in MS Excel, remove the Points Possible row and the
+                    Test Student row, then save it as a proper Excel file.
+                </p>
+                <p class="card-text">The first row of the Excel file should be the column names:</p>
+                <ul class="flex-grow-1">
+                    <li>Student</li>
+                    <li>ID</li>
+                    <li>SIS User ID</li>
+                    <li>SIS Login ID</li>
+                </ul>
+                <div>
+                    <a asp-controller="Canvas" asp-action="ImportStudents" class="btn btn-primary stretched-link">Import</a>
                 </div>
             </div>
         </div>

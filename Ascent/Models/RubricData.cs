@@ -37,6 +37,8 @@ public class RubricDataPoint
 
     public int RatingId { get; set; }
     public RubricRating Rating { get; set; }
+
+    public string Comments { get; set; }
 }
 
 // This class is mapped to a view. We aggregate multiple ratings for a person in a section for a rubric criterion

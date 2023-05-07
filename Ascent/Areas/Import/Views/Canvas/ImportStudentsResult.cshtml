@@ -1,0 +1,27 @@
+@model int[]
+@{
+    ViewData["Title"] = "Import Students";
+    string[] labels = { "Created", "Updated", "Unchanged" };
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Import</a></li>
+        <li class="breadcrumb-item active">Canvas Students</li>
+    </ol>
+</nav>
+
+<div class="row row-cols-auto g-3 mb-3">
+    @for (int i = 0; i < 3; ++i)
+    {
+        <div class="col">
+            <div class="card">
+                <div class="card-header text-center">@labels[i]</div>
+                <div class="card-body text-center display-6">
+                    <div class="card-text ">@Model[i]</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Import</a>

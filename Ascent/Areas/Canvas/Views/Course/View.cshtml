@@ -19,22 +19,19 @@
                     <span>@assignment.Name</span>
                     @if (assignment.PeerReviews)
                     {
-                        <a asp-action="AssignPeerReviews" asp-route-id="@ViewBag.Course.Id" asp-route-assignmentId="@assignment.Id"
-                           title="Assign Peer Reviews" class="btn btn-outline-primary btn-sm ms-auto">
-                            <i class="bi bi-people-fill"></i>
-                        </a>
+                        <span class="badge text-bg-info ms-auto">Peer Review</span>
                     }
                 </div>
                 <div class="card-body">
                     @Html.Raw(@assignment.Description)
                     @if (assignment.RubricSettings != null)
                     {
-                        <p class="card-text border rounded p-2">
-                            Rubric: @assignment.RubricSettings.Title
-                            @if (assignment.PeerReviews)
-                            {
-                                <span class="badge text-bg-info ms-3">Peer Review</span>
-                            }
+                        <p class="card-text border rounded d-flex justify-content-between align-items-center p-2">
+                            <span>Rubric: @assignment.RubricSettings.Title</span>
+                            <a asp-action="ImportData" asp-route-id="@assignment.Id" title="Import Data"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-box-arrow-down"></i>
+                            </a>
                         </p>
                     }
                 </div>

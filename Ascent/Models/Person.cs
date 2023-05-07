@@ -33,6 +33,9 @@ public class Person
     // MS Grduation Term
     public Term MgTerm { get; set; }
 
+    // User ID on Canvas
+    public int? CanvasId { get; set; }
+
     public bool IsDeleted { get; set; }
 
     public string FullName => $"{FirstName} {LastName}";

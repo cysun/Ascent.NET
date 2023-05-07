@@ -53,6 +53,7 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Person>().HasIndex(p => p.CampusId).IsUnique();
+        modelBuilder.Entity<Person>().HasIndex(p => p.CanvasId).IsUnique();
         modelBuilder.Entity<Group>().HasIndex(g => g.Name).IsUnique();
         modelBuilder.Entity<Group>().Property(g => g.EmailPreference).HasConversion<string>();
         modelBuilder.Entity<GroupMember>().HasKey(m => new { m.GroupId, m.PersonId });

@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Import Students";
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Import</a></li>
+        <li class="breadcrumb-item active">Canvas Students</li>
+    </ol>
+</nav>
+
+<form method="post" enctype="multipart/form-data">
+    <input id="file" name="uploadedFile" class="form-control mb-3" type="file">
+    <a id="cancel" class="btn btn-secondary me-2" asp-action="Index">Cancel</a>
+    <button id="import" type="button" class="btn btn-primary">Import</button>
+</form>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#import").click(function () {
+                $("#cancel").addClass("disabled");
+                $(this).prop("disabled", true);
+                $(this).html("<span class='spinner-border spinner-border-sm'></span>");
+                $("form").submit();
+            });
+        });
+    </script>
+}

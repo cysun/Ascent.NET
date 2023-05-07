@@ -52,7 +52,12 @@ namespace Ascent.Areas.Canvas.Controllers
 
         public async Task<IActionResult> AssignPeerReviewsAsync(int id, int assignmentId)
         {
-            var groups = await _canvasApiService.GetGroups(id);
+            // Canvas's "anonymous" peer review is kind of the opposite of what we want - instead of anonymous
+            // reviewers, Canvas anonymizes reviewees, so we won't be using Canvas's peer review for our Teamwork
+            // rubric assessment. With that said, I want to keep this action in case we need it for something
+            // else, or in case Canvas adds the anonymous reviewer options in the future.
+            // var groups = await _canvasApiService.GetGroups(id);
+            var groups = new List<Group>();
             _logger.LogInformation("{groups} groups retrieved from course {course}", groups.Count, id);
 
             foreach (var group in groups)
