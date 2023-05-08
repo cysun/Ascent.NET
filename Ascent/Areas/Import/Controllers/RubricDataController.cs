@@ -12,9 +12,7 @@ namespace Ascent.Areas.Import.Controllers
     [Authorize(Policy = Constants.Policy.CanWrite)]
     public class RubricDataController : Controller
     {
-
         private readonly PersonService _personService;
-        private readonly CourseService _courseService;
         private readonly RubricService _rubricService;
         private readonly RubricDataService _rubricDataService;
         private readonly ILogger<RubricDataController> _logger;
@@ -23,7 +21,6 @@ namespace Ascent.Areas.Import.Controllers
             RubricDataService rubricDataService, ILogger<RubricDataController> logger)
         {
             _personService = personService;
-            _courseService = courseService;
             _rubricService = rubricService;
             _rubricDataService = rubricDataService;
             _logger = logger;
@@ -67,7 +64,7 @@ namespace Ascent.Areas.Import.Controllers
                         EvaluateeId = person.Id,
                         RubricId = input.RubricId,
                         CriterionId = criteria[i].Id,
-                        RatingId = ratingMaps[i][excelReader.Get($"C{i+1}")]
+                        RatingId = ratingMaps[i][excelReader.Get($"C{i + 1}")]
                     });
                 }
             }

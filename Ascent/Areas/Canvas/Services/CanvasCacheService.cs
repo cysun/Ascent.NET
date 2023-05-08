@@ -38,4 +38,7 @@ public class CanvasCacheService
     {
         foreach (var assignment in assignments) SetAssignment(assignment);
     }
+
+    public async Task<Assignment> GetAssignmentAsync(int courseId, int assignmentId) =>
+        (Assignment)_cache.Get(AssignmentKey(assignmentId)) ?? await _canvasApiService.GetAssignment(courseId, assignmentId);
 }

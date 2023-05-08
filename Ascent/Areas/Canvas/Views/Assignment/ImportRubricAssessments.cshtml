@@ -1,0 +1,123 @@
+@model Ascent.Areas.Canvas.Models.RubricAssessmentsImportInputModel
+@{
+    ViewData["Title"] = "Import Rubric Assessments";
+    var currentTerm = new Term();
+    var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous() };
+    var rubrics = ((List<Rubric>)ViewBag.Rubrics).Select(r => new SelectListItem(r.Name, r.Id.ToString()));
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Import</a></li>
+        <li class="breadcrumb-item active">Rubric Data</li>
+    </ol>
+</nav>
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Canvas</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Course" asp-action="Index">Courses</a></li>
+        <li class="breadcrumb-item">
+            <a asp-controller="Course" asp-action="View"
+               asp-route-id="@ViewBag.Course.Id">@ViewBag.Course.Name</a>
+        </li>
+        <li class="breadcrumb-item active">Import Rubric Assessments</li>
+    </ol>
+</nav>
+
+<form method="post">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-floating mb-3">
+                <select id="term" class="form-select" name="TermCode">
+                    @foreach (var term in terms)
+                    {
+                        <option value="@term.Code">@term.Name</option>
+                    }
+                </select>
+                <label for="term">Term</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-floating mb-3">
+                <input id="searchCourse" name="prefix" class="form-control">
+                <label for="searchCourse">Course</label>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="form-floating mb-3">
+                <input id="searchPerson" name="searchText" class="form-control">
+                <label for="searchPerson">Instructor</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <span class="form-control">@ViewBag.Assignment.Name</span>
+                <label>Assignment</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <select asp-for="RubricId" asp-items="rubrics" class="form-select"></select>
+                <label asp-for="RubricId"></label>
+            </div>
+        </div>
+        <div class="col-12">
+            <input id="course" type="hidden" name="CourseId" />
+            <input id="instructor" type="hidden" name="InstructorId" />
+            <input type="hidden" name="CanvasCourseId" value="@ViewBag.Course.Id" />
+            <input type="hidden" name="CanvasAssignmentId" value="@ViewBag.Assignment.Id" />
+            <a id="cancel" class="btn btn-secondary me-2" asp-controller="Course" asp-action="View"
+               asp-route-id="@ViewBag.Course.Id">Cancel</a>
+            <button id="submit" type="submit" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                Import
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <script src="~/js/autocomplete.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            const field1 = document.getElementById("searchPerson");
+            const ac1 = new Autocomplete(field1, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/person/autocomplete",
+                        data: { searchText: $("#searchPerson").val() },
+                        success: results => ac1.setData(results.map(r =>
+                            ({ label: r.campusId + " " + r.fullName, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    $("#instructor").val(value);
+                }
+            });
+            const field2 = document.getElementById("searchCourse");
+            const ac2 = new Autocomplete(field2, {
+                onInput: function () {
+                    $.ajax({
+                        url: "/course/autocomplete",
+                        data: { prefix: $("#searchCourse").val() },
+                        success: results => ac2.setData(results.map(r =>
+                            ({ label: r.code, value: r.id })))
+                    })
+                },
+                onSelectItem: ({ label, value }) => {
+                    $("#course").val(value);
+                }
+            });
+            $(".spinner-border").hide();
+            $("form").submit(function (e) {
+                if ($("#instructor").val() && $("#course").val()) {
+                    $("#cancel").addClass("disabled");
+                    $("#submit").prop("disabled", true);
+                    $(".spinner-border").show();
+                }
+                else {
+                    e.preventDefault(e);
+                }
+            });
+        });
+    </script>
+}

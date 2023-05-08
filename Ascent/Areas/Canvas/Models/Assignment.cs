@@ -48,6 +48,44 @@ public class Submission
 
     [JsonPropertyName("assignment_id")]
     public int AssignmentId { get; set; }
+
+    [JsonPropertyName("user_id")]
+    public int UserId { get; set; }
+
+    [JsonPropertyName("full_rubric_assessment")]
+    public SubmissionRubricAssessment RubricAssessment { get; set; }
+}
+
+// The rubric assessment object included in a submission in the List Submission API call with
+// include[]=full_rubric_assessment parameter.
+public class SubmissionRubricAssessment
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("grading")]
+    public string AssessmentType { get; set; }
+
+    [JsonPropertyName("assessor_id")]
+    public int AssessorId { get; set; }
+
+    [JsonPropertyName("data")]
+    public SubmissionRubricRating[] Ratings { get; set; }
+}
+
+// The rubric ratings included in a submission in the List Submission API call with
+// include[]=full_rubric_assessment parameter.
+public class SubmissionRubricRating
+{
+    [JsonPropertyName("points")]
+    public float Points { get; set; }
+
+    [JsonPropertyName("comments")]
+    public string Comments { get; set; }
+
+    public bool HasComments => !string.IsNullOrEmpty(Comments);
+
+    public int Value => (int)Points;
 }
 
 public class PeerReview

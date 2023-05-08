@@ -61,6 +61,23 @@ public class CanvasApiService
     public async Task<List<Assignment>> GetAssignments(int courseId) =>
         await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{courseId}/assignments");
 
+    public async Task<Assignment> GetAssignment(int courseId, int assignmentId) =>
+        await _httpClient.GetFromJsonAsync<Assignment>($"courses/{courseId}/assignments/{assignmentId}");
+
+    // The include[]=full_rubric_assessment parameter seems to be an "undocumented" feature as it's in the
+    // documetation for the Get Single Submission API call but not in the List Submissions call.
+    // Test it before use!!
+    public async Task<List<Submission>> GetSubmissions(int courseId, int assignmentId)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new KeyValuePair<string, string>("include[]", "full_rubric_assessment"),
+        };
+        var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
+        return await _httpClient.GetFromJsonAsync<List<Submission>>(
+            $"courses/{courseId}/assignments/{assignmentId}/submissions?{queryString}");
+    }
+
     public async Task<List<Group>> GetGroups(int courseId)
     {
         var parameters = new Dictionary<string, string>
