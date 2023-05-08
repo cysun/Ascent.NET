@@ -23,6 +23,52 @@ public class CanvasHttpMessageHandler : DelegatingHandler
     }
 }
 
+// See https://canvas.instructure.com/doc/api/file.pagination.html for what a Link header looks like. In particular,
+// it will not contain a "next" link if we are on the last page, and this is what we use to determine if we have
+// exhausted all results.
+public class Links
+{
+    public string Current { get; set; }
+    public string Next { get; set; }
+    public string Prev { get; set; }
+    public string First { get; set; }
+    public string Last { get; set; }
+
+    public bool HasNext => Next != null;
+
+    public static Links FromHttpResponse(HttpResponseMessage response)
+    {
+        var links = new Links();
+        var header = response.Headers.GetValues("Link").FirstOrDefault();
+        if (header != null)
+        {
+            var tokens = header.Split(',');
+            foreach (var token in tokens)
+            {
+                var parts = token.Split(new char[] { '<', '>', ';', ' ', '"' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 3) continue;
+
+                switch (parts[2])
+                {
+                    case "current":
+                        links.Current = parts[0]; break;
+                    case "next":
+                        links.Next = parts[0]; break;
+                    case "prev":
+                        links.Prev = parts[0]; break;
+                    case "first":
+                        links.First = parts[0]; break;
+                    case "Last":
+                        links.Last = parts[0]; break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return links;
+    }
+}
+
 public class CanvasApiService
 {
     private readonly HttpClient _httpClient;
@@ -71,11 +117,10 @@ public class CanvasApiService
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string, string>("include[]", "full_rubric_assessment"),
+            new KeyValuePair<string, string>("include[]", "full_rubric_assessment")
         };
         var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
-        return await _httpClient.GetFromJsonAsync<List<Submission>>(
-            $"courses/{courseId}/assignments/{assignmentId}/submissions?{queryString}");
+        return await GetAll<Submission>($"courses/{courseId}/assignments/{assignmentId}/submissions?{queryString}");
     }
 
     public async Task<List<Group>> GetGroups(int courseId)
@@ -104,5 +149,23 @@ public class CanvasApiService
             new FormUrlEncodedContent(parameters));
 
         return response.IsSuccessStatusCode;
+    }
+
+    private async Task<List<T>> GetAll<T>(string uri)
+    {
+        var results = new List<T>();
+        var links = new Links { Next = uri };
+        while (links.HasNext)
+        {
+            var response = await _httpClient.GetAsync(links.Next);
+            if (!response.IsSuccessStatusCode)
+            {
+                var msg = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(msg);
+            }
+            results.AddRange(await response.Content.ReadFromJsonAsync<List<T>>());
+            links = Links.FromHttpResponse(response);
+        }
+        return results;
     }
 }

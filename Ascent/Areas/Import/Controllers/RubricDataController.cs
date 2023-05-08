@@ -17,7 +17,7 @@ namespace Ascent.Areas.Import.Controllers
         private readonly RubricDataService _rubricDataService;
         private readonly ILogger<RubricDataController> _logger;
 
-        public RubricDataController(PersonService personService, CourseService courseService, RubricService rubricService,
+        public RubricDataController(PersonService personService, RubricService rubricService,
             RubricDataService rubricDataService, ILogger<RubricDataController> logger)
         {
             _personService = personService;
