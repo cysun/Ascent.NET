@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,12 @@ public enum RubricAssessmentType
     Instructor = 0,
     Peer = 1,
     External = 2
+}
+
+public enum RubricDataSourceType
+{
+    CanvasAssignment = 1,
+    Other = 0
 }
 
 public class RubricDataPoint
@@ -39,6 +46,13 @@ public class RubricDataPoint
     public RubricRating Rating { get; set; }
 
     public string Comments { get; set; }
+
+    // When the rubric data is imported from an external source, e.g. a Canvas assignment,
+    // keep the source type and source id.
+    public RubricDataSourceType? SourceType { get; set; }
+
+    [MaxLength(100)]
+    public string SourceId { get; set; }
 }
 
 // This class is mapped to a view. We aggregate multiple ratings for a person in a section for a rubric criterion
@@ -81,4 +95,24 @@ public class AssessmentSection
     public int TermCode { get; set; }
 
     public Term Term => new Term(TermCode);
+}
+
+// This class is used to keep track of imports of rubric data from external sources, e.g. Canvas assignments.
+public class RubricDataImportLogEntry
+{
+    public int Id { get; set; }
+
+    public int RubricId { get; set; }
+
+    public int TermCode { get; set; }
+
+    public int CourseId { get; set; }
+
+    [Required, MaxLength(100)]
+    public RubricDataSourceType SourceType { get; set; }
+
+    [Required, MaxLength(100)]
+    public string SourceId { get; set; }
+
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 }

@@ -45,6 +45,7 @@ public class AppDbContext : DbContext
     public DbSet<RubricDataPoint> RubricData { get; set; }
     public DbSet<RubricDataByPerson> RubricDataByPerson { get; set; }
     public DbSet<AssessmentSection> AssessmentSections { get; set; }
+    public DbSet<RubricDataImportLogEntry> RubricDataImportLog { get; set; }
     public DbSet<OutcomeSurvey> OutcomeSurveys { get; set; }
     public DbSet<SurveyDataPoint> SurveyData { get; set; }
     public DbSet<CourseTemplate> CourseTemplates { get; set; }
@@ -76,6 +77,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ProgramResource>().HasIndex(i => new { i.ModuleId, i.Index });
         modelBuilder.Entity<ProjectResource>().Property(i => i.Type).HasConversion<string>();
         modelBuilder.Entity<RubricDataByPerson>().ToView("RubricDataByPerson");
+        modelBuilder.Entity<RubricDataImportLogEntry>().HasIndex(e => new { e.SourceId, e.SourceType });
 
         // The following views do not exist, but without these EF Core will create tables.
         modelBuilder.Entity<AssessmentSection>().ToView("AssessmentSesions");

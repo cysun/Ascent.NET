@@ -36,5 +36,21 @@ public class RubricDataService
 
     public void AddRubricDataPoint(RubricDataPoint dataPoint) => _db.RubricData.Add(dataPoint);
 
+    public void DeleteRubricData(string sourceId, RubricDataSourceType sourceType = RubricDataSourceType.CanvasAssignment) =>
+        _db.RubricData.Where(d => d.SourceId == sourceId && d.SourceType == sourceType)
+       .ExecuteDelete();
+
+    public DateTime GetLastImportTime(string sourceId, RubricDataSourceType sourceType = RubricDataSourceType.CanvasAssignment) =>
+        _db.RubricDataImportLog.Where(l => l.SourceId == sourceId && l.SourceType == sourceType)
+        .OrderByDescending(l => l.Timestamp)
+        .Select(l => l.Timestamp)
+        .FirstOrDefault();
+
+    public void LogRubricDataImport(RubricDataImportLogEntry entry)
+    {
+        _db.RubricDataImportLog.Add(entry);
+        _db.SaveChanges();
+    }
+
     public void SaveChanges() => _db.SaveChanges();
 }

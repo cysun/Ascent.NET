@@ -4,6 +4,7 @@ DROP TABLE "CourseTemplates";
 DROP TABLE "SurveyData";
 DROP TABLE "OutcomeSurveys";
 
+DROP TABLE "RubricDataImportLog";
 DROP VIEW "RubricDataByPerson";
 DROP TABLE "RubricData";
 

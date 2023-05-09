@@ -32,12 +32,12 @@ namespace Ascent.Areas.Canvas.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ImportRubricAssessmentsAsync(int id, int courseId)
+        public async Task<IActionResult> ImportRubricAssessmentsAsync(int id, int courseId, bool hasImport = false)
         {
             var assignment = await _canvasCacheService.GetAssignmentAsync(courseId, id);
             var rubrics = _rubricService.GetRubrics();
 
-            var input = new RubricAssessmentsImportInputModel();
+            var input = new RubricAssessmentsImportInputModel() { DeleteOldImport = hasImport };
             var rubric = rubrics.Where(r => r.Name == assignment.RubricSettings.Title).FirstOrDefault();
             if (rubric != null)
                 input.RubricId = rubric.Id;
@@ -53,6 +53,9 @@ namespace Ascent.Areas.Canvas.Controllers
         public async Task<IActionResult> ImportRubricAssessmentsAsync(RubricAssessmentsImportInputModel input)
         {
             if (!ModelState.IsValid) return View(input);
+
+            if (input.DeleteOldImport)
+                _rubricDataService.DeleteRubricData(input.CanvasAssignmentId.ToString(), RubricDataSourceType.CanvasAssignment);
 
             var term = new Ascent.Models.Term(input.TermCode);
             var criteria = _rubricService.GetCriteria(input.RubricId);
@@ -72,7 +75,7 @@ namespace Ascent.Areas.Canvas.Controllers
 
                 for (int i = 0; i < criteria.Count; ++i)
                 {
-                    _rubricDataService.AddRubricDataPoint(new RubricDataPoint
+                    var dataPoint = new RubricDataPoint
                     {
                         Year = term.Year,
                         Term = new Ascent.Models.Term(input.TermCode), // see comments in Rubric Data importer
@@ -82,13 +85,35 @@ namespace Ascent.Areas.Canvas.Controllers
                         EvaluateeId = person.Id,
                         RubricId = input.RubricId,
                         CriterionId = criteria[i].Id,
-                        RatingId = ratingMaps[i][submission.RubricAssessment.Ratings[i].Value]
-                    });
-                }
-                _rubricDataService.SaveChanges();
-            }
+                        RatingId = ratingMaps[i][submission.RubricAssessment.Ratings[i].Value],
+                        SourceType = RubricDataSourceType.CanvasAssignment,
+                        SourceId = input.CanvasAssignmentId.ToString()
+                    };
 
-            return RedirectToAction("View", "Course", new { id = input.CanvasCourseId });
+                    if (!string.IsNullOrWhiteSpace(submission.RubricAssessment.Ratings[i].Comments))
+                        dataPoint.Comments = submission.RubricAssessment.Ratings[i].Comments;
+
+                    _rubricDataService.AddRubricDataPoint(dataPoint);
+                }
+            }
+            _rubricDataService.SaveChanges();
+
+            _rubricDataService.LogRubricDataImport(new RubricDataImportLogEntry
+            {
+                RubricId = input.RubricId,
+                TermCode = input.TermCode,
+                CourseId = input.CourseId,
+                SourceType = RubricDataSourceType.CanvasAssignment,
+                SourceId = input.CanvasAssignmentId.ToString()
+            });
+
+            return RedirectToAction("Section", "Assessment", new
+            {
+                area = "Rubric",
+                rubricId = input.RubricId,
+                courseId = input.CourseId,
+                termCode = input.TermCode
+            });
         }
     }
 }
@@ -108,5 +133,7 @@ namespace Ascent.Areas.Canvas.Models
         public int CourseId { get; set; }
 
         public int InstructorId { get; set; }
+
+        public bool DeleteOldImport { get; set; }
     }
 }

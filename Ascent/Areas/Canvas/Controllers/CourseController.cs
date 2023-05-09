@@ -1,6 +1,7 @@
 using Ascent.Areas.Canvas.Models;
 using Ascent.Areas.Canvas.Services;
 using Ascent.Security;
+using Ascent.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,13 +14,16 @@ namespace Ascent.Areas.Canvas.Controllers
         private readonly CanvasApiService _canvasApiService;
         private readonly CanvasCacheService _canvasCacheService;
 
+        private readonly RubricDataService _rubricDataService;
+
         private readonly ILogger<CourseController> _logger;
 
         public CourseController(CanvasApiService canvasApiService, CanvasCacheService canvasCacheService,
-            ILogger<CourseController> logger)
+            RubricDataService rubricDataService, ILogger<CourseController> logger)
         {
             _canvasApiService = canvasApiService;
             _canvasCacheService = canvasCacheService;
+            _rubricDataService = rubricDataService;
             _logger = logger;
         }
 
@@ -36,6 +40,14 @@ namespace Ascent.Areas.Canvas.Controllers
 
             var assignments = await _canvasApiService.GetAssignments(id);
             _canvasCacheService.SetAssignments(assignments);
+
+            var lastImportTimes = new Dictionary<int, DateTime>();
+            foreach (var assignment in assignments)
+            {
+                if (assignment.RubricSettings != null)
+                    lastImportTimes[assignment.Id] = _rubricDataService.GetLastImportTime(assignment.Id.ToString());
+            }
+            ViewBag.LastImportTimes = lastImportTimes;
 
             return View(assignments);
         }
