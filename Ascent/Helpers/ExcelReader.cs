@@ -2,7 +2,7 @@ using NPOI.SS.UserModel;
 
 namespace Ascent.Helpers
 {
-    public class ExcelReader
+    public class ExcelReader : IDisposable
     {
         private readonly IWorkbook _workbook;
         private readonly ISheet _sheet;
@@ -10,6 +10,7 @@ namespace Ascent.Helpers
 
         private int _currentRowIndex = -1;
         private string[] _currentRow;
+        private int _currentEmptyCellCount;
 
         private readonly Dictionary<string, int> _colIndexes = new Dictionary<string, int>();
 
@@ -28,7 +29,8 @@ namespace Ascent.Helpers
 
             Next(); // First row should be a header row
             for (int i = 0; i < ColCount; ++i)
-                _colIndexes.Add(_currentRow[i].Trim(), i);
+                if (_currentRow[i] != "")
+                    _colIndexes.Add(_currentRow[i], i);
         }
 
         public bool HasNext() => _currentRowIndex + 1 < RowCount;
@@ -37,8 +39,14 @@ namespace Ascent.Helpers
         {
             if (++_currentRowIndex >= RowCount) return false;
 
+            _currentEmptyCellCount = 0;
             for (int i = 0; i < ColCount; ++i)
+            {
+                // FormatCellValue() always returns a string (i.e. never returns null)
                 _currentRow[i] = _dataFormatter.FormatCellValue(_sheet.GetRow(_currentRowIndex).GetCell(i)).Trim();
+                if (_currentRow[i] == "")
+                    ++_currentEmptyCellCount;
+            }
 
             return true;
         }
@@ -47,6 +55,19 @@ namespace Ascent.Helpers
 
         public string Get(string colName) => _currentRow[_colIndexes[colName]];
 
+        public string[] GetAll() => _currentRow;
+
+        public int EmptyCellCount() => _currentEmptyCellCount;
+
         public bool HasColumn(string colName) => _colIndexes.ContainsKey(colName);
+
+        public bool HasColumns(string[] colNames)
+        {
+            foreach (var colName in colNames)
+                if (!HasColumn(colName)) return false;
+            return true;
+        }
+
+        void IDisposable.Dispose() => _workbook.Dispose();
     }
 }

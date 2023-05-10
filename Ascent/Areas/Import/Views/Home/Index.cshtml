@@ -29,27 +29,6 @@
     </div>
     <div class="col">
         <div class="card h-100">
-            <div class="card-header">Rubric Data</div>
-            <div class="card-body d-flex flex-column">
-                <p class="card-text flex-grow-1">
-                    Import rubric data from an Excel file. The Excel file is expected to have the following columns:
-                </p>
-                <ul>
-                    <li>Name</li>
-                    <li>CIN</li>
-                    <li>One criterion per column, with column name C1, C2, and so on.</li>
-                </ul>
-                <p class="card-text">
-                    The first row should be column names, followed by one assessment of a student per row.
-                </p>
-                <div>
-                    <a asp-controller="RubricData" asp-action="Import" class="btn btn-primary stretched-link">Import</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card h-100">
             <div class="card-header">Group</div>
             <div class="card-body d-flex flex-column">
                 <p class="card-text">
@@ -64,6 +43,36 @@
                 </ul>
                 <div>
                     <a asp-controller="Group" asp-action="Import" class="btn btn-primary stretched-link">Import</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-header">Rubric Data</div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text">
+                    Import rubric assessment data from an Excel file. The first row should be column names:
+                </p>
+                <ul>
+                    <li>Student</li>
+                    <li>CIN</li>
+                    <li>
+                        One criterion per column, with the criterion name being the column name, e.g. Participation,
+                        Contribution, and so on in the Teamwork rubric.
+                    </li>
+                    <li>Comments</li>
+                    <li>
+                        AssessorId - this is required for peer and external assessments; for instructor assessment,
+                        the assessor id is the id of the instructor.
+                    </li>
+                </ul>
+                <p class="card-text flex-grow-1">
+                    Each row after the first should be the assessment data of a student. The content in each criterion
+                    column should be an integer rating value (1-4 in our rubrics).
+                </p>
+                <div>
+                    <a asp-controller="RubricData" asp-action="Import" class="btn btn-primary stretched-link">Import</a>
                 </div>
             </div>
         </div>

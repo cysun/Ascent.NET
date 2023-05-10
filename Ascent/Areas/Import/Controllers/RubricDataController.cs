@@ -48,10 +48,25 @@ namespace Ascent.Areas.Import.Controllers
                     ratingMaps[i][rating.Value.ToString()] = rating.Id;
             }
 
-            var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
+            var idMap = new Dictionary<string, int>(); // map Canvas Id to Person Id
+
+            using var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
             while (excelReader.Next())
             {
-                var person = GetOrCreatePerson(excelReader);
+                var person = GetOrCreatePerson(excelReader); // Get the Evaluatee
+
+                int evaluatorId = input.InstructorId; // Get the Evaluator
+                if (input.AssessmentType == RubricAssessmentType.Peer)
+                {
+                    var assessorId = excelReader.Get("AssessorId");
+                    if (!idMap.ContainsKey(assessorId))
+                    {
+                        var assessor = _personService.GetPersonByCanvasId(int.Parse(assessorId));
+                        idMap[assessorId] = assessor.Id;
+                    }
+                    evaluatorId = idMap[assessorId];
+                }
+
                 for (int i = 0; i < criteria.Count; ++i)
                 {
                     _rubricDataService.AddRubricDataPoint(new RubricDataPoint
@@ -59,18 +74,25 @@ namespace Ascent.Areas.Import.Controllers
                         Year = term.Year,
                         Term = new Term(input.TermCode), // use term here seems to cause all but one data point to have null TermCode
                         CourseId = input.CourseId,
-                        AssessmentType = RubricAssessmentType.Instructor,
-                        EvaluatorId = input.InstructorId,
+                        AssessmentType = input.AssessmentType,
+                        EvaluatorId = evaluatorId,
                         EvaluateeId = person.Id,
                         RubricId = input.RubricId,
                         CriterionId = criteria[i].Id,
-                        RatingId = ratingMaps[i][excelReader.Get($"C{i + 1}")]
+                        RatingId = ratingMaps[i][excelReader.Get(criteria[i].Name)],
+                        Comments = excelReader.Get("Comments")
                     });
                 }
             }
             _rubricDataService.SaveChanges();
 
-            return RedirectToAction("Index", "Assessment", new { Area = "Rubric", rubricId = input.RubricId });
+            return RedirectToAction("Section", "Assessment", new
+            {
+                area = "Rubric",
+                rubricId = input.RubricId,
+                courseId = input.CourseId,
+                termCode = input.TermCode
+            });
         }
 
         private Person GetOrCreatePerson(ExcelReader excelReader)
@@ -101,6 +123,9 @@ namespace Ascent.Models
     {
         [Display(Name = "Rubric")]
         public int RubricId { get; set; }
+
+        [Display(Name = "Assessment Type")]
+        public RubricAssessmentType AssessmentType { get; set; } = RubricAssessmentType.Instructor;
 
         public int TermCode { get; set; }
 

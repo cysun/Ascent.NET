@@ -37,7 +37,13 @@
                 <label for="searchPerson">Instructor</label>
             </div>
         </div>
-        <div class="col-12">
+        <div class="col-md-3">
+            <div class="form-floating mb-3">
+                <select asp-for="AssessmentType" asp-items="Html.GetEnumSelectList<RubricAssessmentType>()" class="form-select"></select>
+                <label asp-for="AssessmentType"></label>
+            </div>
+        </div>
+        <div class="col-md-9">
             <div class="form-floating mb-3">
                 <select asp-for="RubricId" asp-items="rubrics" class="form-select"></select>
                 <label asp-for="RubricId"></label>
