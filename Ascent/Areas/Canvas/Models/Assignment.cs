@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Ascent.Models;
 
 namespace Ascent.Areas.Canvas.Models;
 
@@ -104,4 +105,32 @@ public class PeerReview
 
     [JsonPropertyName("assessor_id")]
     public int AssessorId { get; set; } // Id of the assessor
+}
+
+public class AssignmentForCreation
+{
+    public class Assignment
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonIgnore]
+        public int CourseId { get; set; }
+    }
+
+    [JsonPropertyName("assignment")]
+    public Assignment AssignmentProperty { get; set; }
+
+    public AssignmentForCreation(AssignmentTemplate template, int courseId)
+    {
+        AssignmentProperty = new Assignment
+        {
+            Name = template.Name,
+            Description = template.Description,
+            CourseId = courseId
+        };
+    }
 }

@@ -110,6 +110,12 @@ public class CanvasApiService
     public async Task<Assignment> GetAssignment(int courseId, int assignmentId) =>
         await _httpClient.GetFromJsonAsync<Assignment>($"courses/{courseId}/assignments/{assignmentId}");
 
+    public async Task<Assignment> CreateAssignment(AssignmentForCreation assignment)
+    {
+        var uri = $"courses/{assignment.AssignmentProperty.CourseId}/assignments";
+        return await PostAsJson<AssignmentForCreation, Assignment>(uri, assignment);
+    }
+
     // The include[]=full_rubric_assessment parameter seems to be an "undocumented" feature as it's in the
     // documetation for the Get Single Submission API call but not in the List Submissions call.
     // Test it before use!!
@@ -121,6 +127,15 @@ public class CanvasApiService
         };
         var queryString = await new FormUrlEncodedContent(parameters).ReadAsStringAsync();
         return await GetAll<Submission>($"courses/{courseId}/assignments/{assignmentId}/submissions?{queryString}");
+    }
+
+    public async Task<List<Models.Rubric>> GetRubrics(int courseId) =>
+        await _httpClient.GetFromJsonAsync<List<Models.Rubric>>($"courses/{courseId}/rubrics");
+
+    public async Task<Models.Rubric> CreateRubric(RubricForCreation rubric)
+    {
+        var uri = $"courses/{rubric.Association.AssociationId}/rubrics";
+        return await PostAsJson<RubricForCreation, Models.Rubric>(uri, rubric);
     }
 
     public async Task<List<Group>> GetGroups(int courseId)
@@ -167,5 +182,16 @@ public class CanvasApiService
             links = Links.FromHttpResponse(response);
         }
         return results;
+    }
+
+    private async Task<TReturn> PostAsJson<TValue, TReturn>(string uri, TValue value)
+    {
+        var response = await _httpClient.PostAsJsonAsync(uri, value);
+        if (!response.IsSuccessStatusCode)
+        {
+            var msg = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException(msg);
+        }
+        return await response.Content.ReadFromJsonAsync<TReturn>();
     }
 }

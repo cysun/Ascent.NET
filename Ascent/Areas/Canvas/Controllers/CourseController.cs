@@ -8,22 +8,27 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ascent.Areas.Canvas.Controllers
 {
     [Area("Canvas")]
-    [Authorize(AuthenticationSchemes = Constants.AuthenticationScheme.Canvas)]
+    [Authorize(AuthenticationSchemes = $"{Constants.AuthenticationScheme.Canvas},{Constants.AuthenticationScheme.Oidc}")]
     public class CourseController : Controller
     {
         private readonly CanvasApiService _canvasApiService;
         private readonly CanvasCacheService _canvasCacheService;
 
+        private readonly RubricService _rubricService;
         private readonly RubricDataService _rubricDataService;
+        private readonly CourseTemplateService _courseTemplateService;
 
         private readonly ILogger<CourseController> _logger;
 
         public CourseController(CanvasApiService canvasApiService, CanvasCacheService canvasCacheService,
-            RubricDataService rubricDataService, ILogger<CourseController> logger)
+            RubricService rubricService, RubricDataService rubricDataService, CourseTemplateService courseTemplateService,
+            ILogger<CourseController> logger)
         {
             _canvasApiService = canvasApiService;
             _canvasCacheService = canvasCacheService;
+            _rubricService = rubricService;
             _rubricDataService = rubricDataService;
+            _courseTemplateService = courseTemplateService;
             _logger = logger;
         }
 
@@ -49,7 +54,39 @@ namespace Ascent.Areas.Canvas.Controllers
             }
             ViewBag.LastImportTimes = lastImportTimes;
 
+            var hasNoRubric = (await _canvasApiService.GetRubrics(id)).Count == 0;
+            ViewBag.HasNoRubric = hasNoRubric;
+            if (hasNoRubric)
+                ViewBag.CourseTemplates = _courseTemplateService.GetCourseTemplates();
+
             return View(assignments);
+        }
+
+        public async Task<IActionResult> PopulateFromTemplateAsync(int id, int templateId)
+        {
+            var rubricIdMap = new Dictionary<int, int>();
+            var assignmentIdMap = new Dictionary<int, int>();
+            var courseTemplate = _courseTemplateService.GetFullCourseTemplate(templateId);
+
+            foreach (var assignmentTemplate in courseTemplate.AssignmentTemplates)
+            {
+                if (assignmentTemplate.Rubric != null)
+                {
+                    assignmentTemplate.Rubric.Criteria = _rubricService.GetCriteria(assignmentTemplate.Rubric.Id);
+                    var rubricToCreate = new RubricForCreation(assignmentTemplate.Rubric, id);
+                    var rubricCreated = await _canvasApiService.CreateRubric(rubricToCreate);
+                    rubricIdMap[assignmentTemplate.Rubric.Id] = rubricCreated.Id;
+                }
+            }
+
+            foreach (var assignmentTemplate in courseTemplate.AssignmentTemplates)
+            {
+                var assignmentToCreate = new AssignmentForCreation(assignmentTemplate, id);
+                var assignmentCreated = await _canvasApiService.CreateAssignment(assignmentToCreate);
+                assignmentIdMap[assignmentTemplate.Id] = assignmentCreated.Id;
+            }
+
+            return RedirectToAction("View", new { id });
         }
 
         public async Task<IActionResult> AssignPeerReviewsAsync(int id, int assignmentId)

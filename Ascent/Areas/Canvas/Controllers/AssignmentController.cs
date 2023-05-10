@@ -2,12 +2,16 @@ using System.ComponentModel.DataAnnotations;
 using Ascent.Areas.Canvas.Models;
 using Ascent.Areas.Canvas.Services;
 using Ascent.Models;
+using Ascent.Security;
 using Ascent.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ascent.Areas.Canvas.Controllers
 {
     [Area("Canvas")]
+    [Authorize(AuthenticationSchemes = $"{Constants.AuthenticationScheme.Canvas},{Constants.AuthenticationScheme.Oidc}")]
+    [Authorize(Policy = Constants.Policy.CanWrite)]
     public class AssignmentController : Controller
     {
         private readonly CanvasApiService _canvasApiService;

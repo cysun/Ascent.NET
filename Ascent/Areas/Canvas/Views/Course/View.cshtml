@@ -1,7 +1,11 @@
 @model List< Ascent.Areas.Canvas.Models.Assignment>
 @{
     ViewData["Title"] = "View Course";
+    var hasNoRubric = (bool)ViewBag.HasNoRubric;
     var lastImportTimes = (Dictionary<int, DateTime>)ViewBag.LastImportTimes;
+    var courseTemmplates = !hasNoRubric ? null :
+        ((List<CourseTemplate>)ViewBag.CourseTemplates).Select(t => new SelectListItem($"{t.Course.Code} {t.Course.Title}",
+        t.Id.ToString()));
 }
 <nav>
     <ol class="breadcrumb">
@@ -10,6 +14,18 @@
         <li class="breadcrumb-item active">@ViewBag.Course.Name</li>
     </ol>
 </nav>
+
+@if (hasNoRubric)
+{
+    <form asp-action="PopulateFromTemplate" asp-route-id="@ViewBag.Course.Id" class="mb-3">
+        <select name="templateId" asp-items="courseTemmplates" class="form-select mb-3"></select>
+        <a id="cancel" asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+        <button id="submit" type="submit" class="btn btn-primary">
+            Create Rubrics and Assignments from Course Template
+            <span class="spinner-border spinner-border-sm ms-2" role="status"></span>
+        </button>
+    </form>
+}
 
 <div class="row row-cols-1 row-cols-lg-2 g-4">
     @foreach (var assignment in Model)
@@ -45,3 +61,16 @@
         </div>
     }
 </div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $(".spinner-border").hide();
+            $("form").submit(function (e) {
+                $("#cancel").addClass("disabled");
+                $("#submit").prop("disabled", true);
+                $(".spinner-border").show();
+            });
+        });
+    </script>
+}

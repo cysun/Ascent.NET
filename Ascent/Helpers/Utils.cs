@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Ascent.Models;
 
 namespace Ascent.Helpers;
@@ -34,4 +35,7 @@ public class Utils
 
         return ((new Term(startYear, "FALL")).StartTime, (new Term(endYear, "FALL")).StartTime);
     }
+
+    // From https://stackoverflow.com/questions/18153998/how-do-i-remove-all-html-tags-from-a-string-without-knowing-which-tags-are-in-it
+    public static string StripHtmlTags(string input) => input != null ? Regex.Replace(input, "<.*?>", String.Empty) : null;
 }
