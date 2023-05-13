@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ascent.Areas.Canvas.Controllers
 {
     [Area("Canvas")]
+    [Authorize(Policy = Constants.Policy.HasCat)]
     public class CourseController : Controller
     {
         private readonly CanvasApiService _canvasApiService;
@@ -31,7 +32,6 @@ namespace Ascent.Areas.Canvas.Controllers
             _logger = logger;
         }
 
-        [Authorize(AuthenticationSchemes = Constants.AuthenticationScheme.Canvas)]
         public async Task<IActionResult> IndexAsync()
         {
             var courses = await _canvasApiService.GetCourses();
@@ -39,7 +39,6 @@ namespace Ascent.Areas.Canvas.Controllers
             return View(courses);
         }
 
-        [Authorize] // Need to check authenticated here to avoid the form anti-forgery error
         public async Task<IActionResult> ViewAsync(int id)
         {
             ViewBag.Course = await _canvasCacheService.GetCourseAsync(id);

@@ -1,5 +1,8 @@
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "Canvas";
+    var hasCat = (await AuthorizationService.AuthorizeAsync(User, Constants.Policy.HasCat)).Succeeded;
+    var disabled = hasCat ? "" : "disabled";
 }
 <nav>
     <ol class="breadcrumb">
@@ -35,7 +38,7 @@
                     access your courses.
                 </p>
                 <div>
-                    <a asp-controller="Course" asp-action="Index" class="btn btn-primary stretched-link disabled">View</a>
+                    <a asp-controller="Course" asp-action="Index" class="btn btn-primary stretched-link @disabled">View</a>
                 </div>
             </div>
         </div>

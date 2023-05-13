@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using Ascent.Areas.Canvas.Models;
 using Ascent.Security;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Ascent.Areas.Canvas.Services;
 
@@ -17,8 +16,8 @@ public class CanvasHttpMessageHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync(Constants.AuthenticationScheme.CanvasCookie, "access_token");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var accessToken = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == Constants.Claim.Cat)?.Value;
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken ?? "");
         return await base.SendAsync(request, cancellationToken);
     }
 }

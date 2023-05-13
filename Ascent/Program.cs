@@ -86,6 +86,7 @@ services.AddAuthorization(options =>
 {
     options.AddPolicy(Constants.Policy.CanRead, policyBuilder => policyBuilder.RequireClaim(Constants.Claim.Read));
     options.AddPolicy(Constants.Policy.CanWrite, policyBuilder => policyBuilder.RequireClaim(Constants.Claim.Write));
+    options.AddPolicy(Constants.Policy.HasCat, policyBuilder => policyBuilder.RequireClaim(Constants.Claim.Cat));
     options.AddPolicy(Constants.Policy.CanManageProject,
         policyBuilder => policyBuilder.AddRequirements(new CanManageProjectRequirement()));
     options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireClaim(Constants.Claim.Read).Build();
