@@ -6,6 +6,7 @@ namespace Ascent.Helpers
     {
         private readonly IWorkbook _workbook;
         private readonly ISheet _sheet;
+        private readonly IFormulaEvaluator _formulaEvaluator;
         private readonly DataFormatter _dataFormatter;
 
         private int _currentRowIndex = -1;
@@ -25,6 +26,7 @@ namespace Ascent.Helpers
 
             // NPOI's DataFormatter doesn't seem to support POI's setUseCachedValuesForFormulaCells() yet. See
             // https://stackoverflow.com/questions/7608511/java-poi-how-to-read-excel-cell-value-and-not-the-formula-computing-it
+            _formulaEvaluator = _workbook.GetCreationHelper().CreateFormulaEvaluator();
             _dataFormatter = new DataFormatter();
 
             Next(); // First row should be a header row
@@ -43,7 +45,7 @@ namespace Ascent.Helpers
             for (int i = 0; i < ColCount; ++i)
             {
                 // FormatCellValue() always returns a string (i.e. never returns null)
-                _currentRow[i] = _dataFormatter.FormatCellValue(_sheet.GetRow(_currentRowIndex).GetCell(i)).Trim();
+                _currentRow[i] = _dataFormatter.FormatCellValue(_sheet.GetRow(_currentRowIndex).GetCell(i), _formulaEvaluator).Trim();
                 if (_currentRow[i] == "")
                     ++_currentEmptyCellCount;
             }

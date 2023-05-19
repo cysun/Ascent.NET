@@ -80,7 +80,7 @@ namespace Ascent.Areas.Import.Controllers
                         RubricId = input.RubricId,
                         CriterionId = criteria[i].Id,
                         RatingId = ratingMaps[i][excelReader.Get(criteria[i].Name)],
-                        Comments = excelReader.Get("Comments")
+                        Comments = excelReader.HasColumn("Comments") ? excelReader.Get("Comments") : null
                     });
                 }
             }
