@@ -79,6 +79,13 @@ namespace Ascent.Areas.Canvas.Controllers
 
                 for (int i = 0; i < criteria.Count; ++i)
                 {
+                    var ratingValue = submission.RubricAssessment?.Ratings[i]?.Value;
+                    if (ratingValue == null || !ratingMaps[i].ContainsKey((int)ratingValue))
+                    {
+                        _logger.LogWarning("Invalid/incomplete rating value: {rating}", ratingValue);
+                        continue;
+                    }
+
                     var dataPoint = new RubricDataPoint
                     {
                         Year = term.Year,
@@ -89,7 +96,7 @@ namespace Ascent.Areas.Canvas.Controllers
                         EvaluateeId = person.Id,
                         RubricId = input.RubricId,
                         CriterionId = criteria[i].Id,
-                        RatingId = ratingMaps[i][submission.RubricAssessment.Ratings[i].Value],
+                        RatingId = ratingMaps[i][(int)ratingValue],
                         SourceType = RubricDataSourceType.CanvasAssignment,
                         SourceId = input.CanvasAssignmentId.ToString()
                     };
