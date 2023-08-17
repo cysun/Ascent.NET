@@ -320,10 +320,7 @@ CREATE TABLE "CourseJournals" (
     "Term_Code" integer NULL,
     "InstructorId" integer NOT NULL,
     "CourseUrl" character varying(255) NOT NULL,
-    "SyllabusUrl" character varying(255) NOT NULL,
-    "SampleStudentAUrl" character varying(255) NOT NULL,
-    "SampleStudentBUrl" character varying(255) NOT NULL,
-    "SampleStudentCUrl" character varying(255) NOT NULL,
+    "SampleStudentWorkUrl" character varying(255) NULL,
     CONSTRAINT "PK_CourseJournals" PRIMARY KEY ("Id"),
     CONSTRAINT "FK_CourseJournals_Courses_CourseId" FOREIGN KEY ("CourseId") REFERENCES "Courses" ("Id") ON DELETE CASCADE,
     CONSTRAINT "FK_CourseJournals_Persons_InstructorId" FOREIGN KEY ("InstructorId") REFERENCES "Persons" ("Id") ON DELETE CASCADE
@@ -572,7 +569,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20230509031418_InitialSchema', '7.0.5');
+VALUES ('20230817161722_InitialSchema', '7.0.10');
 
 COMMIT;
 

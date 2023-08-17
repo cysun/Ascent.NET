@@ -116,14 +116,7 @@ namespace Ascent.Models
         [Required, MaxLength(255), Display(Name = "Course URL")]
         public string CourseUrl { get; set; }
 
-        [Required, MaxLength(255), Display(Name = "Syllabus URL")]
-        public string SyllabusUrl { get; set; }
-
-        [Required, MaxLength(255), Display(Name = "Sample Student A URL")]
-        public string SampleStudentAUrl { get; set; }
-        [Required, MaxLength(255), Display(Name = "Sample Student B URL")]
-        public string SampleStudentBUrl { get; set; }
-        [Required, MaxLength(255), Display(Name = "Sample Student C URL")]
-        public string SampleStudentCUrl { get; set; }
+        [MaxLength(255), Display(Name = "Sample Student Work URL")]
+        public string SampleStudentWorkUrl { get; set; }
     }
 }

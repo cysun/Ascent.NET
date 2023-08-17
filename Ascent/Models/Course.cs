@@ -74,13 +74,6 @@ public class CourseJournal
     [Required, MaxLength(255)]
     public string CourseUrl { get; set; }
 
-    [Required, MaxLength(255)]
-    public string SyllabusUrl { get; set; }
-
-    [Required, MaxLength(255)]
-    public string SampleStudentAUrl { get; set; }
-    [Required, MaxLength(255)]
-    public string SampleStudentBUrl { get; set; }
-    [Required, MaxLength(255)]
-    public string SampleStudentCUrl { get; set; }
+    [MaxLength(255)]
+    public string SampleStudentWorkUrl { get; set; }
 }
