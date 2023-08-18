@@ -105,11 +105,13 @@ public class Term
                 case 1: // Winter term: week 1-3
                     return winterStartTime;
                 case 3: // Spring term: week 4-21
-                    return winterStartTime.AddDays(4 * 7);
+                    return winterStartTime.AddDays(3 * 7);
                 case 6: // Summer term: week 22-33
-                    return winterStartTime.AddDays(22 * 7);
+                    return winterStartTime.AddDays(21 * 7);
                 default:// Fall term: week 34-
-                    return winterStartTime.AddDays(34 * 7);
+                    // We'll count the week befor fall semester as part of fall semester because the stuff
+                    // happened in that week should be consider things for the new academic year.
+                    return winterStartTime.AddDays(32 * 7);
             }
         }
     }
