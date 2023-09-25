@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "New Course Journal";
     var currentTerm = new Term();
-    var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous() };
+    var terms = Ascent.Helpers.Utils.GetTerms(9);
 }
 <nav>
     <ol class="breadcrumb">

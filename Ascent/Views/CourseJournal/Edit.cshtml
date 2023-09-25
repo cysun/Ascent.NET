@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit Course Journal";
     var courseJournal = (CourseJournal)ViewBag.CourseJournal;
     var currentTerm = new Term();
-    var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous() };
+    var terms = Ascent.Helpers.Utils.GetTerms(9);
     if (!terms.Select(t => t.Code).ToHashSet().Contains(Model.TermCode))
         terms.Add(new Term(Model.TermCode));
     var selectItems = terms.Select(t => new SelectListItem(t.Name, t.Code.ToString())).ToList();

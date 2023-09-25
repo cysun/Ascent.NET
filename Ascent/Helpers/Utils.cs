@@ -38,4 +38,16 @@ public class Utils
 
     // From https://stackoverflow.com/questions/18153998/how-do-i-remove-all-html-tags-from-a-string-without-knowing-which-tags-are-in-it
     public static string StripHtmlTags(string input) => input != null ? Regex.Replace(input, "<.*?>", String.Empty) : null;
+
+    public static List<Term> GetTerms(int n = 6)
+    {
+        var terms = new List<Term>();
+        var term = new Term();
+        for (int i = 0; i < n; i++)
+        {
+            terms.Add(term);
+            term = term.Previous();
+        }
+        return terms;
+    }
 }

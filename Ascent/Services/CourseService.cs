@@ -21,7 +21,7 @@ public class CourseService
         .ToList();
 
     public List<Course> GetJournalCourses() => _db.Courses.AsNoTracking()
-        .Where(c => !c.IsObsolete && (c.IsRequired || c.IsElective) && !c.Number.StartsWith("5"))
+        .Where(c => !c.IsObsolete && c.IsRequired && !c.Number.StartsWith("5"))
         .Include(c => c.CourseJournal).ThenInclude(j => j.Instructor)
         .OrderBy(c => c.Number)
         .ToList();
