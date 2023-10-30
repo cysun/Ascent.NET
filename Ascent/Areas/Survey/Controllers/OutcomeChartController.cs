@@ -97,15 +97,45 @@ namespace Ascent.Areas.Survey.Controllers
 
             var dataPoints = _surveyDataService.GetSurveyDataByOutcome(id, _fromYear, _toYear);
             var dataTables = new Dictionary<ConstituencyType, object[][]>();
-            foreach (var dataPoint in dataPoints)
-            {
-                var constituencyType = dataPoint.ConstituencyType;
-                if (!dataTables.ContainsKey(constituencyType))
-                    dataTables[constituencyType] = createDataTable(_years);
 
-                var yearIndex = yearToIndex[dataPoint.Year];
-                dataTables[constituencyType][yearIndex][dataPoint.Value] =
-                    (int)dataTables[constituencyType][yearIndex][dataPoint.Value] + 1;
+            if (_fromYear < _toYear)
+            {
+                foreach (var dataPoint in dataPoints)
+                {
+                    var constituencyType = dataPoint.ConstituencyType;
+                    if (!dataTables.ContainsKey(constituencyType))
+                        dataTables[constituencyType] = createDataTable(_years);
+
+                    var yearIndex = yearToIndex[dataPoint.Year];
+                    dataTables[constituencyType][yearIndex][dataPoint.Value] =
+                        (int)dataTables[constituencyType][yearIndex][dataPoint.Value] + 1;
+                }
+            }
+            else // For one year, display all constituent surveys in the same chart
+            {
+                var dataTable = new object[Enum.GetNames(typeof(ConstituencyType)).Length - 1][];
+                dataTables[ConstituencyType.All] = dataTable;
+                var typeIndexes = new Dictionary<ConstituencyType, int>();
+
+                int rowIndex = 0;
+                foreach (var constituencyType in Enum.GetValues<ConstituencyType>())
+                {
+                    if (constituencyType != ConstituencyType.All)
+                    {
+                        var row = new object[6];
+                        row[0] = constituencyType.ToString();
+                        for (int j = 1; j < row.Length; j++)
+                            row[j] = 0;
+                        typeIndexes[constituencyType] = rowIndex;
+                        dataTables[ConstituencyType.All][rowIndex++] = row;
+                    }
+                }
+
+                foreach (var dataPoint in dataPoints)
+                {
+                    var row = dataTable[typeIndexes[dataPoint.ConstituencyType]];
+                    row[dataPoint.Value] = (int)row[dataPoint.Value] + 1;
+                }
             }
 
             ViewBag.Outcome = outcome;

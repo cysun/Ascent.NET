@@ -73,7 +73,14 @@
                         <table class="table table-bordered d-none d-md-table">
                             <thead>
                                 <tr>
-                                    <th>Year</th>
+                                    @if (constituencyType == ConstituencyType.All)
+                                    {
+                                        <th>Constituency</th>
+                                    }
+                                    else
+                                    {
+                                        <th>Year</th>
+                                    }
                                     <th>Strongly Disagree</th>
                                     <th>Disagree</th>
                                     <th>Neither Agree or Disagree</th>
@@ -116,7 +123,10 @@
                         title: "@Outcome.Program.Name Survey, Outcome #@(Outcome.Index + 1)"
                     };
                     chart.dataTable = new google.visualization.DataTable();
-                    chart.dataTable.addColumn("string", "Year");
+                    if (property == "All")
+                        chart.dataTable.addColumn("string", "Constituency");
+                    else
+                        chart.dataTable.addColumn("string", "Year");
                     chart.dataTable.addColumn("number", "Strongly Disagree");
                     chart.dataTable.addColumn("number", "Disagree");
                     chart.dataTable.addColumn("number", "Neither Agree or Disagree");
