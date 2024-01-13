@@ -59,11 +59,11 @@
                         <div class="card-header d-flex align-items-center">
                             <span>@assessmentType.ToString() Assessment - @ViewBag.Criteria[i].Name</span>
                             <div class="btn-group ms-auto" role="group">
-                                <a id="chart@(assessmentType)Svg" download="RubricAssessment.svg" title="Save SVG"
+                                <a id="chart@(assessmentType)-@(i)Svg" download="RubricAssessment.svg" title="Save SVG"
                                    class="btn btn-outline-primary btn-sm svg">
                                     <i class="bi bi-filetype-svg"></i>
                                 </a>
-                                <a id="chart@(assessmentType)Png" download="RubricAssessment.png" title="Save PNG"
+                                <a id="chart@(assessmentType)-@(i)Png" download="RubricAssessment.png" title="Save PNG"
                                    class="btn btn-outline-primary btn-sm png">
                                     <i class="bi bi-filetype-png"></i>
                                 </a>
