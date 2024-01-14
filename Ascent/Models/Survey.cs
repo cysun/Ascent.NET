@@ -186,8 +186,7 @@ public enum ConstituencyType
     Student = 0,
     Faculty = 1,
     Alumni = 2,
-    IAB = 3,
-    All = 99
+    IAB = 3
 }
 
 public class OutcomeSurvey

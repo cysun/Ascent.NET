@@ -48,124 +48,140 @@
     </div>
 </div>
 
-<div class="row row-cols-1 g-4">
-    @foreach (var constituencyType in Enum.GetValues<ConstituencyType>())
-    {
-        if (Model.ContainsKey(constituencyType))
+<div class="card">
+    <div class="card-header">Survey Result Summary</div>
+    <div class="card-body">
+        <div id="surveyChart" style="height: 600px;"></div>
+        @foreach (var constituencyType in Enum.GetValues<ConstituencyType>())
         {
-            <div class="col">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <span>@constituencyType.ToString() Survey</span>
-                        <div class="btn-group ms-auto" role="group">
-                            <a id="chart@(constituencyType)Svg" download="OutcomeSurvey.svg" title="Save SVG"
-                               class="btn btn-outline-primary btn-sm svg">
-                                <i class="bi bi-filetype-svg"></i>
-                            </a>
-                            <a id="chart@(constituencyType)Png" download="OutcomeSurvey.png" title="Save PNG"
-                               class="btn btn-outline-primary btn-sm png">
-                                <i class="bi bi-filetype-png"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="chart@(constituencyType)" style="height: 600px;"></div>
-                        <table class="table table-bordered d-none d-md-table">
-                            <thead>
-                                <tr>
-                                    @if (constituencyType == ConstituencyType.All)
-                                    {
-                                        <th>Constituency</th>
-                                    }
-                                    else
-                                    {
-                                        <th>Year</th>
-                                    }
-                                    <th>Strongly Disagree</th>
-                                    <th>Disagree</th>
-                                    <th>Neither Agree or Disagree</th>
-                                    <th>Agree</th>
-                                    <th>Strongly Agree</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var row in Model[constituencyType])
+            if (Model.ContainsKey(constituencyType))
+            {
+                <table class="table table-bordered caption-top d-none d-md-table">
+                    <caption>@constituencyType.ToString() Survey</caption>
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Strongly Disagree</th>
+                            <th>Disagree</th>
+                            <th>Neither Agree or Disagree</th>
+                            <th>Agree</th>
+                            <th>Strongly Agree</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model[constituencyType])
+                        {
+                            <tr>
+                                @foreach (var col in row)
                                 {
-                                    <tr>
-                                        @foreach (var col in row)
-                                        {
-                                            <td>@col</td>
-                                        }
-                                    </tr>
+                                    <td>@col</td>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
         }
-    }
+    </div>
 </div>
 
-@section HeadScripts{
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+@section HeadScripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 }
-@section Scripts{
-    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
         $(function () {
             var data = @Html.Raw(JsonSerializer.Serialize(Model));
-            google.charts.load('current', { packages: ['corechart'] }).then(function () {
-                var charts = [];
-                for (const property in data) {
-                    let chart = {
-                        name: `chart${property}`, // e.g. chartInstructor
-                        title: "@Outcome.Program.Name Survey, Outcome #@(Outcome.Index + 1)"
-                    };
-                    chart.dataTable = new google.visualization.DataTable();
-                    if (property == "All")
-                        chart.dataTable.addColumn("string", "Constituency");
-                    else
-                        chart.dataTable.addColumn("string", "Year");
-                    chart.dataTable.addColumn("number", "Strongly Disagree");
-                    chart.dataTable.addColumn("number", "Disagree");
-                    chart.dataTable.addColumn("number", "Neither Agree or Disagree");
-                    chart.dataTable.addColumn("number", "Agree");
-                    chart.dataTable.addColumn("number", "Strongly Agree");
-                    chart.dataTable.addRows(data[property]);
-                    charts.push(chart);
+            // console.log(data);
+            var dataByYear = {};
+            var categories = [];
+            var series = [];
+            for (const property in data) {
+                categories.push(property);
+                for (const row of data[property]) {
+                    if (!dataByYear[row[0]]) {
+                        dataByYear[row[0]] = [];
+                    }
+                    dataByYear[row[0]].push(row);
                 }
-
-                charts.forEach(c => {
-                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
-                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
+            }
+            let showInLegend = true;
+            for (const year in dataByYear) {
+                series.push({
+                    name: 'Strongly Agree',
+                    data: dataByYear[year].map(r => r[5]),
+                    stack: year,
+                    showInLegend: showInLegend
+                }, {
+                    name: 'Agree',
+                    data: dataByYear[year].map(r => r[4]),
+                    stack: year,
+                    showInLegend: showInLegend
+                }, {
+                    name: 'Neither Agree or Disagree',
+                    data: dataByYear[year].map(r => r[3]),
+                    stack: year,
+                    showInLegend: showInLegend
+                }, {
+                    name: 'Disagree',
+                    data: dataByYear[year].map(r => r[2]),
+                    stack: year,
+                    showInLegend: showInLegend
+                }, {
+                    name: 'Strongly Disagree',
+                    data: dataByYear[year].map(r => r[1]),
+                    stack: year,
+                    showInLegend: showInLegend
                 });
-
-                var drawChart = function (c) {
-                    var options = {
-                        title: c.title,
-                        isStacked: 'percent',
-                        legend: { position: "bottom" },
-                        series: {
-                            0: { color: "red" },
-                            1: { color: "orange" },
-                            2: { color: "yellow" },
-                            3: { color: "greenyellow" },
-                            4: { color: "green" }
+                showInLegend = false;
+            }
+            let chart = {
+                container: 'surveyChart',
+                options: {
+                    title: {
+                        text: '@Outcome.Program.Name Survey, SO #@(Outcome.Index + 1), @(ViewBag.FromYear)-@(ViewBag.ToYear)'
+                    },
+                    xAxis: {
+                        categories: categories
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Percentage of Responses'
+                        },
+                        labels: {
+                            formatter: function () {
+                                return this.value + '%';
+                            }
+                        },
+                        max: 105,
+                        endOnTick: false,
+                        stackLabels: {
+                            enabled: true,
+                            formatter: function () {
+                                return this.stack;
+                            }
                         }
-                    };
-                    c.chart.clearChart();
-                    c.chart.draw(c.dataTable, options);
+                    },
+                    series: series,
+                    chart: {
+                        type: 'column'
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'percent'
+                        }
+                    },
+                    exporting: {
+                        sourceHeight: 600,
+                        sourceWidth: 1200
+                    },
+                    colors: ['green', 'greenyellow', 'yellow', 'orange', 'red']
                 }
-
-                var drawCharts = function () {
-                    charts.forEach(c => drawChart(c));
-                };
-
-                window.onresize = drawCharts;
-
-                drawCharts();
-            });
+            };
+            Highcharts.chart(chart.container, chart.options);
 
             $("select").change(function () {
                 var fromYear = $("#fromYear").val();
