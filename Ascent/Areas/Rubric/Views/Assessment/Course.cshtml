@@ -52,26 +52,15 @@
     {
         if (Model.ContainsKey(assessmentType))
         {
-            for (int i = 0; i < ViewBag.Criteria.Count; ++i)
-            {
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <span>@assessmentType.ToString() Assessment - @ViewBag.Criteria[i].Name</span>
-                            <div class="btn-group ms-auto" role="group">
-                                <a id="chart@(assessmentType)-@(i)Svg" download="RubricAssessment.svg" title="Save SVG"
-                                   class="btn btn-outline-primary btn-sm svg">
-                                    <i class="bi bi-filetype-svg"></i>
-                                </a>
-                                <a id="chart@(assessmentType)-@(i)Png" download="RubricAssessment.png" title="Save PNG"
-                                   class="btn btn-outline-primary btn-sm png">
-                                    <i class="bi bi-filetype-png"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="chart@(assessmentType)-@i" style="height: 600px;"></div>
-                            <table class="table table-bordered d-none d-md-table">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">@assessmentType.ToString() Assessment</div>
+                    <div class="card-body">
+                        <div id="chart@(assessmentType)" style="height: 600px;"></div>
+                        @for (int i = 0; i < ViewBag.Criteria.Count; ++i)
+                        {
+                            <table class="table table-bordered caption-top d-none d-md-table">
+                                <caption>@ViewBag.Criteria[i].Name</caption>
                                 <thead>
                                     <tr>
                                         <th>Year</th>
@@ -97,79 +86,105 @@
                                     }
                                 </tbody>
                             </table>
-                        </div>
+                        }
                     </div>
                 </div>
-            }
+            </div>
         }
     }
 </div>
 
-@section HeadScripts{
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+@section HeadScripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 }
-@section Scripts{
-    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
         $(function () {
             var data = @Html.Raw(JsonSerializer.Serialize(Model));
-            google.charts.load('current', { packages: ['corechart'] }).then(function () {
-                var charts = [];
-                for (const property in data) {
-
-                    let dataTable = new google.visualization.DataTable();
-                    dataTable.addColumn("string", "Year");
-                    dataTable.addColumn("string", "Criterion");
-                    dataTable.addColumn("number", "Unsatisfactory");
-                    dataTable.addColumn("number", "Needs Improvement");
-                    dataTable.addColumn("number", "Meets Expectations");
-                    dataTable.addColumn("number", "Exceeds Expectations");
-                    dataTable.addRows(data[property]);
-
-                    for (let i = 0; i < @ViewBag.Rubric.CriteriaCount ; ++i) {
-                        let criterion = data[property][i][1];
-                        let chart = {
-                            name: `chart${property}-${i}`, // e.g. chartInstructor-1
-                            title: `@ViewBag.Rubric.Name - ${criterion}, @ViewBag.Course.Code`,
-                            dataView: new google.visualization.DataView(dataTable)
-                        };
-                        chart.dataView.setColumns([0, 2, 3, 4, 5]);
-                        chart.dataView.setRows(dataTable.getFilteredRows(
-                            [{ column: 1, value: criterion }]
-                        ));
-                        charts.push(chart);
+            // console.log(data);
+            for (const property in data) {
+                let dataByYear = {};
+                for (const row of data[property]) {
+                    if (!dataByYear[row[0]]) {
+                        dataByYear[row[0]] = [];
                     }
+                    dataByYear[row[0]].push(row);
                 }
-
-                charts.forEach(c => {
-                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
-                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
-                });
-
-                var drawChart = function (c) {
-                    var options = {
-                        title: c.title,
-                        isStacked: 'percent',
-                        legend: { position: "bottom" },
-                        series: {
-                            0: { color: "red" },
-                            1: { color: "yellow" },
-                            2: { color: "greenyellow" },
-                            3: { color: "green" }
-                        }
-                    };
-                    c.chart.clearChart();
-                    c.chart.draw(c.dataView, options);
+                // console.log(dataByYear);
+                let series = [];
+                let showInLegend = true;
+                for (const year in dataByYear) {
+                    series.push({
+                        name: 'Exceeds Expectations',
+                        data: dataByYear[year].map(r => r[5]),
+                        stack: year,
+                        showInLegend: showInLegend
+                    }, {
+                        name: 'Meets Expectations',
+                        data: dataByYear[year].map(r => r[4]),
+                        stack: year,
+                        showInLegend: showInLegend
+                    }, {
+                        name: 'Needs Improvement',
+                        data: dataByYear[year].map(r => r[3]),
+                        stack: year,
+                        showInLegend: showInLegend
+                    }, {
+                        name: 'Unsatisfactory',
+                        data: dataByYear[year].map(r => r[2]),
+                        stack: year,
+                        showInLegend: showInLegend
+                    });
+                    showInLegend = false;
                 }
-
-                var drawCharts = function () {
-                    charts.forEach(c => drawChart(c));
+                let chart = {
+                    container: `chart${property}`, // e.g. chartInstructor
+                    options: {
+                        title: {
+                            text: `@ViewBag.Rubric.Name, @ViewBag.Course.Code @(ViewBag.StartYear)-@(ViewBag.ToYear), Assessment by ${property}`
+                        },
+                        xAxis: {
+                            categories: data[property].filter(e => e[0] == data[property][0][0]).map(e => e[1])
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Percentage of Students'
+                            },
+                            labels: {
+                                formatter: function () {
+                                    return this.value + '%';
+                                }
+                            },
+                            max: 105,
+                            endOnTick: false,
+                            stackLabels: {
+                                enabled: true,
+                                formatter: function () {
+                                    return this.stack;
+                                }
+                            }
+                        },
+                        series: series,
+                        chart: {
+                            type: 'column'
+                        },
+                        plotOptions: {
+                            column: {
+                                stacking: 'percent'
+                            }
+                        },
+                        exporting: {
+                            sourceHeight: 600,
+                            sourceWidth: 1200
+                        },
+                        colors: ['green', 'greenyellow', 'yellow', 'red']
+                    }
                 };
-
-                window.onresize = drawCharts;
-
-                drawCharts();
-            });
+                Highcharts.chart(chart.container, chart.options);
+            }
             $("select").change(function () {
                 var fromYear = $("#fromYear").val();
                 var toYear = $("#toYear").val();

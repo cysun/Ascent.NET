@@ -19,19 +19,7 @@
         {
             <div class="col">
                 <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <span>@assessmentType.ToString() Assessment</span>
-                        <div class="btn-group ms-auto" role="group">
-                            <a id="chart@(assessmentType)Svg" download="RubricAssessment.svg" title="Save SVG"
-                               class="btn btn-outline-primary btn-sm svg">
-                                <i class="bi bi-filetype-svg"></i>
-                            </a>
-                            <a id="chart@(assessmentType)Png" download="RubricAssessment.png" title="Save PNG"
-                               class="btn btn-outline-primary btn-sm png">
-                                <i class="bi bi-filetype-png"></i>
-                            </a>
-                        </div>
-                    </div>
+                    <div class="card-header">@assessmentType.ToString() Assessment</div>
                     <div class="card-body">
                         <div id="chart@(assessmentType)" style="height: 600px;"></div>
                         <table class="table table-bordered d-none d-md-table">
@@ -63,60 +51,68 @@
     }
 </div>
 
-@section HeadScripts{
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+@section HeadScripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 }
-@section Scripts{
-    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
         $(function () {
             var data = @Html.Raw(JsonSerializer.Serialize(Model));
-            google.charts.load('current', { packages: ['corechart'] }).then(function () {
-                var charts = [];
-                for (const property in data) {
-                    let chart = {
-                        name: `chart${property}`, // e.g. chartInstructor
-                        title: "@ViewBag.Rubric.Name, @ViewBag.Course.Code @ViewBag.Term.ShortName"
-                    };
-                    chart.dataTable = new google.visualization.DataTable();
-                    chart.dataTable.addColumn("string", "Criterion");
-                    chart.dataTable.addColumn("number", "Unsatisfactory");
-                    chart.dataTable.addColumn("number", "Needs Improvement");
-                    chart.dataTable.addColumn("number", "Meets Expectations");
-                    chart.dataTable.addColumn("number", "Exceeds Expectations");
-                    chart.dataTable.addRows(data[property]);
-                    charts.push(chart);
-                }
-
-                charts.forEach(c => {
-                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
-                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
-                });
-
-                var drawChart = function (c) {
-                    var options = {
-                        title: c.title,
-                        isStacked: 'percent',
-                        legend: { position: "bottom" },
-                        series: {
-                            0: { color: "red" },
-                            1: { color: "yellow" },
-                            2: { color: "greenyellow" },
-                            3: { color: "green" }
-                        }
-                    };
-                    c.chart.clearChart();
-                    c.chart.draw(c.dataTable, options);
-                }
-
-                var drawCharts = function () {
-                    charts.forEach(c => drawChart(c));
+            // console.log(data);
+            for (const property in data) {
+                let chart = {
+                    container: `chart${property}`, // e.g. chartInstructor
+                    options: {
+                        title: {
+                            text: `@ViewBag.Rubric.Name, @ViewBag.Course.Code @ViewBag.Term.ShortName, Assessment by ${property}`
+                        },
+                        xAxis: {
+                            categories: data[property].map(e => e[0])
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'Percentage of Students'
+                            },
+                            labels: {
+                                formatter: function () {
+                                    return this.value + '%';
+                                }
+                            }
+                        },
+                        series: [{
+                            name: 'Exceeds Expectations',
+                            data: data[property].map(r => r[4])
+                        }, {
+                            name: 'Meets Expectations',
+                            data: data[property].map(r => r[3])
+                        }, {
+                            name: 'Needs Improvement',
+                            data: data[property].map(r => r[2])
+                        }, {
+                            name: 'Unsatisfactory',
+                            data: data[property].map(r => r[1])
+                        }],
+                        chart: {
+                            type: 'column'
+                        },
+                        plotOptions: {
+                            column: {
+                                stacking: 'percent'
+                            }
+                        },
+                        exporting: {
+                            sourceHeight: 600,
+                            sourceWidth: 1200
+                        },
+                        colors: ['green', 'greenyellow', 'yellow', 'red']
+                    }
                 };
-
-                window.onresize = drawCharts;
-
-                drawCharts();
-            });
+                Highcharts.chart(chart.container, chart.options);
+            }
         });
     </script>
 }
