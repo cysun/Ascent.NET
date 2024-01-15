@@ -2,7 +2,7 @@
 @model List<MftScoreStat>
 @{
     ViewData["Title"] = "MFT - Score Charts";
-    var data = Model.Select(i => new object[] { i.Year.ToString(), i.Mean, i.Median,
+    var modelData = Model.Select(i => new object[] { i.Year.ToString(), i.Mean, i.Median,
         i.MeanPercentile, i.MedianPercentile, i.InstitutionPercentile }).ToArray();
 }
 <nav>
@@ -46,118 +46,133 @@
             }
         </select>
     </div>
-    <div class="col-12">
-        <div class="card mt-3">
-            <div class="card-header d-flex align-items-center">
-                <span>Median Score</span>
-                <div class="btn-group ms-auto" role="group">
-                    <a id="chart1Svg" download="MedianScores.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
-                        <i class="bi bi-filetype-svg"></i>
-                    </a>
-                    <a id="chart1Png" download="MedianScores.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
-                        <i class="bi bi-filetype-png"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="chart1" class="card-body" style="height: 600px;"></div>
-        </div>
-        <div class="card mt-3">
-            <div class="card-header d-flex align-items-center">
-                <span>Median Score Percentile</span>
-                <div class="btn-group ms-auto" role="group">
-                    <a id="chart2Svg" download="MedianPercentiles.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
-                        <i class="bi bi-filetype-svg"></i>
-                    </a>
-                    <a id="chart2Png" download="MedianPercentiles.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
-                        <i class="bi bi-filetype-png"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="chart2" class="card-body" style="height: 600px;"></div>
-        </div>
-        <div class="card mt-3">
-            <div class="card-header d-flex align-items-center">
-                <span>Institution Percentile</span>
-                <div class="btn-group ms-auto" role="group">
-                    <a id="chart3Svg" download="InstitutionPercentiles.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
-                        <i class="bi bi-filetype-svg"></i>
-                    </a>
-                    <a id="chart3Png" download="InstitutionPercentiles.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
-                        <i class="bi bi-filetype-png"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="chart3" class="card-body" style="height: 600px;"></div>
-        </div>
-    </div>
 </div>
 
-@section HeadScripts{
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+<div class="card mt-3">
+    <div class="card-header">Median Score</div>
+    <div id="chart1" class="card-body" style="height: 600px;"></div>
+</div>
+<div class="card mt-3">
+    <div class="card-header">Median Score Percentile</div>
+    <div id="chart2" class="card-body" style="height: 600px;"></div>
+</div>
+<div class="card mt-3">
+    <div class="card-header">Institution Percentile</div>
+    <div id="chart3" class="card-body" style="height: 600px;"></div>
+</div>
+
+@section HeadScripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 }
-    @section Scripts{
-    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
-        $(function() {
-            google.charts.load('current', { packages: ['corechart'] }).then(function() {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Year');
-                data.addColumn('number', 'Mean Score');
-                data.addColumn('number', 'Median Score');
-                data.addColumn('number', 'Mean Score Percentile');
-                data.addColumn('number', 'Median Score Percentile');
-                data.addColumn('number', 'Institution Percentile');
-                data.addRows((@Html.Raw(JsonSerializer.Serialize(data))).reverse());
-
-                var charts = [{
-                    name: "chart1",
-                    title: "MFT Median Score",
-                    colIndexes: [0, 2],
-                    vMin: 120
-                }, {
-                    name: "chart2",
-                    title: "MFT Median Score Percentile",
-                    colIndexes: [0, 4],
-                    vMax: 100
-                }, {
-                    name: "chart3",
-                    title: "MFT institution Percentile",
-                    colIndexes: [0, 5],
-                    vMax: 100
-                }];
-
-                charts.forEach(c => {
-                    c.chart = new google.visualization.ColumnChart(document.getElementById(c.name));
-                    google.visualization.events.addListener(c.chart, "ready", setImageLinks(c.chart, c.name));
-                });
-
-                var drawChart = function(c) {
-                    var view = new google.visualization.DataView(data);
-                    var fromYear = parseInt($("#fromYear").val());
-                    var toYear = parseInt($("#toYear").val());
-                    if (fromYear <= toYear) {
-                        view.setColumns(c.colIndexes);
-                        var rowIndexes = data.getFilteredRows([{ column: 0, minValue: fromYear, maxValue: toYear }]);
-                        view.setRows(rowIndexes);
-                        var options = {
-                            title: `${c.title} (${fromYear}-${toYear})`,
-                            legend: { position: "bottom" },
-                        };
-                        if (c.vMax) options.vAxis = { maxValue: c.vMax };
-                        if (c.vMin) options.vAxis = { minValue: c.vMin };
-                        c.chart.clearChart();
-                        c.chart.draw(view, options);
+        $(function () {
+            var data = @(Html.Raw(JsonSerializer.Serialize(modelData))).reverse();
+            // console.log(data);
+            var charts = [{
+                container: "chart1",
+                options: {
+                    title: {}, // set in setOptions
+                    xAxis: {}, // set in setOptions
+                    yAxis: {
+                        min: 120,
+                        title: {
+                            enabled: false
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: "Median Score" // data is set in setOptions
+                    }],
+                    chart: {
+                        type: 'column'
+                    },
+                    exporting: {
+                        sourceHeight: 600,
+                        sourceWidth: 1200
                     }
                 }
+            }, {
+                container: "chart2",
+                options: {
+                    title: {}, // set in setOptions
+                    xAxis: {}, // set in setOptions
+                    yAxis: {
+                        max: 100,
+                        title: {
+                            enabled: false
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: "Median Score Percentile" // data is set in setOptions
+                    }],
+                    chart: {
+                        type: 'column'
+                    },
+                    exporting: {
+                        sourceHeight: 600,
+                        sourceWidth: 1200
+                    }
+                }
+            }, {
+                container: "chart3",
+                options: {
+                    title: {}, // set in setOptions
+                    xAxis: {}, // set in setOptions
+                    yAxis: {
+                        max: 100,
+                        title: {
+                            enabled: false
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: "Institution Percentile" // data is set in setOptions
+                    }],
+                    chart: {
+                        type: 'column'
+                    },
+                    exporting: {
+                        sourceHeight: 600,
+                        sourceWidth: 1200
+                    }
+                }
+            }];
 
-                var drawCharts = function() {
-                    charts.forEach(c => drawChart(c));
-                };
+            var setOptions = function () {
+                let fromYear = $("#fromYear").val();
+                let toYear = $("#toYear").val();
+                let selectedData = data.filter(e => e[0] >= fromYear && e[0] <= toYear);
+                let categories = selectedData.map(e => e[0]);
+                charts[0].options.title.text = `MFT Median Score, ${fromYear}-${toYear}`;
+                charts[0].options.xAxis.categories = categories;
+                charts[0].options.series[0].data = selectedData.map(e => e[2]);
+                charts[1].options.title.text = `MFT Median Score Percentile, ${fromYear}-${toYear}`;
+                charts[1].options.xAxis.categories = categories;
+                charts[1].options.series[0].data = selectedData.map(e => e[4]);
+                charts[2].options.title.text = `MFT institution Percentile, ${fromYear}-${toYear}`;
+                charts[2].options.xAxis.categories = categories;
+                charts[2].options.series[0].data = selectedData.map(e => e[5]);
+            };
 
-                $("#fromYear, #toYear").change(drawCharts);
-                window.onresize = drawCharts;
+            setOptions();
+            var highCharts = charts.map(chart => Highcharts.chart(chart.container, chart.options));
 
-                drawCharts();
+            $("#fromYear, #toYear").change(function () {
+                setOptions();
+                for (let i = 0; i < highCharts.length; i++) {
+                    highCharts[i].update(charts[i].options);
+                }
             });
         });
     </script>

@@ -2,7 +2,7 @@
 @model List<MftIndicator>
 @{
     ViewData["Title"] = "MFT - Assessment Indicator Charts";
-    var data = Model.Select(i => new object[] { i.Year.ToString(), i.Scores[0], i.Scores[1], i.Scores[2],
+    var modelData = Model.Select(i => new object[] { i.Year.ToString(), i.Scores[0], i.Scores[1], i.Scores[2],
         i.Percentiles[0], i.Percentiles[1], i.Percentiles[2] }).ToArray();
 }
 <nav>
@@ -46,89 +46,112 @@
             }
         </select>
     </div>
-    <div class="col-12">
-        <div class="card mt-3">
-            <div class="card-header d-flex align-items-center">
-                <span>Mean Score</span>
-                <div class="btn-group ms-auto" role="group">
-                    <a id="chart1Svg" download="AIScores.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
-                        <i class="bi bi-filetype-svg"></i>
-                    </a>
-                    <a id="chart1Png" download="AIScores.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
-                        <i class="bi bi-filetype-png"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="chart1" class="card-body" style="height: 600px;"></div>
-        </div>
-        <div class="card mt-3">
-            <div class="card-header d-flex align-items-center">
-                <span>Mean Score Percentile</span>
-                <div class="btn-group ms-auto" role="group">
-                    <a id="chart2Svg" download="AIPercentiles.svg" title="Save SVG" class="btn btn-outline-primary btn-sm svg">
-                        <i class="bi bi-filetype-svg"></i>
-                    </a>
-                    <a id="chart2Png" download="AIPercentiles.png" title="Save PNG" class="btn btn-outline-primary btn-sm png">
-                        <i class="bi bi-filetype-png"></i>
-                    </a>
-                </div>
-            </div>
-            <div id="chart2" class="card-body" style="height: 600px;"></div>
-        </div>
-    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-header">Average Correct Percentage</div>
+    <div id="chart1" class="card-body" style="height: 600px;"></div>
+</div>
+<div class="card mt-3">
+    <div class="card-header">Institution Percentile</div>
+    <div id="chart2" class="card-body" style="height: 600px;"></div>
 </div>
 
-@section HeadScripts{
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+@section HeadScripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
 }
-    @section Scripts{
-    <script src="~/js/chart-functions.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script>
-        $(function() {
-            google.charts.load('current', { packages: ['corechart'] }).then(function() {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Year');
-                data.addColumn('number', 'AI-1');
-                data.addColumn('number', 'AI-2');
-                data.addColumn('number', 'AI-3');
-                data.addColumn('number', 'AI-1');
-                data.addColumn('number', 'AI-2');
-                data.addColumn('number', 'AI-3');
-                data.addRows((@Html.Raw(JsonSerializer.Serialize(data))).reverse());
-
-                var chart1 = new google.visualization.ColumnChart(document.getElementById("chart1"));
-                var chart2 = new google.visualization.ColumnChart(document.getElementById("chart2"));
-
-                google.visualization.events.addListener(chart1, "ready", setImageLinks(chart1, "chart1"));
-                google.visualization.events.addListener(chart2, "ready", setImageLinks(chart2, "chart2"));
-
-                var drawChart = function(chart, colIndexes) {
-                    var view = new google.visualization.DataView(data);
-                    var fromYear = parseInt($("#fromYear").val());
-                    var toYear = parseInt($("#toYear").val());
-                    if (fromYear <= toYear) {
-                        view.setColumns(colIndexes);
-                        var rowIndexes = data.getFilteredRows([{ column: 0, minValue: fromYear, maxValue: toYear }]);
-                        view.setRows(rowIndexes);
-                        var options = {
-                            title: `MFT Assessment Indicators (${fromYear}-${toYear})`,
-                            legend: { position: "bottom" },
-                            vAxis: { maxValue: 100 }
-                        };
-                        chart.clearChart();
-                        chart.draw(view, options);
+        $(function () {
+            var data = @(Html.Raw(JsonSerializer.Serialize(modelData))).reverse();
+            // console.log(data);
+            var categories = [
+                "AI-1: Programming and Software Engineering",
+                "AI-2: Discrete Structures and Algorithms",
+                "AI-3: Systems: Architecture/Operating Systems/Networking/Database"
+            ];
+            var charts = [{
+                container: "chart1",
+                options: {
+                    title: {}, // set in setOptions
+                    xAxis: {
+                        categories: categories
+                    },
+                    yAxis: {
+                        max: 100,
+                        title: {
+                            text: "Average Percentage of Questions Answered Correctly"
+                        }
+                    },
+                    series: [],
+                    chart: {
+                        type: 'column'
+                    },
+                    exporting: {
+                        sourceHeight: 600,
+                        sourceWidth: 1200
                     }
                 }
+            }, {
+                container: "chart2",
+                options: {
+                    title: {}, // set in setOptions
+                    xAxis: {
+                        categories: categories
+                    },
+                    yAxis: {
+                        max: 100,
+                        title: {
+                            text: "Institution Percentile"
+                        }
+                    },
+                    series: [],
+                    chart: {
+                        type: 'column'
+                    },
+                    exporting: {
+                        sourceHeight: 600,
+                        sourceWidth: 1200
+                    }
+                }
+            }];
 
-                var drawCharts = function() {
-                    drawChart(chart1, [0, 1, 2, 3]);
-                    drawChart(chart2, [0, 4, 5, 6]);
+            data.forEach(e => {
+                charts[0].options.series.push({
+                    name: e[0],
+                    data: [e[1], e[2], e[3]],
+                    visible: false
+                });
+                charts[1].options.series.push({
+                    name: e[0],
+                    data: [e[4], e[5], e[6]],
+                    visible: false
+                });
+            });
+
+            var setOptions = function () {
+                let fromYear = $("#fromYear").val();
+                let toYear = $("#toYear").val();
+                let toggleSeries = function (s) {
+                    let show = s.name >= fromYear && s.name <= toYear;
+                    s.visible = s.showInLegend = show;
                 };
+                charts[0].options.title.text = `MFT Assessment Indicators - Average Correct Percentage, ${fromYear}-${toYear}`;
+                charts[0].options.series.forEach(toggleSeries);
+                charts[1].options.title.text = `MFT Assessment Indicators - Institution Percentile, ${fromYear}-${toYear}`;
+                charts[1].options.series.forEach(toggleSeries);
+            };
 
-                $("#fromYear, #toYear").change(drawCharts);
-                window.onresize = drawCharts;
+            setOptions();
+            var highCharts = charts.map(chart => Highcharts.chart(chart.container, chart.options));
 
-                drawCharts();
+            $("#fromYear, #toYear").change(function () {
+                setOptions();
+                for (let i = 0; i < highCharts.length; i++) {
+                    highCharts[i].update(charts[i].options);
+                }
             });
         });
     </script>
