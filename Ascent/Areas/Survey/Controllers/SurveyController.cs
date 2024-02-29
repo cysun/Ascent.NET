@@ -139,6 +139,9 @@ namespace Ascent.Models
         [Display(Name = "Allow multiple responses from one person")]
         public bool AllowMultipleSubmissions { get; set; }
 
+        [Display(Name = "Pinned")]
+        public bool IsPinned { get; set; }
+
         public bool IsPublished => TimePublished.HasValue && TimePublished < DateTime.UtcNow;
         public bool IsClosed => TimeClosed.HasValue && TimeClosed < DateTime.UtcNow;
     }

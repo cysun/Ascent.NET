@@ -43,6 +43,10 @@
             {
                 <tr>
                     <td>
+                        @if(survey.IsPinned)
+                        {
+                            <i class="bi bi-pin-fill text-secondary"></i>
+                        }
                         <a asp-action="View" asp-route-id="@survey.Id">@survey.Name</a>
                     </td>
                     <td class="d-none d-lg-table-cell">

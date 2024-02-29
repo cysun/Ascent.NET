@@ -144,7 +144,7 @@
                     container: `chart${property}`, // e.g. chartInstructor
                     options: {
                         title: {
-                            text: `@ViewBag.Rubric.Name, @ViewBag.Course.Code @(ViewBag.StartYear)-@(ViewBag.ToYear), Assessment by ${property}`
+                            text: `@ViewBag.Rubric.Name, @ViewBag.Course.Code @(ViewBag.FromYear)-@(ViewBag.ToYear), Assessment by ${property}`
                         },
                         xAxis: {
                             categories: data[property].filter(e => e[0] == data[property][0][0]).map(e => e[1])

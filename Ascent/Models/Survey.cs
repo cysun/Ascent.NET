@@ -25,6 +25,7 @@ public class Survey
     // Whether to allow one person to submit multiple responses
     public bool AllowMultipleSubmissions { get; set; }
 
+    public bool IsPinned { get; set; }
     public bool IsDeleted { get; set; }
 
     public Survey Clone()

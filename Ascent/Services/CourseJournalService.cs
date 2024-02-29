@@ -17,7 +17,7 @@ public class CourseJournalService
     }
 
     public List<CourseJournal> GetCourseJournals() => _db.CourseJournals.AsNoTracking()
-        .Where(j => !j.Course.IsObsolete)
+        .Where(j => !j.Course.IsObsolete && j.Course.IsRequired)
         .Include(j => j.Course).Include(j => j.Instructor)
         .OrderBy(j => j.Course.Number)
         .ToList();
