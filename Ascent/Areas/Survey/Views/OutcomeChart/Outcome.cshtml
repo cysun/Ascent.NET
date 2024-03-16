@@ -46,6 +46,12 @@
             }
         </select>
     </div>
+    <div class="col-auto">
+        <label class="col-form-label" for="plotLine">Plot Line</label>
+    </div>
+    <div class="col-auto">
+        <input id="plotLine" type="number" class="form-control" size="2" value="70" min="5" max="95" />
+    </div>
 </div>
 
 <div class="card">
@@ -111,18 +117,8 @@
             let showInLegend = true;
             for (const year in dataByYear) {
                 series.push({
-                    name: 'Strongly Agree',
-                    data: dataByYear[year].map(r => r[5]),
-                    stack: year,
-                    showInLegend: showInLegend
-                }, {
-                    name: 'Agree',
-                    data: dataByYear[year].map(r => r[4]),
-                    stack: year,
-                    showInLegend: showInLegend
-                }, {
-                    name: 'Neither Agree or Disagree',
-                    data: dataByYear[year].map(r => r[3]),
+                    name: 'Strongly Disagree',
+                    data: dataByYear[year].map(r => r[1]),
                     stack: year,
                     showInLegend: showInLegend
                 }, {
@@ -131,8 +127,18 @@
                     stack: year,
                     showInLegend: showInLegend
                 }, {
-                    name: 'Strongly Disagree',
-                    data: dataByYear[year].map(r => r[1]),
+                    name: 'Neither Agree or Disagree',
+                    data: dataByYear[year].map(r => r[3]),
+                    stack: year,
+                    showInLegend: showInLegend
+                }, {
+                    name: 'Agree',
+                    data: dataByYear[year].map(r => r[4]),
+                    stack: year,
+                    showInLegend: showInLegend
+                }, {
+                    name: 'Strongly Agree',
+                    data: dataByYear[year].map(r => r[5]),
                     stack: year,
                     showInLegend: showInLegend
                 });
@@ -163,7 +169,12 @@
                             formatter: function () {
                                 return this.stack;
                             }
-                        }
+                        },
+                        plotLines: [{
+                            value: 70,
+                            color: 'blue',
+                            width: 2
+                        }]
                     },
                     series: series,
                     chart: {
@@ -178,11 +189,21 @@
                         sourceHeight: 600,
                         sourceWidth: 1200
                     },
-                    colors: ['green', 'greenyellow', 'yellow', 'orange', 'red']
+                    colors: ['red', 'orange', 'yellow', 'greenyellow', 'green']
                 }
             };
-            Highcharts.chart(chart.container, chart.options);
-
+            let hchart = Highcharts.chart(chart.container, chart.options);
+            $("#plotLine").change(function () {
+                hchart.update({
+                    yAxis: {
+                        plotLines: [{
+                            value: $(this).val(),
+                            color: 'blue',
+                            width: 2
+                        }]
+                    }
+                });
+            });
             $("select").change(function () {
                 var fromYear = $("#fromYear").val();
                 var toYear = $("#toYear").val();

@@ -12,6 +12,19 @@
     </ol>
 </nav>
 
+<div class="row mb-3">
+    <label class="col-auto col-form-label" for="plotLine">Plot Line</label>
+    <div class="col-auto">
+        <input id="plotLine" type="number" class="form-control" size="2" value="80" min="5" max="95" />
+    </div>
+    <div class="col-auto">
+        <div class="btn-group" role="group">
+            <button id="removeFirst" class="btn btn-outline-secondary" title="Remove First"><i class="bi bi-box-arrow-left"></i></button>
+            <button id="removeLast" class="btn btn-outline-secondary" title="Remove Last"><i class="bi bi-box-arrow-right"></i></button>
+        </div>
+    </div>
+</div>
+
 <div class="row row-cols-1 g-4">
     @foreach (var assessmentType in Enum.GetValues<RubricAssessmentType>())
     {
@@ -62,6 +75,7 @@
         $(function () {
             var data = @Html.Raw(JsonSerializer.Serialize(Model));
             // console.log(data);
+            var charts = [];
             for (const property in data) {
                 let chart = {
                     container: `chart${property}`, // e.g. chartInstructor
@@ -81,20 +95,25 @@
                                 formatter: function () {
                                     return this.value + '%';
                                 }
-                            }
+                            },
+                            plotLines: [{
+                                value: 80,
+                                color: 'blue',
+                                width: 2
+                            }]
                         },
                         series: [{
-                            name: 'Exceeds Expectations',
-                            data: data[property].map(r => r[4])
-                        }, {
-                            name: 'Meets Expectations',
-                            data: data[property].map(r => r[3])
+                            name: 'Unsatisfactory',
+                            data: data[property].map(r => r[1])
                         }, {
                             name: 'Needs Improvement',
                             data: data[property].map(r => r[2])
                         }, {
-                            name: 'Unsatisfactory',
-                            data: data[property].map(r => r[1])
+                            name: 'Meets Expectations',
+                            data: data[property].map(r => r[3])
+                        }, {
+                            name: 'Exceeds Expectations',
+                            data: data[property].map(r => r[4])
                         }],
                         chart: {
                             type: 'column'
@@ -108,11 +127,33 @@
                             sourceHeight: 600,
                             sourceWidth: 1200
                         },
-                        colors: ['green', 'greenyellow', 'yellow', 'red']
+                        colors: ['red', 'yellow', 'greenyellow', 'green']
                     }
                 };
-                Highcharts.chart(chart.container, chart.options);
+                charts.push(Highcharts.chart(chart.container, chart.options));
             }
+            $("#plotLine").change(function () {
+                charts.forEach(c => c.update({
+                    yAxis: {
+                        plotLines: [{
+                            value: $(this).val(),
+                            color: 'blue',
+                            width: 2
+                        }]
+                    }
+                }));
+            });
+            $("#removeFirst").click(function () {
+                charts.forEach(c => {
+                    c.series.forEach(s => s.removePoint(0));
+                });
+            });
+            $("#removeLast").click(function () {
+                charts.forEach(c => {
+                    let length = c.series[0].data.length;
+                    c.series.forEach(s => s.removePoint(length - 1));
+                });
+            });
         });
     </script>
 }

@@ -12,21 +12,29 @@
     </ol>
 </nav>
 
-<form id="yearSelect" method="get" class="d-inline-flex mb-3">
-    <select name="year" class="form-select">
-        @foreach (var year in ViewBag.Years)
-        {
-            if (year == ViewBag.Year)
+<div class="row mb-3">
+    <div class="col-auto">
+        <select id="yearSelect" name="year" class="form-select">
+            @foreach (var year in ViewBag.Years)
             {
-                <option selected>@year</option>
+                if (year == ViewBag.Year)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
             }
-            else
-            {
-                <option>@year</option>
-            }
-        }
-    </select>
-</form>
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="col-form-label" for="plotLine">Plot Line</label>
+    </div>
+    <div class="col-auto">
+        <input id="plotLine" type="number" class="form-control" size="2" value="70" min="5" max="95" />
+    </div>
+</div>
 
 <div class="row row-cols-1 g-4">
     @foreach (var constituencyType in Enum.GetValues<ConstituencyType>())
@@ -78,7 +86,8 @@
     <script>
         $(function () {
             var data = @Html.Raw(JsonSerializer.Serialize(Model));
-            console.log(data);
+            // console.log(data);
+            var charts = [];
             for (const property in data) {
                 let chart = {
                     container: `chart${property}`, // e.g. chartStudent
@@ -98,23 +107,28 @@
                                 formatter: function () {
                                     return this.value + '%';
                                 }
-                            }
+                            },
+                            plotLines: [{
+                                value: 70,
+                                color: 'blue',
+                                width: 2
+                            }]
                         },
                         series: [{
-                            name: 'Strongly Agree',
-                            data: data[property].map(r => r[5])
-                        }, {
-                            name: 'Agree',
-                            data: data[property].map(r => r[4])
-                        }, {
-                            name: 'Neither Agree or Disagree',
-                            data: data[property].map(r => r[3])
+                            name: 'Strongly Disagree',
+                            data: data[property].map(r => r[1])
                         }, {
                             name: 'Disagree',
                             data: data[property].map(r => r[2])
                         }, {
-                            name: 'Strongly Disagree',
-                            data: data[property].map(r => r[1])
+                            name: 'Neither Agree or Disagree',
+                            data: data[property].map(r => r[3])
+                        }, {
+                            name: 'Agree',
+                            data: data[property].map(r => r[4])
+                        }, {
+                            name: 'Strongly Agree',
+                            data: data[property].map(r => r[5])
                         }],
                         chart: {
                             type: 'column'
@@ -128,13 +142,24 @@
                             sourceHeight: 600,
                             sourceWidth: 1200
                         },
-                        colors: ['green', 'greenyellow', 'yellow', 'orange', 'red']
+                        colors: ['red', 'orange', 'yellow', 'greenyellow', 'green']
                     }
                 };
-                Highcharts.chart(chart.container, chart.options);
+                charts.push(Highcharts.chart(chart.container, chart.options));
             }
+            $("#plotLine").change(function () {
+                charts.forEach(c => c.update({
+                    yAxis: {
+                        plotLines: [{
+                            value: $(this).val(),
+                            color: 'blue',
+                            width: 2
+                        }]
+                    }
+                }));
+            });
             $("#yearSelect").change(function () {
-                window.location.href = "../program/@(ViewBag.Program.Id)?year=" + $("select").val();
+                window.location.href = "../program/@(ViewBag.Program.Id)?year=" + $(this).val();
             });
         });
     </script>
