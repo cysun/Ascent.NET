@@ -46,6 +46,12 @@
             }
         </select>
     </div>
+    <div class="col-auto">
+        <label class="col-form-label" for="plotLine">Plot Line</label>
+    </div>
+    <div class="col-auto">
+        <input id="plotLine" type="number" class="form-control" size="2" value="50" min="5" max="95" />
+    </div>
 </div>
 <div class="card mt-3">
     <div class="card-header">Average Correct Percentage</div>
@@ -105,7 +111,12 @@
                         max: 100,
                         title: {
                             text: "Institution Percentile"
-                        }
+                        },
+                        plotLines: [{
+                            value: 50,
+                            color: 'blue',
+                            width: 2
+                        }]
                     },
                     series: [],
                     chart: {
@@ -146,6 +157,18 @@
 
             setOptions();
             var highCharts = charts.map(chart => Highcharts.chart(chart.container, chart.options));
+
+            $("#plotLine").change(function () {
+                highCharts[1].update({
+                    yAxis: {
+                        plotLines: [{
+                            value: $(this).val(),
+                            color: 'blue',
+                            width: 2
+                        }]
+                    }
+                });
+            });
 
             $("#fromYear, #toYear").change(function () {
                 setOptions();
