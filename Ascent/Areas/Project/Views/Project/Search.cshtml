@@ -1,0 +1,35 @@
+@model List<Project>
+@{
+    ViewData["Title"] = "Search Projects";
+    var searchText = Context.Request.Query["searchText"];
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Projects</a></li>
+        <li class="breadcrumb-item active">Search</li>
+    </ol>
+</nav>
+
+<form method="get" class="d-inline-flex mb-3">
+    <input id="search" name="searchText" class="form-control me-2" value="@searchText" required>
+    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+</form>
+
+@if (Model.Count > 0)
+{
+    <table class="table border-top">
+        <thead>
+            <tr><th>Year</th><th>Title</th><th>Spronsor</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var project in Model)
+            {
+                <tr>
+                    <td>@project.AcademicYear</td>
+                    <td><a asp-action="View" asp-route-id="@project.Id">@project.Title</a></td>
+                    <td><a asp-action="Search" asp-route-searchText="@project.Sponsor">@project.Sponsor</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

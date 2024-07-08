@@ -17,6 +17,10 @@ public class ProjectService
         .Include(p => p.Members.OrderBy(s => s.Person.LastName)).ThenInclude(s => s.Person)
         .OrderBy(p => p.Title).ToList();
 
+    public List<Project> GetProjectsByMember(int memberId, Project.MemberType memberType) => _db.Projects.AsNoTracking()
+        .Where(p => p.Members.Any(m => m.PersonId == memberId && m.Type == memberType && !p.IsDeleted))
+        .OrderByDescending(p => p.AcademicYear).ToList();
+
     public Project GetProject(int id) => _db.Projects.Find(id);
 
     public Project GetProjectWithMembers(int id) => _db.Projects.AsNoTracking()
@@ -84,6 +88,16 @@ public class ProjectService
     {
         _db.ProjectResources.Remove(resource);
         _db.SaveChanges();
+    }
+
+    // maxResults=null for unlimited results
+    public List<Project> SearchProjects(string searchText, int? maxResults = null)
+    {
+        if (string.IsNullOrWhiteSpace(searchText)) return new List<Project>();
+
+        return _db.Projects.FromSqlRaw("SELECT * FROM \"SearchProjects\"({0}, {1})", searchText, maxResults)
+            .OrderByDescending(p => p.AcademicYear)
+            .AsNoTracking().ToList();
     }
 
     public void SaveChanges() => _db.SaveChanges();

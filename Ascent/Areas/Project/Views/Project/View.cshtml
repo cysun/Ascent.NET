@@ -39,14 +39,16 @@
     <div class="col-md-6">
         <div class="card mb-2">
             <div class="card-header">Project Sponsor</div>
-            <div class="card-body">@Model.Sponsor</div>
+            <div class="card-body"><a asp-action="Search" asp-route-searchText="@Model.Sponsor">@Model.Sponsor</a></div>
         </div>
         <div class="card mb-2">
             <div class="card-header">Project Liaisons</div>
             <ul class="list-group list-group-flush">
                 @foreach (var liaison in Model.Liaisons)
                 {
-                    <li class="list-group-item">@liaison.Person.FullName</li>
+                    <li class="list-group-item">
+                        <a asp-action="ByMember" asp-route-memberId="@liaison.PersonId" asp-route-memberType="Liaison">@liaison.Person.FullName</a>
+                    </li>
                 }
             </ul>
         </div>
@@ -56,7 +58,9 @@
             <ul class="list-group list-group-flush">
                 @foreach (var advisor in Model.Advisors)
                 {
-                    <li class="list-group-item">@advisor.Person.FullName</li>
+                    <li class="list-group-item">
+                        <a asp-action="ByMember" asp-route-memberId="@advisor.PersonId" asp-route-memberType="Advisor">@advisor.Person.FullName</a>
+                    </li>
                 }
             </ul>
         </div>
@@ -68,7 +72,7 @@
                 @if ((await AuthorizationService.AuthorizeAsync(User, Model.Id, Constants.Policy.CanManageProject)).Succeeded)
                 {
                     <a asp-controller="Resource" asp-action="Index" asp-route-projectId="@Model.Id"
-                   class="btn btn-outline-primary btn-sm ms-auto" title="Edit Resources">
+                       class="btn btn-outline-primary btn-sm ms-auto" title="Edit Resources">
                         <i class="bi bi-pencil-fill"></i>
                     </a>
                 }
@@ -91,9 +95,9 @@
                                 break;
                             case ResourceType.File:
                                 <a asp-controller="Resource" asp-action="Get" asp-route-id="@resource.Id" asp-route-inline="true"
-                       class="me-auto" style="z-index: 3">@resource.Name</a>
+                                   class="me-auto" style="z-index: 3">@resource.Name</a>
                                 <a asp-controller="Resource" asp-action="Get" asp-route-id="@resource.Id"
-                       class="btn btn-outline-primary btn-sm stretched-link">
+                                   class="btn btn-outline-primary btn-sm stretched-link">
                                     <i class="bi bi-download"></i>
                                 </a>
                                 break;

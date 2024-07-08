@@ -12,6 +12,7 @@ namespace Ascent.Areas.Project.Controllers
     [Authorize] // The default policy is CanRead; here we only need Authenticated for the operations that check CanManageProject.
     public class ProjectController : Controller
     {
+        private readonly PersonService _personService;
         private readonly ProjectService _projectService;
 
         private readonly IAuthorizationService _authorizationService;
@@ -19,9 +20,10 @@ namespace Ascent.Areas.Project.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<ProjectController> _logger;
 
-        public ProjectController(ProjectService projectService, IAuthorizationService authorizationService,
-            IMapper mapper, ILogger<ProjectController> logger)
+        public ProjectController(PersonService personService, ProjectService projectService,
+            IAuthorizationService authorizationService, IMapper mapper, ILogger<ProjectController> logger)
         {
+            _personService = personService;
             _projectService = projectService;
             _authorizationService = authorizationService;
             _mapper = mapper;
@@ -118,6 +120,27 @@ namespace Ascent.Areas.Project.Controllers
             _logger.LogInformation("{user} deleted project {project}", User.Identity.Name, id);
 
             return RedirectToAction("Index", new { year = project.AcademicYear });
+        }
+
+        [AllowAnonymous]
+        public IActionResult Search(string searchText, int? sectionId)
+        {
+            return View(_projectService.SearchProjects(searchText));
+        }
+
+        [AllowAnonymous]
+        public IActionResult ByMember(int memberId, string memberType)
+        {
+            var member = _personService.GetPerson(memberId);
+            if (member == null) return NotFound();
+
+            var ok = Enum.TryParse(memberType, out Models.Project.MemberType type);
+            if (!ok) return BadRequest();
+
+            ViewBag.Member = member;
+            ViewBag.MemberType = type;
+
+            return View(_projectService.GetProjectsByMember(memberId, type));
         }
 
         [Authorize(Policy = Constants.Policy.CanWrite)]
