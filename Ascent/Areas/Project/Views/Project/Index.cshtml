@@ -17,7 +17,7 @@
     </ol>
 </nav>
 
-<form method="get" class="d-inline-flex mb-2">
+<form id="yearForm" method="get" class="d-inline-flex mb-2">
     <select name="year" class="form-select">
         @foreach (var year in ViewBag.AcademicYears)
         {
@@ -88,7 +88,7 @@
     <script>
         $(function () {
             $("select").change(function () {
-                $("form").submit();
+                $("#yearForm").submit();
             });
         })
     </script>

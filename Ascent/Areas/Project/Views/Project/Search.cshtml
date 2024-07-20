@@ -25,7 +25,7 @@
             @foreach (var project in Model)
             {
                 <tr>
-                    <td>@project.AcademicYear</td>
+                    <td><a asp-action="Index" asp-route-year="@project.AcademicYear">@project.AcademicYear</a></td>
                     <td><a asp-action="View" asp-route-id="@project.Id">@project.Title</a></td>
                     <td><a asp-action="Search" asp-route-searchText="@project.Sponsor">@project.Sponsor</a></td>
                 </tr>
