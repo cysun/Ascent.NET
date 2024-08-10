@@ -46,6 +46,8 @@ public class Course
     public bool IsObsolete { get; set; }
 
     public bool IsGraduateCourse => Number.StartsWith("5");
+
+    public bool IsNotCS => Subject != "CS";
 }
 
 [PrimaryKey(nameof(CourseId), nameof(PersonId))]

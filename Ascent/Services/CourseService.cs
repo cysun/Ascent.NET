@@ -17,7 +17,7 @@ public class CourseService
     public List<Course> GetCourses() => _db.Courses.AsNoTracking()
         .Where(c => !c.IsObsolete)
         .Include(c => c.Coordinators.OrderBy(c => c.Person.LastName)).ThenInclude(c => c.Person)
-        .OrderBy(c => c.Number)
+        .OrderBy(c => c.Subject).ThenBy(c => c.Number)
         .ToList();
 
     public List<Course> GetJournalCourses() => _db.Courses.AsNoTracking()
