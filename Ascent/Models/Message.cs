@@ -39,5 +39,4 @@ public class Message
     public bool UseBcc { get; set; }
 
     public DateTime TimeSent { get; set; }
-    public bool IsFailed { get; set; } // Whether the email was sent successfully
 }

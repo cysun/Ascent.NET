@@ -12,12 +12,10 @@
     "ClientId": "10000000000001",
     "ClientSecret": "********"
   },
+  "RabbitMQ": {
+    "QueueName": "alice-mail-service"
+  },
   "Email": {
-    "Host": "localhost",
-    "Port": 25,
-    "RequireAuthentication": true,
-    "Username": "cysun@localhost.localdomain",
-    "Password": "abcd",
     "SenderName": "Ascent Mail",
     "SenderEmail": "ascent@cysun.org"
   },

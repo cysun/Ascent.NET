@@ -49,7 +49,6 @@ CREATE TABLE "Messages" (
     "Content" text NOT NULL,
     "UseBcc" boolean NOT NULL,
     "TimeSent" timestamp with time zone NOT NULL,
-    "IsFailed" boolean NOT NULL,
     CONSTRAINT "PK_Messages" PRIMARY KEY ("Id")
 );
 
@@ -570,7 +569,7 @@ CREATE INDEX "IX_SurveyQuestions_SurveyId_Index" ON "SurveyQuestions" ("SurveyId
 CREATE INDEX "IX_SurveyResponses_SurveyId" ON "SurveyResponses" ("SurveyId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20240229035244_InitialSchema', '8.0.2');
+VALUES ('20240821203922_InitialSchema', '8.0.8');
 
 COMMIT;
 

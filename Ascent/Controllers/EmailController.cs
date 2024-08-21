@@ -63,11 +63,11 @@ namespace Ascent.Controllers
             var recipients = _groupService.GetMembers(group)
                 .Where(p => !string.IsNullOrWhiteSpace(p.GetPreferredEmail(group.EmailPreference)))
                 .Select(p => (Name: p.FullName, Email: p.GetPreferredEmail(group.EmailPreference))).ToList();
-            message.IsFailed = !_emailSender.Send(message, recipients, $"{senderFirstName} {senderLastName}");
+            _emailSender.Send(message, recipients, $"{senderFirstName} {senderLastName}");
             message.TimeSent = DateTime.UtcNow;
 
             _messageService.AddMessage(message);
-            _logger.LogInformation("{user} sent email to group {group}: {success}", User.Identity.Name, group.Name, !message.IsFailed);
+            _logger.LogInformation("{user} sent email to group {group}", User.Identity.Name, group.Name);
 
             return RedirectToAction("View", "Group", new { id = group.Id });
         }

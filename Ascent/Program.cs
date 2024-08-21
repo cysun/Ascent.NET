@@ -107,6 +107,9 @@ services.Configure<MinioSettings>(configuration.GetSection("Minio"));
 services.AddSingleton<MinioService>();
 services.AddScoped<FileService>();
 
+services.Configure<RabbitMQSettings>(configuration.GetSection("RabbitMQ"));
+services.AddSingleton<RabbitService>();
+
 services.Configure<EmailSettings>(configuration.GetSection("Email"));
 services.AddScoped<EmailSender>();
 

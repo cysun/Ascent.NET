@@ -1,4 +1,4 @@
-ALTER TABLE "Surveys" ADD COLUMN "IsPinned" boolean NOT NULL default FALSE;
+ALTER TABLE "Messages" DROP COLUMN "IsFailed";
 
 DELETE FROM "__EFMigrationsHistory";
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ('20240229035244_InitialSchema', '8.0.2');
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ('20240821203922_InitialSchema', '8.0.8');
