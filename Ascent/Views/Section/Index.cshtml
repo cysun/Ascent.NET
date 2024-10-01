@@ -8,7 +8,7 @@
     </ol>
 </nav>
 
-<form method="get" class="d-inline-flex">
+<form id="yearForm" method="get" class="d-inline-flex">
     <select name="termCode" class="form-select">
         @foreach (var term in ViewBag.Terms)
         {
@@ -47,11 +47,11 @@
     </table>
 }
 
-@section Scripts{
+@section Scripts {
     <script>
         $(function () {
             $("select").change(function () {
-                $("form").submit();
+                $("#yearForm").submit();
             });
         })
     </script>
