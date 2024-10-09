@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -62,7 +63,7 @@ namespace Ascent.Controllers
 
             _mapper.Map(input, file);
             _fileService.SaveChanges();
-            _logger.LogInformation("User {user} edited {file}", User.Identity.Name, file.Id);
+            _logger.LogInformation("User {user} edited {file}", User.GetName(), file.Id);
 
             if (file.ParentId != null)
                 return RedirectToAction("View", "Folder", new { id = file.ParentId });
@@ -85,7 +86,7 @@ namespace Ascent.Controllers
             file.ParentId = parentId;
             _fileService.SaveChanges();
             _logger.LogInformation("User {user} moved {file} from {oldParent} to {newParent}",
-                User.Identity.Name, file.Id, file.ParentId, parentId);
+                User.GetName(), file.Id, file.ParentId, parentId);
 
             if (parentId != null)
                 return RedirectToAction("View", "Folder", new { id = file.ParentId });
@@ -103,13 +104,13 @@ namespace Ascent.Controllers
             {
                 var filesDeleted = await _fileService.DeleteFolderAsync(id);
                 _logger.LogInformation("User {user} deleted folder {folder} with {n} files",
-                    User.Identity.Name, file.Name, filesDeleted);
+                    User.GetName(), file.Name, filesDeleted);
             }
             else
             {
                 var versionsDeleted = await _fileService.DeleteFileAsync(id);
                 _logger.LogInformation("User {user} deleted file {file} with {n} versions",
-                    User.Identity.Name, file.Name, versionsDeleted);
+                    User.GetName(), file.Name, versionsDeleted);
             }
 
             if (file.ParentId != null)
@@ -165,7 +166,7 @@ namespace Ascent.Controllers
             }
 
             _fileService.SaveChanges();
-            _logger.LogInformation("{user} set file {file} field {field} to {value}", User.Identity.Name,
+            _logger.LogInformation("{user} set file {file} field {field} to {value}", User.GetName(),
                 file.Id, field, value);
 
             return Ok();

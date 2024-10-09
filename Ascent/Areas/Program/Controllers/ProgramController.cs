@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -78,7 +79,7 @@ namespace Ascent.Areas.Program.Controllers
                 });
             }
             _programService.AddProgram(program);
-            _logger.LogInformation("{user} created program {program}", User.Identity.Name, program.Id);
+            _logger.LogInformation("{user} created program {program}", User.GetName(), program.Id);
 
             return RedirectToAction("View", new { id = program.Id });
         }
@@ -112,7 +113,7 @@ namespace Ascent.Areas.Program.Controllers
                     program.Outcomes[i].Text = input.Outcomes[i];
             }
             _programService.SaveChanges();
-            _logger.LogInformation("{user} edited program {program}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited program {program}", User.GetName(), id);
 
             return RedirectToAction("View", new { id });
         }

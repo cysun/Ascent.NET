@@ -1,3 +1,4 @@
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -68,7 +69,7 @@ namespace Ascent.Controllers
             if (section == null) return NotFound();
 
             _sectionService.DeleteSection(section);
-            _logger.LogInformation("{user} deleted section {section}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted section {section}", User.GetName(), id);
 
             return RedirectToAction("Index", new { termCode = section.Term.Code });
         }

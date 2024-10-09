@@ -1,9 +1,10 @@
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Ascent.Models;
 
 namespace Ascent.Helpers;
 
-public class Utils
+public static class Utils
 {
     // We assume names are either in "FirstName LastName" format or "LastName, FirstName" format.
     // If a name has multiple words like "name1 name2 name3", the first/last one is consider first/last name
@@ -49,5 +50,14 @@ public class Utils
             term = term.Previous();
         }
         return terms;
+    }
+
+    // Get the "name" claim value from Identity, and if "name" claim does not exist, get NameIdentifier claim value.
+    public static string GetName(this ClaimsPrincipal user)
+    {
+        var name = user.FindFirstValue("name");
+        if (string.IsNullOrEmpty(name))
+            name = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        return name;
     }
 }

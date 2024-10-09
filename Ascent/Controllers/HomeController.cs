@@ -1,3 +1,4 @@
+using Ascent.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ public class HomeController : Controller
     {
         var feature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         _logger.LogWarning("Exception {exception} caused by user {user}: \n{stackTrace}",
-            feature?.Error?.Message, User.Identity.Name, feature?.Error?.StackTrace);
+            feature?.Error?.Message, User.GetName(), feature?.Error?.StackTrace);
 
         return View();
     }

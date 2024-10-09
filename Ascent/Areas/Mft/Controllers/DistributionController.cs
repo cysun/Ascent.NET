@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -74,7 +75,7 @@ namespace Ascent.Areas.Mft.Controllers
 
             var distribution = _mapper.Map<MftDistribution>(input, opts => opts.Items["type"] = input.TypeAlias);
             _mftService.AddDistribution(distribution);
-            _logger.LogInformation("{user} added mft distribution {distribution}", User.Identity.Name, distribution.Id);
+            _logger.LogInformation("{user} added mft distribution {distribution}", User.GetName(), distribution.Id);
 
             return RedirectToAction("View", new { id = distribution.Id });
         }
@@ -83,7 +84,7 @@ namespace Ascent.Areas.Mft.Controllers
         public IActionResult Delete(int id)
         {
             _mftService.DeleteDistribution(id);
-            _logger.LogInformation("{user} added mft distribution {distribution}", User.Identity.Name, id);
+            _logger.LogInformation("{user} added mft distribution {distribution}", User.GetName(), id);
 
             return RedirectToAction("Index");
         }

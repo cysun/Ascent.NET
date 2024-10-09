@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -54,7 +55,7 @@ namespace Ascent.Areas.Survey.Controllers
             var question = _mapper.Map<SurveyQuestion>(input);
             _surveyService.AddQuestionToSurvey(surveyId, question);
             _logger.LogInformation("{user} added question {question} to survey {survey}",
-                User.Identity.Name, question.Id, surveyId);
+                User.GetName(), question.Id, surveyId);
 
             return RedirectToAction("Index", "Question", new { surveyId }, $"q-id-{question.Id}");
         }
@@ -82,7 +83,7 @@ namespace Ascent.Areas.Survey.Controllers
 
             _mapper.Map(input, question);
             _surveyService.SaveChanges();
-            _logger.LogInformation("{user} edited question {question}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited question {question}", User.GetName(), id);
 
             return RedirectToAction("Index", "Question", new { surveyId = question.SurveyId }, $"q-id-{question.Id}");
         }
@@ -99,7 +100,7 @@ namespace Ascent.Areas.Survey.Controllers
                 current.Index--;
                 previous.Index++;
                 _surveyService.SaveChanges();
-                _logger.LogInformation("{user} moved up question {question}", User.Identity.Name, id);
+                _logger.LogInformation("{user} moved up question {question}", User.GetName(), id);
             }
 
             return RedirectToAction("Index", "Question", new { surveyId = current.SurveyId }, $"q-id-{current.Id}");
@@ -117,7 +118,7 @@ namespace Ascent.Areas.Survey.Controllers
                 current.Index++;
                 next.Index--;
                 _surveyService.SaveChanges();
-                _logger.LogInformation("{user} moved down question {question}", User.Identity.Name, id);
+                _logger.LogInformation("{user} moved down question {question}", User.GetName(), id);
             }
 
             return RedirectToAction("Index", "Question", new { surveyId = current.SurveyId }, $"q-id-{current.Id}");
@@ -127,7 +128,7 @@ namespace Ascent.Areas.Survey.Controllers
         public async Task<IActionResult> DeleteAsync(int id, int surveyId)
         {
             await _surveyService.DeleteQuestionAsync(id);
-            _logger.LogInformation("{user} deleted question {question}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted question {question}", User.GetName(), id);
             return RedirectToAction("Index", new { surveyId });
         }
     }

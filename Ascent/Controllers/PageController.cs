@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -73,7 +74,7 @@ namespace Ascent.Controllers
             var page = _mapper.Map<Page>(input);
             page.IsRegular = true; // pages created via Page UI are "regular"
             _pageService.AddPage(page);
-            _logger.LogInformation("{user} created page {page}", User.Identity.Name, page.Id);
+            _logger.LogInformation("{user} created page {page}", User.GetName(), page.Id);
 
             return RedirectToAction("Edit", new { id = page.Id });
         }
@@ -116,7 +117,7 @@ namespace Ascent.Controllers
             page.TimeUpdated = DateTime.UtcNow;
             page.TimeViewed = DateTime.UtcNow;
             _pageService.SaveChanges();
-            _logger.LogInformation("{user} set page {page} field {field} to {value}", User.Identity.Name,
+            _logger.LogInformation("{user} set page {page} field {field} to {value}", User.GetName(),
                 page.Id, field, value);
 
             return Ok();
@@ -129,7 +130,7 @@ namespace Ascent.Controllers
             if (page == null) return NotFound();
 
             _pageService.DeletePage(page);
-            _logger.LogInformation("{user} deleted page {page}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted page {page}", User.GetName(), id);
 
             return RedirectToAction("Index");
         }
@@ -157,7 +158,7 @@ namespace Ascent.Controllers
             page.Version++;
             _pageService.AddPageRevision(revision);
             _logger.LogInformation("{user} created revision {version} of page {page}",
-                User.Identity.Name, revision.Version, id);
+                User.GetName(), revision.Version, id);
 
             return RedirectToAction("Revisions", new { id = id, version = revision.Version });
         }
@@ -174,7 +175,7 @@ namespace Ascent.Controllers
             page.TimeViewed = DateTime.UtcNow;
 
             _pageService.SaveChanges();
-            _logger.LogInformation("{user} reverted page {page} to revision {version}", User.Identity.Name, id, version);
+            _logger.LogInformation("{user} reverted page {page} to revision {version}", User.GetName(), id, version);
 
             return RedirectToAction("Revisions", new { id = id });
         }

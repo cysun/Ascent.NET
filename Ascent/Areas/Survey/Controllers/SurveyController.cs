@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -53,7 +54,7 @@ namespace Ascent.Areas.Survey.Controllers
 
             var survey = _mapper.Map<Models.Survey>(input);
             _surveyService.AddSurvey(survey);
-            _logger.LogInformation("{user} created survey {survey}", User.Identity.Name, survey.Id);
+            _logger.LogInformation("{user} created survey {survey}", User.GetName(), survey.Id);
 
             return RedirectToAction("Index", "Question", new { surveyId = survey.Id });
         }
@@ -80,7 +81,7 @@ namespace Ascent.Areas.Survey.Controllers
 
             _mapper.Map(input, survey);
             _surveyService.SaveChanges();
-            _logger.LogInformation("{user} edited survey {survey}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited survey {survey}", User.GetName(), id);
 
             return RedirectToAction("View", new { id });
         }
@@ -95,7 +96,7 @@ namespace Ascent.Areas.Survey.Controllers
             {
                 survey.IsDeleted = true;
                 _surveyService.SaveChanges();
-                _logger.LogInformation("{user} deleted survey {survey}", User.Identity.Name, id);
+                _logger.LogInformation("{user} deleted survey {survey}", User.GetName(), id);
             }
 
             return RedirectToAction("Index");
@@ -108,7 +109,7 @@ namespace Ascent.Areas.Survey.Controllers
             if (survey == null) return NotFound();
 
             var newSurvey = _surveyService.CloneSurvey(survey);
-            _logger.LogInformation("{user} cloned survey {survey} into {newSurvey}", User.Identity.Name, id, newSurvey.Id);
+            _logger.LogInformation("{user} cloned survey {survey} into {newSurvey}", User.GetName(), id, newSurvey.Id);
 
             return RedirectToAction("Edit", new { id = newSurvey.Id });
         }

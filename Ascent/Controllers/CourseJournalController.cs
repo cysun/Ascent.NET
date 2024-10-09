@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -56,7 +57,7 @@ namespace Ascent.Controllers
             var courseJournal = _mapper.Map<CourseJournal>(input);
             courseJournal = _courseJournalService.AddOrUpdateCourseJournal(courseJournal);
             _logger.LogInformation("{user} added/updated course journal {journal} for {course}",
-                User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
+                User.GetName(), courseJournal.Id, courseJournal.CourseId);
 
             return RedirectToAction("View", new { id = courseJournal.Id });
         }
@@ -83,7 +84,7 @@ namespace Ascent.Controllers
 
             _mapper.Map(input, courseJournal);
             _courseJournalService.SaveChanges();
-            _logger.LogInformation("{user} edited course journal {courseJournal}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited course journal {courseJournal}", User.GetName(), id);
 
             return RedirectToAction("View", new { id });
         }
@@ -95,7 +96,7 @@ namespace Ascent.Controllers
 
             _courseJournalService.DeleteCourseJournal(courseJournal);
             _logger.LogInformation("{user} deleted course journal {journal} for {course}",
-                User.Identity.Name, courseJournal.Id, courseJournal.CourseId);
+                User.GetName(), courseJournal.Id, courseJournal.CourseId);
 
             return RedirectToAction("Index");
         }

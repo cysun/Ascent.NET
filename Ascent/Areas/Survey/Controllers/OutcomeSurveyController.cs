@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -74,7 +75,7 @@ namespace Ascent.Areas.Survey.Controllers
                 outcomeSurvey.QuestionIds[i] = questions[i].Id;
 
             _surveyService.AddOutcomeSurvey(outcomeSurvey);
-            _logger.LogInformation("{user} created outcome survey {survey}", User.Identity.Name, outcomeSurvey.Id);
+            _logger.LogInformation("{user} created outcome survey {survey}", User.GetName(), outcomeSurvey.Id);
 
             return RedirectToAction("View", new { id = outcomeSurvey.Id });
         }
@@ -135,7 +136,7 @@ namespace Ascent.Areas.Survey.Controllers
 
             outcomeSurvey.DataImportTime = DateTime.UtcNow;
             _surveyDataService.SaveChanges();
-            _logger.LogInformation("{user} imported data from outcome survey {survey}", User.Identity.Name, outcomeSurvey.Id);
+            _logger.LogInformation("{user} imported data from outcome survey {survey}", User.GetName(), outcomeSurvey.Id);
 
             return RedirectToAction("Index");
         }

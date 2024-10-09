@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -44,7 +45,7 @@ namespace Ascent.Areas.Canvas.Controllers
 
             var assignmentTemplate = _mapper.Map<AssignmentTemplate>(input);
             _assignmentTemplateService.AddAssignmentTemplate(assignmentTemplate);
-            _logger.LogInformation("{user} added assignment template {assignmentTemplate}", User.Identity.Name, assignmentTemplate.Id);
+            _logger.LogInformation("{user} added assignment template {assignmentTemplate}", User.GetName(), assignmentTemplate.Id);
 
             return RedirectToAction("View", "CourseTemplate", new { id = assignmentTemplate.CourseTemplateId });
         }
@@ -72,7 +73,7 @@ namespace Ascent.Areas.Canvas.Controllers
 
             _mapper.Map(input, assignmentTemplate);
             _assignmentTemplateService.SaveChanges();
-            _logger.LogInformation("{user} edited assignment template {assignmentTemplate}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited assignment template {assignmentTemplate}", User.GetName(), id);
 
             return RedirectToAction("View", "CourseTemplate", new { id = assignmentTemplate.CourseTemplateId });
         }
@@ -83,7 +84,7 @@ namespace Ascent.Areas.Canvas.Controllers
             if (assignmentTemplate == null) return NotFound();
 
             _assignmentTemplateService.DeleteAssignmentTemplate(assignmentTemplate);
-            _logger.LogInformation("{user} deleted assignment template {assignmentTemplate}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted assignment template {assignmentTemplate}", User.GetName(), id);
             return RedirectToAction("View", "CourseTemplate", new { id = assignmentTemplate.CourseTemplateId });
         }
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -71,7 +72,7 @@ namespace Ascent.Areas.Rubric.Controllers
 
             _rubricService.AddCriterionToRubric(rubricId, criterion);
             _logger.LogInformation("{user} added criterion {criterion} to rubric {rubric}",
-                User.Identity.Name, criterion.Id, rubricId);
+                User.GetName(), criterion.Id, rubricId);
 
             return RedirectToAction("Edit", new { id = criterion.Id });
         }
@@ -99,7 +100,7 @@ namespace Ascent.Areas.Rubric.Controllers
 
             _mapper.Map(input, criterion);
             _rubricService.SaveChanges();
-            _logger.LogInformation("{user} edited criterion {criterion}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited criterion {criterion}", User.GetName(), id);
 
             return RedirectToAction("Index", "Criterion", new { rubricId = criterion.RubricId });
         }

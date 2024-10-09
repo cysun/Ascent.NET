@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -55,7 +56,7 @@ namespace Ascent.Areas.Program.Controllers
             var module = _mapper.Map<ProgramModule>(input);
             _programService.AddModuleToProgram(programId, module);
             _logger.LogInformation("{user} added module {module} to {program}",
-                User.Identity.Name, module.Id, programId);
+                User.GetName(), module.Id, programId);
 
             return RedirectToAction("View", "Program", new { id = programId });
         }
@@ -82,7 +83,7 @@ namespace Ascent.Areas.Program.Controllers
 
             _mapper.Map(input, module);
             _programService.SaveChanges();
-            _logger.LogInformation("{user} edited module {module}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited module {module}", User.GetName(), id);
 
             return RedirectToAction("View", "Program", new { id = module.ProgramId });
         }
@@ -93,7 +94,7 @@ namespace Ascent.Areas.Program.Controllers
             if (module == null) return NotFound();
 
             _programService.MoveUpModule(module);
-            _logger.LogInformation("{user} moved up module {module}", User.Identity.Name, id);
+            _logger.LogInformation("{user} moved up module {module}", User.GetName(), id);
 
             return RedirectToAction("Edit", "Program", new { id = module.ProgramId }, $"m-id-{module.Id}");
         }
@@ -104,7 +105,7 @@ namespace Ascent.Areas.Program.Controllers
             if (module == null) return NotFound();
 
             _programService.MoveDownModule(module);
-            _logger.LogInformation("{user} moved down module {module}", User.Identity.Name, id);
+            _logger.LogInformation("{user} moved down module {module}", User.GetName(), id);
 
             return RedirectToAction("Edit", "Program", new { id = module.ProgramId }, $"m-id-{module.Id}");
         }
@@ -115,7 +116,7 @@ namespace Ascent.Areas.Program.Controllers
             if (module == null) return NotFound();
 
             _programService.DeleteModule(module);
-            _logger.LogInformation("{user} deleted module {module}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted module {module}", User.GetName(), id);
 
             return RedirectToAction("View", "Program", new { id = module.ProgramId });
         }

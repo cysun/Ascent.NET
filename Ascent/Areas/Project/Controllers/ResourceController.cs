@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -76,7 +77,7 @@ namespace Ascent.Areas.Project.Controllers
             }
 
             _projectService.AddProjectResource(resource);
-            _logger.LogInformation("{user} added resource {resource} to project {project}", User.Identity.Name,
+            _logger.LogInformation("{user} added resource {resource} to project {project}", User.GetName(),
                 resource.Id, resource.ProjectId);
 
             return RedirectToAction("Index", new { projectId = resource.ProjectId });
@@ -107,7 +108,7 @@ namespace Ascent.Areas.Project.Controllers
                 return Forbid();
 
             _projectService.RemoveProjectResource(resource);
-            _logger.LogInformation("{user} removed resource {resource} from project {project}", User.Identity.Name,
+            _logger.LogInformation("{user} removed resource {resource} from project {project}", User.GetName(),
                 resource.Id, resource.ProjectId);
 
             return RedirectToAction("Index", new { projectId = resource.ProjectId });
@@ -132,7 +133,7 @@ namespace Ascent.Areas.Project.Controllers
             }
 
             _projectService.SaveChanges();
-            _logger.LogInformation("{user} edited resource {resource} of project {project}", User.Identity.Name,
+            _logger.LogInformation("{user} edited resource {resource} of project {project}", User.GetName(),
                 resource.Id, resource.ProjectId);
 
             return RedirectToAction("Index", new { projectId = resource.ProjectId });

@@ -1,3 +1,4 @@
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -39,7 +40,7 @@ namespace Ascent.Areas.Program.Controllers
             }
 
             _programService.AddResourceToModule(moduleId, resource);
-            _logger.LogInformation("{user} added resource {resource} to module {module}", User.Identity.Name, resource.Id, moduleId);
+            _logger.LogInformation("{user} added resource {resource} to module {module}", User.GetName(), resource.Id, moduleId);
 
             return RedirectToAction("Edit", "Module", new { id = moduleId });
         }
@@ -50,7 +51,7 @@ namespace Ascent.Areas.Program.Controllers
             if (resource == null) return NotFound();
 
             _programService.MoveUpResource(resource);
-            _logger.LogInformation("{user} moved up resource {resource}", User.Identity.Name, id);
+            _logger.LogInformation("{user} moved up resource {resource}", User.GetName(), id);
 
             return RedirectToAction("Edit", "Module", new { id = resource.ModuleId });
         }
@@ -61,7 +62,7 @@ namespace Ascent.Areas.Program.Controllers
             if (resource == null) return NotFound();
 
             _programService.MoveDownResource(resource);
-            _logger.LogInformation("{user} moved down resource {resource}", User.Identity.Name, id);
+            _logger.LogInformation("{user} moved down resource {resource}", User.GetName(), id);
 
             return RedirectToAction("Edit", "Module", new { id = resource.ModuleId });
         }
@@ -72,7 +73,7 @@ namespace Ascent.Areas.Program.Controllers
             if (resource == null) return NotFound();
 
             _programService.DeleteResource(resource);
-            _logger.LogInformation("{user} deleted resource {resource}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted resource {resource}", User.GetName(), id);
 
             return RedirectToAction("Edit", "Module", new { id = resource.ModuleId });
         }

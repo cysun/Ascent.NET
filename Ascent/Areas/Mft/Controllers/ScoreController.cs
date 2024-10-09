@@ -79,7 +79,7 @@ namespace Ascent.Areas.Mft.Controllers
                 stat.InstitutionPercentile = distribution.GetPercentile(stat.Mean);
 
             _mftService.SaveChanges();
-            _logger.LogInformation("{user} updated percentiles for {year} scores", User.Identity.Name, year);
+            _logger.LogInformation("{user} updated percentiles for {year} scores", User.GetName(), year);
 
             return RedirectToAction("Index", new { year });
         }
@@ -152,7 +152,7 @@ namespace Ascent.Areas.Mft.Controllers
             scoreStat.Median = (int)Math.Ceiling(median);
 
             _mftService.SaveChanges();
-            _logger.LogInformation("{user} updated score stat for {year}", User.Identity.Name, year);
+            _logger.LogInformation("{user} updated score stat for {year}", User.GetName(), year);
         }
     }
 }

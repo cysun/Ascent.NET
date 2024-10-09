@@ -1,3 +1,4 @@
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -35,7 +36,7 @@ namespace Ascent.Areas.Canvas.Controllers
                 CourseId = courseId
             };
             _courseTemplateService.AddCourseTemplate(courseTemplate);
-            _logger.LogInformation("{user} added course template {courseTemplate}", User.Identity.Name, courseTemplate.Id);
+            _logger.LogInformation("{user} added course template {courseTemplate}", User.GetName(), courseTemplate.Id);
 
             return RedirectToAction("View", new { id = courseTemplate.Id });
         }
@@ -49,7 +50,7 @@ namespace Ascent.Areas.Canvas.Controllers
         public IActionResult Delete(int id)
         {
             _courseTemplateService.DeleteCourseTemplate(id);
-            _logger.LogInformation("{user} deleted course template {courseTemplate}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted course template {courseTemplate}", User.GetName(), id);
             return RedirectToAction("Index");
         }
     }

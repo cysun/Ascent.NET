@@ -59,7 +59,7 @@ namespace Ascent.Areas.Import.Controllers
                 InstructorId = instructorId
             };
             _sectionService.AddSection(section);
-            _logger.LogInformation("{user} created section {section} for grade import", User.Identity.Name, section.Id);
+            _logger.LogInformation("{user} created section {section} for grade import", User.GetName(), section.Id);
 
             var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
             while (excelReader.Next())

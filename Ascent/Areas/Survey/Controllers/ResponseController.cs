@@ -101,7 +101,7 @@ namespace Ascent.Areas.Survey.Controllers
             var surveyId = _surveyService.DeleteResponse(id);
             if (surveyId == null) return NotFound();
 
-            _logger.LogInformation("{user} deleted response {response}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted response {response}", User.GetName(), id);
 
             return RedirectToAction("Summary", new { surveyId });
         }

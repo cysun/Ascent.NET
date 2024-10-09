@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -53,7 +54,7 @@ namespace Ascent.Controllers
 
             var group = _mapper.Map<Group>(input);
             _groupService.AddGroup(group);
-            _logger.LogInformation("{user} added group {group}", User.Identity.Name, group.Name);
+            _logger.LogInformation("{user} added group {group}", User.GetName(), group.Name);
 
             return RedirectToAction("View", new { id = group.Id });
         }
@@ -84,7 +85,7 @@ namespace Ascent.Controllers
 
             _mapper.Map(input, group);
             _groupService.SaveChanges();
-            _logger.LogInformation("{user} edited group {group}", User.Identity.Name, group.Name);
+            _logger.LogInformation("{user} edited group {group}", User.GetName(), group.Name);
 
             return RedirectToAction("View", new { id = group.Id });
         }
@@ -93,7 +94,7 @@ namespace Ascent.Controllers
         public IActionResult AddMember(int id, int personId)
         {
             _groupService.AddMemberToGroup(id, personId);
-            _logger.LogInformation("{user} added person {person} to group {group}", User.Identity.Name, personId, id);
+            _logger.LogInformation("{user} added person {person} to group {group}", User.GetName(), personId, id);
 
             return RedirectToAction("Edit", new { id });
         }
@@ -102,7 +103,7 @@ namespace Ascent.Controllers
         public IActionResult RemoveMember(int id, int personId)
         {
             _groupService.RemoveMemberFromGroup(id, personId);
-            _logger.LogInformation("{user} removed person {person} from group {group}", User.Identity.Name, personId, id);
+            _logger.LogInformation("{user} removed person {person} from group {group}", User.GetName(), personId, id);
 
             return RedirectToAction("Edit", new { id });
         }
@@ -116,7 +117,7 @@ namespace Ascent.Controllers
             if (!group.IsVirtual)
             {
                 _groupService.DeleteGroup(group);
-                _logger.LogInformation("{user} deleted group {group}", User.Identity.Name, group.Name);
+                _logger.LogInformation("{user} deleted group {group}", User.GetName(), group.Name);
             }
 
             return RedirectToAction("Index");

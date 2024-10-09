@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -55,7 +56,7 @@ namespace Ascent.Controllers
 
             var person = _mapper.Map<Person>(input);
             _personService.AddPerson(person);
-            _logger.LogInformation("{user} added person {person}", User.Identity.Name, person.Id);
+            _logger.LogInformation("{user} added person {person}", User.GetName(), person.Id);
 
             return RedirectToAction("View", new { id = person.Id });
         }
@@ -83,7 +84,7 @@ namespace Ascent.Controllers
 
             _mapper.Map(input, person);
             _personService.SaveChanges();
-            _logger.LogInformation("{user} edited person {person}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited person {person}", User.GetName(), id);
 
             return RedirectToAction("View", new { id });
         }
@@ -96,7 +97,7 @@ namespace Ascent.Controllers
 
             person.IsDeleted = true;
             _personService.SaveChanges();
-            _logger.LogInformation("{user} deleted person {person}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted person {person}", User.GetName(), id);
 
             return RedirectToAction("Index");
         }

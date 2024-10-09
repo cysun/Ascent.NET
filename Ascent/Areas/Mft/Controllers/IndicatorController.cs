@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -59,14 +60,14 @@ namespace Ascent.Areas.Mft.Controllers
             {
                 indicator = _mapper.Map<MftIndicator>(input);
                 _mftService.AddIndicator(indicator);
-                _logger.LogInformation("{user} added indicators for year {year}", User.Identity.Name, input.Year);
+                _logger.LogInformation("{user} added indicators for year {year}", User.GetName(), input.Year);
             }
             else
             {
                 _mapper.Map(input, indicator);
                 indicator.Percentiles = new int?[] { null, null, null };
                 _mftService.SaveChanges();
-                _logger.LogInformation("{user} updated indicators for year {year}", User.Identity.Name, input.Year);
+                _logger.LogInformation("{user} updated indicators for year {year}", User.GetName(), input.Year);
             }
 
             return RedirectToAction("Index");
@@ -84,7 +85,7 @@ namespace Ascent.Areas.Mft.Controllers
                 UpdatePercentiles(indicator, distributionYears);
 
             _mftService.SaveChanges();
-            _logger.LogInformation("{user} updated percentiles for indicators", User.Identity.Name);
+            _logger.LogInformation("{user} updated percentiles for indicators", User.GetName());
 
             return RedirectToAction("Index");
         }

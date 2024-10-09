@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -70,7 +71,7 @@ namespace Ascent.Areas.Project.Controllers
 
             var project = _mapper.Map<Models.Project>(input);
             _projectService.AddProject(project);
-            _logger.LogInformation("{user} created project {project}", User.Identity.Name, project.Id);
+            _logger.LogInformation("{user} created project {project}", User.GetName(), project.Id);
 
             return RedirectToAction("Members", new { id = project.Id });
         }
@@ -104,7 +105,7 @@ namespace Ascent.Areas.Project.Controllers
 
             _mapper.Map(input, project);
             _projectService.SaveChanges();
-            _logger.LogInformation("{user} edited project {project}", User.Identity.Name, id);
+            _logger.LogInformation("{user} edited project {project}", User.GetName(), id);
 
             return RedirectToAction("View", new { id });
         }
@@ -117,7 +118,7 @@ namespace Ascent.Areas.Project.Controllers
 
             project.IsDeleted = true;
             _projectService.SaveChanges();
-            _logger.LogInformation("{user} deleted project {project}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted project {project}", User.GetName(), id);
 
             return RedirectToAction("Index", new { year = project.AcademicYear });
         }
@@ -156,7 +157,7 @@ namespace Ascent.Areas.Project.Controllers
         public IActionResult AddMember(int id, int personId, string memberType)
         {
             _projectService.AddProjectMember(id, personId, memberType);
-            _logger.LogInformation("{user} added member {member} to project {project}", User.Identity.Name, personId, id);
+            _logger.LogInformation("{user} added member {member} to project {project}", User.GetName(), personId, id);
 
             return RedirectToAction("Members", new { id });
         }
@@ -165,7 +166,7 @@ namespace Ascent.Areas.Project.Controllers
         public IActionResult RemoveMember(int id, int personId, string memberType)
         {
             _projectService.RemoveProjectMember(id, personId, memberType);
-            _logger.LogInformation("{user} removed member {member} from project {project}", User.Identity.Name, personId, id);
+            _logger.LogInformation("{user} removed member {member} from project {project}", User.GetName(), personId, id);
 
             return RedirectToAction("Members", new { id });
         }

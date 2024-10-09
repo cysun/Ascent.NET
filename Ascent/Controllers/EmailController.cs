@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Services;
 using AutoMapper;
@@ -67,7 +68,7 @@ namespace Ascent.Controllers
             message.TimeSent = DateTime.UtcNow;
 
             _messageService.AddMessage(message);
-            _logger.LogInformation("{user} sent email to group {group}", User.Identity.Name, group.Name);
+            _logger.LogInformation("{user} sent email to group {group}", User.GetName(), group.Name);
 
             return RedirectToAction("View", "Group", new { id = group.Id });
         }

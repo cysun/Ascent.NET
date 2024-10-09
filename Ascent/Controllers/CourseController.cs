@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
@@ -68,7 +69,7 @@ namespace Ascent.Controllers
             }
 
             _courseService.AddCourse(course);
-            _logger.LogInformation("{user} added course {course}", User.Identity.Name, course.Code);
+            _logger.LogInformation("{user} added course {course}", User.GetName(), course.Code);
 
             return RedirectToAction("View", new { id = course.Id });
         }
@@ -103,7 +104,7 @@ namespace Ascent.Controllers
             }
 
             _courseService.SaveChanges();
-            _logger.LogInformation("{user} edited course {course}", User.Identity.Name, course.Code);
+            _logger.LogInformation("{user} edited course {course}", User.GetName(), course.Code);
 
             return RedirectToAction("View", new { id });
         }
@@ -116,7 +117,7 @@ namespace Ascent.Controllers
 
             course.IsObsolete = true;
             _courseService.SaveChanges();
-            _logger.LogInformation("{user} deleted course {course}", User.Identity.Name, id);
+            _logger.LogInformation("{user} deleted course {course}", User.GetName(), id);
 
             return RedirectToAction("Index");
         }
@@ -134,7 +135,7 @@ namespace Ascent.Controllers
         public IActionResult AddCoordinator(int id, int personId)
         {
             _courseService.AddCoordinator(id, personId);
-            _logger.LogInformation("{user} added coordinator {coordinator} to course {course}", User.Identity.Name, personId, id);
+            _logger.LogInformation("{user} added coordinator {coordinator} to course {course}", User.GetName(), personId, id);
 
             return RedirectToAction("Coordinators", new { id });
         }
@@ -143,7 +144,7 @@ namespace Ascent.Controllers
         public IActionResult RemoveCoordinator(int id, int personId)
         {
             _courseService.RemoveCoordinator(id, personId);
-            _logger.LogInformation("{user} removed coordinator {coordinator} from course {course}", User.Identity.Name, personId, id);
+            _logger.LogInformation("{user} removed coordinator {coordinator} from course {course}", User.GetName(), personId, id);
 
             return RedirectToAction("Coordinators", new { id });
         }
