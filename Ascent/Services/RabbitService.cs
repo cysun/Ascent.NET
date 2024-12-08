@@ -18,7 +18,14 @@ public class RabbitService : IDisposable
     private readonly RabbitMQSettings _settings;
 
     private readonly ConnectionFactory _factory;
-    private readonly IConnection _connection;
+
+    // Since RabbitMQ .NET Client 7, all operations are async, including connection creation.
+    // Because we want to use one connection for the lifetime of the service for performance reasons,
+    // and because constructors cannot be async, we follow the example at
+    // https://stackoverflow.com/questions/43240405/async-iserviceprovider-in-net-core-di and use
+    // a Lazy<Task<IConnection>>. As explained by https://learn.microsoft.com/en-us/dotnet/api/system.lazy-1?view=net-8.0,
+    // Lazy<T> allows us to defer the creation of the connection until it is first used, and it is thread-safe.
+    private readonly Lazy<Task<IConnection>> _connection;
 
     private readonly ILogger<RabbitService> _logger;
 
@@ -33,16 +40,21 @@ public class RabbitService : IDisposable
             UserName = _settings.UserName,
             Password = _settings.Password
         };
-        _connection = _factory.CreateConnection();
-        _logger.LogInformation("Connected to RabbitMQ server at {host}", _settings.HostName);
+        _connection = new Lazy<Task<IConnection>>(async () =>
+        {
+            var connection = await _factory.CreateConnectionAsync();
+            _logger.LogInformation("Connected to RabbitMQ server at {host}", _settings.HostName);
+            return connection;
+        });
     }
 
-    public void Send(MimeMessage message) => Send(new List<MimeMessage> { message });
+    public async Task SendAsync(MimeMessage message) => await SendAsync(new List<MimeMessage> { message });
 
-    public void Send(List<MimeMessage> messages)
+    public async Task SendAsync(List<MimeMessage> messages)
     {
-        using var channel = _connection.CreateModel();
-        channel.QueueDeclare(
+        var connection = await _connection.Value;
+        using var channel = await connection.CreateChannelAsync();
+        await channel.QueueDeclareAsync(
             queue: _settings.QueueName,
             durable: true,
             exclusive: false,
@@ -61,14 +73,17 @@ public class RabbitService : IDisposable
         }).ToList();
         var body = MessagePackSerializer.Serialize(messagesInBytes);
 
-        channel.BasicPublish(
+        await channel.BasicPublishAsync(
             exchange: string.Empty,
             routingKey: _settings.QueueName,
-            basicProperties: null,
             body: body
         );
         _logger.LogInformation("Publish {n} message to RabbitMQ queue {queue}", messages.Count, _settings.QueueName);
     }
 
-    public void Dispose() => _connection.Dispose();
+    public void Dispose()
+    {
+        if (_connection.IsValueCreated)
+            _connection.Value.Result.Dispose();
+    }
 }

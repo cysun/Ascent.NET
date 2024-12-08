@@ -8,25 +8,27 @@
     </ol>
 </nav>
 
-<form id="yearForm" method="get" class="d-inline-flex">
-    <select name="termCode" class="form-select">
-        @foreach (var term in ViewBag.Terms)
-        {
-            if (term.Code == ViewBag.SelectedTerm?.Code)
+<div class="d-inline-flex mb-2">
+    <form id="yearForm" method="get" class="d-inline-flex">
+        <select name="termCode" class="form-select">
+            @foreach (var term in ViewBag.Terms)
             {
-                <option value="@term.Code" selected>@term.Name</option>
+                if (term.Code == ViewBag.SelectedTerm?.Code)
+                {
+                    <option value="@term.Code" selected>@term.Name</option>
+                }
+                else
+                {
+                    <option value="@term.Code">@term.Name</option>
+                }
             }
-            else
-            {
-                <option value="@term.Code">@term.Name</option>
-            }
-        }
-    </select>
-</form>
-<form asp-action="Search" method="get" class="d-inline-flex ms-3">
-    <input id="search" name="searchText" class="form-control me-2" required>
-    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
-</form>
+        </select>
+    </form>
+    <form asp-action="Search" method="get" class="d-inline-flex ms-3">
+        <input id="search" name="searchText" class="form-control me-2" required>
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
 
 @if (Model != null)
 {

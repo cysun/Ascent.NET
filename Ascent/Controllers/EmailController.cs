@@ -42,7 +42,7 @@ namespace Ascent.Controllers
         }
 
         [HttpPost]
-        public IActionResult Group(int groupId, MessageInputModel input)
+        public async Task<IActionResult> GroupAsync(int groupId, MessageInputModel input)
         {
             if (!ModelState.IsValid) return View(input);
 
@@ -64,7 +64,7 @@ namespace Ascent.Controllers
             var recipients = _groupService.GetMembers(group)
                 .Where(p => !string.IsNullOrWhiteSpace(p.GetPreferredEmail(group.EmailPreference)))
                 .Select(p => (Name: p.FullName, Email: p.GetPreferredEmail(group.EmailPreference))).ToList();
-            _emailSender.Send(message, recipients, $"{senderFirstName} {senderLastName}");
+            await _emailSender.SendAsync(message, recipients, $"{senderFirstName} {senderLastName}");
             message.TimeSent = DateTime.UtcNow;
 
             _messageService.AddMessage(message);

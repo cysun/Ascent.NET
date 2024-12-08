@@ -17,25 +17,27 @@
     </ol>
 </nav>
 
-<form id="yearForm" method="get" class="d-inline-flex mb-2">
-    <select name="year" class="form-select">
-        @foreach (var year in ViewBag.AcademicYears)
-        {
-            if (year == ViewBag.AcademicYear)
+<div class="d-inline-flex mb-2">
+    <form id="yearForm" method="get" class="d-inline-flex">
+        <select name="year" class="form-select">
+            @foreach (var year in ViewBag.AcademicYears)
             {
-                <option selected>@year</option>
+                if (year == ViewBag.AcademicYear)
+                {
+                    <option selected>@year</option>
+                }
+                else
+                {
+                    <option>@year</option>
+                }
             }
-            else
-            {
-                <option>@year</option>
-            }
-        }
-    </select>
-</form>
-<form asp-action="Search" method="get" class="d-inline-flex ms-3">
-    <input id="search" name="searchText" class="form-control me-2" required>
-    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
-</form>
+        </select>
+    </form>
+    <form asp-action="Search" method="get" class="d-inline-flex ms-3">
+        <input id="search" name="searchText" class="form-control me-2" required>
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
 
 <div class="row row-cols-1 row-cols-lg-2 g-4">
     @foreach (var project in Model)

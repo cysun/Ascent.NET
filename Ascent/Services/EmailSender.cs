@@ -16,16 +16,13 @@ public class EmailSender
     private readonly EmailSettings _settings;
     private readonly RabbitService _rabbitService;
 
-    private ILogger<EmailSender> _logger;
-
-    public EmailSender(IOptions<EmailSettings> settings, RabbitService rabbitService, ILogger<EmailSender> logger)
+    public EmailSender(IOptions<EmailSettings> settings, RabbitService rabbitService)
     {
         _settings = settings.Value;
         _rabbitService = rabbitService;
-        _logger = logger;
     }
 
-    public void Send(Message message, List<(string Name, string Email)> recipients, string senderName = null)
+    public async Task SendAsync(Message message, List<(string Name, string Email)> recipients, string senderName = null)
     {
         List<MimeMessage> messages = new List<MimeMessage>();
 
@@ -52,9 +49,8 @@ public class EmailSender
             }
         }
 
-        Send(messages);
+        await SendAsync(messages);
     }
 
-    public void Send(List<MimeMessage> messages) => _rabbitService.Send(messages);
-
+    public async Task SendAsync(List<MimeMessage> messages) => await _rabbitService.SendAsync(messages);
 }
