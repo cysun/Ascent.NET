@@ -61,15 +61,15 @@ namespace Ascent.Areas.Import.Controllers
             _sectionService.AddSection(section);
             _logger.LogInformation("{user} created section {section} for grade import", User.GetName(), section.Id);
 
-            var excelReader = new ExcelReader(uploadedFile.OpenReadStream());
-            while (excelReader.Next())
+            var tableReader = new HtmlTableReader(uploadedFile.OpenReadStream());
+            while (tableReader.Next())
             {
-                var person = GetOrCreatePerson(excelReader);
+                var person = GetOrCreatePerson(tableReader);
                 var enrollment = new Enrollment()
                 {
                     SectionId = section.Id,
                     StudentId = person.Id,
-                    GradeSymbol = excelReader.Get("Official Grade")
+                    GradeSymbol = tableReader.Get("Official Grade")
                 };
                 _enrollmentService.AddEnrollment(enrollment);
             }
@@ -77,13 +77,13 @@ namespace Ascent.Areas.Import.Controllers
             return RedirectToAction("View", "Section", new { Area = "", id = section.Id });
         }
 
-        private Person GetOrCreatePerson(ExcelReader excelReader)
+        private Person GetOrCreatePerson(ITableReader tableReader)
         {
-            var cin = excelReader.Get("ID");
+            var cin = tableReader.Get("ID");
             var person = _personService.GetPersonByCampusId(cin);
             if (person == null)
             {
-                var tokens = excelReader.Get("Name").Split(',', StringSplitOptions.TrimEntries);
+                var tokens = tableReader.Get("Name").Split(',', StringSplitOptions.TrimEntries);
                 var midIndex = tokens[1].IndexOf(' ');
                 person = new Person
                 {
