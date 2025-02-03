@@ -41,13 +41,15 @@
     </div>
 </form>
 
-@section Scripts{
-    <script src="https://cdn.tiny.cloud/1/4jeuqf3mhgytuk82mowljcxt0pbcbem4ivn5xorph63kjcfg/tinymce/6/tinymce.min.js"
-            referrerpolicy="origin"></script>
-    <script src="~/js/tinymce-options.js"></script>
+@section StyleSheets {
+    <link rel="stylesheet" href="~/lib/summernote/summernote-bs5.min.css" />
+}
+@section Scripts {
+    <script src="~/lib/summernote/summernote-bs5.min.js"></script>
+    <script src="~/js/summernote-options.js"></script>
     <script>
         $(function () {
-            tinymce.init(tinymceOptions.standard("textarea#Description"));
+            $("#Description").summernote(summernoteOptions.minimal(350));
         });
     </script>
 }
