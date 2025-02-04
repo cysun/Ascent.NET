@@ -64,8 +64,7 @@
       "library": "bootswatch@5.3.3",
       "destination": "wwwroot/lib/bootswatch/",
       "files": [
-        "cerulean/bootstrap.min.css",
-        "darkly/bootstrap.min.css"
+        "cerulean/bootstrap.min.css"
       ]
     }
   ]

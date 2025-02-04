@@ -144,33 +144,23 @@
         }
         function updateTheme() {
           var theme = Cookies.get("theme");
-          if (theme == "dark") setDarkTheme();
-          else if (theme == "light") setLightTheme();
-          else {
-            if (window.matchMedia("(prefers-color-scheme: light)").matches)
-              setLightTheme();
-            else setDarkTheme();
-          }
+          if( theme != "light" && theme != "dark")
+            theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          theme == "dark" ? setDarkTheme() : setLightTheme();
         }
         function setDarkTheme() {
-          $("#themeCSS").attr(
-            "href",
-            "/lib/bootswatch/darkly/bootstrap.min.css"
-          );
-          $("nav.navbar").removeClass("bg-primary").addClass("bg-dark");
+          $("body").attr("data-bs-theme", "dark");
+          $("#themeCSS").attr("href", "/lib/bootstrap/css/bootstrap.min.css");
+          $("nav.navbar").removeClass("navbar-dark bg-primary").addClass("bg-body-tertiary");
         }
         function setLightTheme() {
-          $("#themeCSS").attr(
-            "href",
-            "/lib/bootswatch/cerulean/bootstrap.min.css"
-          );
-          $("nav.navbar").removeClass("bg-dark").addClass("bg-primary");
+          $("body").attr("data-bs-theme", "light");
+          $("#themeCSS").attr("href", "/lib/bootswatch/cerulean/bootstrap.min.css");
+          $("nav.navbar").removeClass("bg-body-tertiary").addClass("navbar-dark bg-primary");
         }
         $(function () {
           // Code from https://github.com/shaack/bootstrap-auto-dark-mode/blob/main/src/bootstrap-auto-dark-mode.js
-          window
-            .matchMedia("(prefers-color-scheme: light)")
-            .addEventListener("change", updateTheme);
+          window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", updateTheme);
           updateTheme();
         });
     </script>
