@@ -164,7 +164,12 @@ namespace Ascent.Areas.Survey.Controllers
                     var answer = response.Answers[i];
                     answer.Question = questions[i];
                     if (answer.Question.Type != QuestionType.Section)
-                        row.CreateCell(answerIndex++).SetCellValue(answer.GetAnswerAsText());
+                    {
+                        var answerText = Utils.StripHtmlTags(answer.GetAnswerAsText());
+                        if (answerText.Length > 32767) // Excel cell limit
+                            answerText = answerText.Substring(0, 32750) + "...[Truncated!]";
+                        row.CreateCell(answerIndex++).SetCellValue(answerText);
+                    }
                 }
             }
 
