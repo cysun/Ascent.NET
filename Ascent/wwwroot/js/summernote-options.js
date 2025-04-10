@@ -10,7 +10,7 @@ summernoteOptions.standard = (height) => ({
         ['para', ['ul', 'ol', 'paragraph']],
         ['table', ['table']],
         ['insert', ['link', 'picture', 'video', 'hr']],
-        ['view', ['fullscreen']]
+        ['view', ['codeview', 'fullscreen']]
     ]
 });
 
