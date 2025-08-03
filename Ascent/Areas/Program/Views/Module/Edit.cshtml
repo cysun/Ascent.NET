@@ -1,6 +1,7 @@
-@model ProgramModule
+@model ProgramModuleInputModel
 @{
     ViewData["Title"] = "Edit Program Module";
+    ProgramModule module = ViewBag.Module;
 }
 <nav>
     <ol class="breadcrumb">
@@ -10,7 +11,7 @@
         </li>
         <li class="breadcrumb-item active me-auto">Edit Module</li>
         <li>
-            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Module" data-id="@Model.Id">
+            <button id="delete" class="btn btn-outline-danger btn-sm" title="Delete Module" data-id="@module.Id">
                 <i class="bi bi-trash-fill"></i>
             </button>
         </li>
@@ -94,7 +95,7 @@
                 },
                 onSelectItem: ({ label, value }) => {
                     var resourceType = $("#resourceType").val();
-                    window.location.href = `../../resource/add?moduleId=@(Model.Id)&contentId=${value}&type=${resourceType}`;
+                    window.location.href = `../../resource/add?moduleId=@(module.Id)&contentId=${value}&type=${resourceType}`;
                 }
             });
             $("#resourceType").change(function () {
