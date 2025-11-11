@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +14,11 @@ namespace Ascent.Controllers
 
         private readonly IAuthorizationService _authorizationService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<FileController> _logger;
 
         public FileController(FileService fileService, IAuthorizationService authorizationService,
-            IMapper mapper, ILogger<FileController> logger)
+            AppMapper mapper, ILogger<FileController> logger)
         {
             _fileService = fileService;
             _authorizationService = authorizationService;
@@ -49,7 +48,7 @@ namespace Ascent.Controllers
             ViewBag.File = file;
             ViewBag.Ancestors = _fileService.GetAncestors(file);
 
-            return View(_mapper.Map<FileInputModel>(file));
+            return View(_mapper.Map(file));
         }
 
         [HttpPost]

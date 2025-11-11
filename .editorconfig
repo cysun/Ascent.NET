@@ -20,6 +20,12 @@ indent_size = 2
 indent_size = 4
 insert_final_newline = true
 
+##############################
+# Suppress Mapperly warnings #
+##############################
+dotnet_diagnostic.RMG012.severity = none
+dotnet_diagnostic.RMG020.severity = none
+
 ###############################
 # .NET Coding Conventions     #
 ###############################

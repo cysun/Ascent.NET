@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +13,10 @@ namespace Ascent.Areas.Rubric.Controllers
     {
         private readonly RubricService _rubricService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<RubricController> _logger;
 
-        public RubricController(RubricService rubricService, IMapper mapper, ILogger<RubricController> logger)
+        public RubricController(RubricService rubricService, AppMapper mapper, ILogger<RubricController> logger)
         {
             _rubricService = rubricService;
             _mapper = mapper;
@@ -54,7 +53,7 @@ namespace Ascent.Areas.Rubric.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var rubric = _mapper.Map<Models.Rubric>(input);
+            var rubric = _mapper.Map(input);
             _rubricService.AddRubric(rubric);
             _logger.LogInformation("{user} created rubric {rubric}", User.GetName(), rubric.Id);
 
@@ -69,7 +68,7 @@ namespace Ascent.Areas.Rubric.Controllers
             if (rubric == null) return NotFound();
 
             ViewBag.Rubric = rubric;
-            return View(_mapper.Map<RubricInputModel>(rubric));
+            return View(_mapper.Map(rubric));
         }
 
         [HttpPost]
@@ -85,7 +84,7 @@ namespace Ascent.Areas.Rubric.Controllers
             _rubricService.SaveChanges();
             _logger.LogInformation("{user} edited rubric {rubric}", User.GetName(), id);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("View", new { id });
         }
     }
 }

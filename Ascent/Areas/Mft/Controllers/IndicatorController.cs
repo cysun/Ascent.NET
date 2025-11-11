@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +13,10 @@ namespace Ascent.Areas.Mft.Controllers
     {
         private readonly MftService _mftService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<IndicatorController> _logger;
 
-        public IndicatorController(MftService mftService, IMapper mapper, ILogger<IndicatorController> logger)
+        public IndicatorController(MftService mftService, AppMapper mapper, ILogger<IndicatorController> logger)
         {
             _mftService = mftService;
             _mapper = mapper;
@@ -58,7 +57,7 @@ namespace Ascent.Areas.Mft.Controllers
             var indicator = _mftService.GetIndicator(input.Year);
             if (indicator == null)
             {
-                indicator = _mapper.Map<MftIndicator>(input);
+                indicator = _mapper.Map(input);
                 _mftService.AddIndicator(indicator);
                 _logger.LogInformation("{user} added indicators for year {year}", User.GetName(), input.Year);
             }

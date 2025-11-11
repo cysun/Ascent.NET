@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,10 +14,10 @@ namespace Ascent.Areas.Mft.Controllers
     {
         private readonly MftService _mftService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<DistributionController> _logger;
 
-        public DistributionController(MftService mftService, IMapper mapper, ILogger<DistributionController> logger)
+        public DistributionController(MftService mftService, AppMapper mapper, ILogger<DistributionController> logger)
         {
             _mftService = mftService;
             _mapper = mapper;
@@ -73,7 +72,7 @@ namespace Ascent.Areas.Mft.Controllers
             if (_mftService.GetDistribution(input.Year, input.TypeAlias) != null)
                 return BadRequest();
 
-            var distribution = _mapper.Map<MftDistribution>(input, opts => opts.Items["type"] = input.TypeAlias);
+            var distribution = _mapper.Map(input);
             _mftService.AddDistribution(distribution);
             _logger.LogInformation("{user} added mft distribution {distribution}", User.GetName(), distribution.Id);
 

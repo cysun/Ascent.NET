@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ascent.Controllers
@@ -14,11 +13,11 @@ namespace Ascent.Controllers
         private readonly GroupService _groupService;
         private readonly MessageService _messageService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<EmailController> _logger;
 
         public EmailController(EmailSender emailSender, GroupService groupService, MessageService messageService,
-            IMapper mapper, ILogger<EmailController> logger)
+            AppMapper mapper, ILogger<EmailController> logger)
         {
             _emailSender = emailSender;
             _groupService = groupService;
@@ -49,7 +48,7 @@ namespace Ascent.Controllers
             var group = _groupService.GetGroup(groupId);
             if (group == null) return NotFound();
 
-            var message = _mapper.Map<Message>(input);
+            var message = _mapper.Map(input);
             message.Recipient = group.Name;
             message.Author = new Author
             {

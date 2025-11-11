@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +16,11 @@ namespace Ascent.Areas.Survey.Controllers
         private readonly ProgramService _programService;
         private readonly SurveyDataService _surveyDataService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<OutcomeSurveyController> _logger;
 
         public OutcomeSurveyController(SurveyService surveyService, ProgramService programService, SurveyDataService surveyDataService,
-            IMapper mapper, ILogger<OutcomeSurveyController> logger)
+            AppMapper mapper, ILogger<OutcomeSurveyController> logger)
         {
             _surveyService = surveyService;
             _programService = programService;
@@ -65,7 +64,7 @@ namespace Ascent.Areas.Survey.Controllers
         [HttpPost]
         public IActionResult Add(OutcomeSurveyInputModel input)
         {
-            var outcomeSurvey = _mapper.Map<OutcomeSurvey>(input);
+            var outcomeSurvey = _mapper.Map(input);
 
             var program = _programService.GetProgram(input.ProgramId);
             outcomeSurvey.QuestionIds = new int[program.Outcomes.Count];

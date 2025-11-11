@@ -1,5 +1,4 @@
 using Ascent.Models;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ascent.Services;
@@ -8,9 +7,9 @@ public class CourseJournalService
 {
     private readonly AppDbContext _db;
 
-    private readonly IMapper _mapper;
+    private readonly AppMapper _mapper;
 
-    public CourseJournalService(AppDbContext db, IMapper mapper)
+    public CourseJournalService(AppDbContext db, AppMapper mapper)
     {
         _db = db;
         _mapper = mapper;

@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +15,11 @@ namespace Ascent.Controllers
         private readonly CourseService _courseService;
         private readonly FileService _fileService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<CourseController> _logger;
 
-        public CourseController(CourseService courseService, FileService fileService, IMapper mapper, ILogger<CourseController> logger)
+        public CourseController(CourseService courseService, FileService fileService, AppMapper mapper,
+            ILogger<CourseController> logger)
         {
             _courseService = courseService;
             _fileService = fileService;
@@ -60,7 +60,7 @@ namespace Ascent.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var course = _mapper.Map<Course>(input);
+            var course = _mapper.Map(input);
 
             if (uploadedFile != null)
             {
@@ -83,7 +83,7 @@ namespace Ascent.Controllers
 
             ViewBag.Course = course;
 
-            return View(_mapper.Map<CourseInputModel>(course));
+            return View(_mapper.Map(course));
         }
 
         [HttpPost]

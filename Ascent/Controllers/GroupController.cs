@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +12,10 @@ namespace Ascent.Controllers
     {
         private readonly GroupService _groupService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<GroupController> _logger;
 
-        public GroupController(GroupService groupService, IMapper mapper, ILogger<GroupController> logger)
+        public GroupController(GroupService groupService, AppMapper mapper, ILogger<GroupController> logger)
         {
             _groupService = groupService;
             _mapper = mapper;
@@ -52,7 +51,7 @@ namespace Ascent.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var group = _mapper.Map<Group>(input);
+            var group = _mapper.Map(input);
             _groupService.AddGroup(group);
             _logger.LogInformation("{user} added group {group}", User.GetName(), group.Name);
 
@@ -70,7 +69,7 @@ namespace Ascent.Controllers
             ViewBag.Group = group;
             ViewBag.Members = _groupService.GetMembers(group);
 
-            return View(_mapper.Map<GroupInputModel>(group));
+            return View(_mapper.Map(group));
         }
 
         [HttpPost]

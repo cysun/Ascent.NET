@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +16,11 @@ namespace Ascent.Areas.Canvas.Controllers
         private readonly AssignmentTemplateService _assignmentTemplateService;
         private readonly RubricService _rubricService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<AssignmentTemplateController> _logger;
 
         public AssignmentTemplateController(CourseTemplateService courseTemplateService, AssignmentTemplateService assignmentTemplateSerivce,
-            RubricService rubricService, IMapper mapper, ILogger<AssignmentTemplateController> logger)
+            RubricService rubricService, AppMapper mapper, ILogger<AssignmentTemplateController> logger)
         {
             _courseTemplateService = courseTemplateService;
             _assignmentTemplateService = assignmentTemplateSerivce;
@@ -43,7 +42,7 @@ namespace Ascent.Areas.Canvas.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var assignmentTemplate = _mapper.Map<AssignmentTemplate>(input);
+            var assignmentTemplate = _mapper.Map(input);
             _assignmentTemplateService.AddAssignmentTemplate(assignmentTemplate);
             _logger.LogInformation("{user} added assignment template {assignmentTemplate}", User.GetName(), assignmentTemplate.Id);
 
@@ -60,7 +59,7 @@ namespace Ascent.Areas.Canvas.Controllers
             ViewBag.CourseTemplate = _courseTemplateService.GetCourseTemplate(assignmentTemplate.CourseTemplateId);
             ViewBag.Rubrics = _rubricService.GetRubrics();
 
-            return View(_mapper.Map<AssignmentTemplateInputModel>(assignmentTemplate));
+            return View(_mapper.Map(assignmentTemplate));
         }
 
         [HttpPost]

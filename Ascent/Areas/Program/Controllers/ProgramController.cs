@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +14,11 @@ namespace Ascent.Areas.Program.Controllers
         private readonly ProgramService _programService;
         private readonly PageService _pageService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<ProgramController> _logger;
 
         public ProgramController(ProgramService programService, PageService pageService,
-            IMapper mapper, ILogger<ProgramController> logger)
+            AppMapper mapper, ILogger<ProgramController> logger)
         {
             _programService = programService;
             _pageService = pageService;
@@ -63,21 +62,10 @@ namespace Ascent.Areas.Program.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var program = _mapper.Map<Models.Program>(input);
-
+            var program = _mapper.Map(input);
             if (input.HasObjectives)
                 program.ObjectivesDescription = new Page { Subject = $"{input.Name} Objectives Description" };
-
-            program.Outcomes = new List<ProgramOutcome>();
-            for (var i = 0; i < input.Outcomes.Count; ++i)
-            {
-                program.Outcomes.Add(new ProgramOutcome
-                {
-                    Index = i,
-                    Text = input.Outcomes[i],
-                    Description = new Page { Subject = $"{input.Name} Outcome {i + 1} Description" }
-                });
-            }
+            
             _programService.AddProgram(program);
             _logger.LogInformation("{user} created program {program}", User.GetName(), program.Id);
 
@@ -94,7 +82,7 @@ namespace Ascent.Areas.Program.Controllers
             ViewBag.Program = program;
             ViewBag.Modules = _programService.GetModules(id);
 
-            return View(_mapper.Map<ProgramInputModel>(program));
+            return View(_mapper.Map(program));
         }
 
         [HttpPost]
@@ -107,11 +95,9 @@ namespace Ascent.Areas.Program.Controllers
             if (program == null) return NotFound();
 
             _mapper.Map(input, program);
-            if (program.Outcomes.Count == input.Outcomes?.Count) // # of outcomes cannot be changed
-            {
-                for (int i = 0; i < program.Outcomes.Count; ++i)
-                    program.Outcomes[i].Text = input.Outcomes[i];
-            }
+            if (input.HasObjectives && program.ObjectivesDescriptionId == null)
+                program.ObjectivesDescription = new Page { Subject = $"{input.Name} Objectives Description" };
+            
             _programService.SaveChanges();
             _logger.LogInformation("{user} edited program {program}", User.GetName(), id);
 
@@ -150,7 +136,7 @@ namespace Ascent.Models
         public string Name { get; set; }
 
         public bool HasObjectives { get; set; }
-        public List<string> Objectives { get; set; }
+        public List<string> Objectives { get; set; } = new List<string>();
 
         public List<string> Outcomes { get; set; }
     }

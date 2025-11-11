@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +13,11 @@ namespace Ascent.Controllers
         private readonly PersonService _personService;
         private readonly EnrollmentService _enrollmentService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<PersonController> _logger;
 
         public PersonController(PersonService personService, EnrollmentService enrollmentSerivce,
-            IMapper mapper, ILogger<PersonController> logger)
+            AppMapper mapper, ILogger<PersonController> logger)
         {
             _personService = personService;
             _enrollmentService = enrollmentSerivce;
@@ -54,7 +53,7 @@ namespace Ascent.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var person = _mapper.Map<Person>(input);
+            var person = _mapper.Map(input);
             _personService.AddPerson(person);
             _logger.LogInformation("{user} added person {person}", User.GetName(), person.Id);
 
@@ -70,7 +69,7 @@ namespace Ascent.Controllers
 
             ViewBag.Person = person;
 
-            return View(_mapper.Map<PersonInputModel>(person));
+            return View(_mapper.Map(person));
         }
 
         [HttpPost]

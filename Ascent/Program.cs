@@ -101,7 +101,7 @@ services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
-services.AddAutoMapper(config => config.AddProfile<MapperProfile>());
+services.AddSingleton<AppMapper>();
 
 services.Configure<MinioSettings>(configuration.GetSection("Minio"));
 services.AddSingleton<MinioService>();

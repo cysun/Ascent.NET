@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +13,10 @@ namespace Ascent.Areas.Rubric.Controllers
     {
         private readonly RubricService _rubricService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<CriterionController> _logger;
 
-        public CriterionController(RubricService rubricService, IMapper mapper, ILogger<CriterionController> logger)
+        public CriterionController(RubricService rubricService, AppMapper mapper, ILogger<CriterionController> logger)
         {
             _rubricService = rubricService;
             _mapper = mapper;
@@ -53,9 +52,9 @@ namespace Ascent.Areas.Rubric.Controllers
             // For more commonly used scales, Google "sample rubric scales"
             var scales = new Dictionary<int, string[]>()
             {
-                {3, new string[]{"Developing", "Competent", "Exemplary"} },
-                {4, new string[]{"Unsatisfactory", "Needs Improvement", "Meets Expectations", "Exceeds Expectations"} },
-                {5, new string[]{"Poor", "Minimal", "Sufficient", "Above Average", "Excellent"} }
+                { 3, ["Developing", "Competent", "Exemplary"] },
+                { 4, ["Unsatisfactory", "Needs Improvement", "Meets Expectations", "Exceeds Expectations"] },
+                { 5, ["Poor", "Minimal", "Sufficient", "Above Average", "Excellent"] }
             };
             var criterion = new RubricCriterion
             {
@@ -86,7 +85,7 @@ namespace Ascent.Areas.Rubric.Controllers
 
             ViewBag.Criterion = criterion;
 
-            return View(_mapper.Map<RubricCriterionInputModel>(criterion));
+            return View(_mapper.Map(criterion));
         }
 
         [HttpPost]

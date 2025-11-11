@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +14,10 @@ namespace Ascent.Areas.Program.Controllers
     {
         private readonly ProgramService _programService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<ModuleController> _logger;
 
-        public ModuleController(ProgramService programService, IMapper mapper, ILogger<ModuleController> logger)
+        public ModuleController(ProgramService programService, AppMapper mapper, ILogger<ModuleController> logger)
         {
             _programService = programService;
             _mapper = mapper;
@@ -53,7 +52,7 @@ namespace Ascent.Areas.Program.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var module = _mapper.Map<ProgramModule>(input);
+            var module = _mapper.Map(input);
             _programService.AddModuleToProgram(programId, module);
             _logger.LogInformation("{user} added module {module} to {program}",
                 User.GetName(), module.Id, programId);
@@ -71,7 +70,7 @@ namespace Ascent.Areas.Program.Controllers
             ViewBag.Module = module;
             ViewBag.Resources = _programService.GetModuleResources(id);
 
-            return View(_mapper.Map<ProgramModuleInputModel>(module));
+            return View(_mapper.Map(module));
         }
 
         [HttpPost]

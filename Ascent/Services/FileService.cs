@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ascent.Services;
@@ -8,10 +7,10 @@ public class FileService
     private readonly AppDbContext _db;
     private readonly MinioService _minioService;
 
-    private readonly IMapper _mapper;
+    private readonly AppMapper _mapper;
     private readonly ILogger<FileService> _logger;
 
-    public FileService(AppDbContext db, MinioService minioService, IMapper mapper, ILogger<FileService> logger)
+    public FileService(AppDbContext db, MinioService minioService, AppMapper mapper, ILogger<FileService> logger)
     {
         _db = db;
         _minioService = minioService;
@@ -111,7 +110,7 @@ public class FileService
         }
         else
         {
-            _db.FileRevisions.Add(_mapper.Map<Models.FileRevision>(file));
+            _db.FileRevisions.Add(_mapper.MapToFileRevision(file));
             file.ContentType = uploadedFile.ContentType;
             file.Size = uploadedFile.Length;
             file.TimeCreated = DateTime.UtcNow;

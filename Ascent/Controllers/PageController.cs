@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +14,11 @@ namespace Ascent.Controllers
 
         private readonly IAuthorizationService _authorizationService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<PageController> _logger;
 
         public PageController(PageService pageService, IAuthorizationService authorizationService,
-            IMapper mapper, ILogger<PageController> logger)
+            AppMapper mapper, ILogger<PageController> logger)
         {
             _pageService = pageService;
             _authorizationService = authorizationService;
@@ -71,7 +70,7 @@ namespace Ascent.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var page = _mapper.Map<Page>(input);
+            var page = _mapper.Map(input);
             page.IsRegular = true; // pages created via Page UI are "regular"
             _pageService.AddPage(page);
             _logger.LogInformation("{user} created page {page}", User.GetName(), page.Id);
@@ -144,7 +143,8 @@ namespace Ascent.Controllers
             ViewBag.Version = version ?? page.Version;
             ViewBag.Revisions = _pageService.GetPageRevisions(id);
 
-            return View(version == null || version == page.Version ? _mapper.Map<PageRevision>(page)
+            return View(version == null || version == page.Version
+                ? _mapper.MapToPageRevision(page)
                 : _pageService.GetPageRevision(id, (int)version));
         }
 
@@ -154,13 +154,13 @@ namespace Ascent.Controllers
             var page = _pageService.GetPage(id);
             if (page == null) return NotFound();
 
-            var revision = _mapper.Map<PageRevision>(page);
+            var revision = _mapper.MapToPageRevision(page);
             page.Version++;
             _pageService.AddPageRevision(revision);
             _logger.LogInformation("{user} created revision {version} of page {page}",
                 User.GetName(), revision.Version, id);
 
-            return RedirectToAction("Revisions", new { id = id, version = revision.Version });
+            return RedirectToAction("Revisions", new { id, version = revision.Version });
         }
 
         public IActionResult RevertToRevision(int id, int version)
@@ -177,7 +177,7 @@ namespace Ascent.Controllers
             _pageService.SaveChanges();
             _logger.LogInformation("{user} reverted page {page} to revision {version}", User.GetName(), id, version);
 
-            return RedirectToAction("Revisions", new { id = id });
+            return RedirectToAction("Revisions", new { id });
         }
 
         public List<Page> Autocomplete(string searchText)

@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +13,10 @@ namespace Ascent.Areas.Survey.Controllers
     {
         private readonly SurveyService _surveyService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<SurveyController> _logger;
 
-        public SurveyController(SurveyService surveyService, IMapper mapper, ILogger<SurveyController> logger)
+        public SurveyController(SurveyService surveyService, AppMapper mapper, ILogger<SurveyController> logger)
         {
             _surveyService = surveyService;
             _mapper = mapper;
@@ -52,7 +51,7 @@ namespace Ascent.Areas.Survey.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var survey = _mapper.Map<Models.Survey>(input);
+            var survey = _mapper.Map(input);
             _surveyService.AddSurvey(survey);
             _logger.LogInformation("{user} created survey {survey}", User.GetName(), survey.Id);
 
@@ -67,7 +66,7 @@ namespace Ascent.Areas.Survey.Controllers
             if (survey == null) return NotFound();
 
             ViewBag.Survey = survey;
-            return View(_mapper.Map<SurveyInputModel>(survey));
+            return View(_mapper.Map(survey));
         }
 
         [HttpPost]

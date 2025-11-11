@@ -1,6 +1,5 @@
 using Ascent.Models;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ascent.Areas.Survey.Controllers
@@ -8,21 +7,13 @@ namespace Ascent.Areas.Survey.Controllers
     [Area("Survey")]
     public class OutcomeChartController : Controller
     {
-        private readonly SurveyService _surveyService;
         private readonly ProgramService _programService;
         private readonly SurveyDataService _surveyDataService;
 
-        private readonly IMapper _mapper;
-        private readonly ILogger<OutcomeChartController> _logger;
-
-        public OutcomeChartController(SurveyService surveyService, ProgramService programService, SurveyDataService surveyDataService,
-            IMapper mapper, ILogger<OutcomeChartController> logger)
+        public OutcomeChartController(ProgramService programService, SurveyDataService surveyDataService)
         {
-            _surveyService = surveyService;
             _programService = programService;
             _surveyDataService = surveyDataService;
-            _mapper = mapper;
-            _logger = logger;
         }
 
         public IActionResult Index()

@@ -370,3 +370,4 @@ deploy.sh
 .idea/
 /Ascent/Areas/Program/Views/Program/_Mission.cshtml
 /Ascent/Areas/Program/Views/Program/_Vision.cshtml
+.DS_Store

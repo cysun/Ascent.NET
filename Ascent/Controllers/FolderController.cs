@@ -1,6 +1,5 @@
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +11,10 @@ namespace Ascent.Controllers
 
         private readonly IAuthorizationService _authorizationService;
 
-        private readonly IMapper _mapper;
-        private readonly ILogger<FolderController> _logger;
-
-        public FolderController(FileService fileService, IAuthorizationService authorizationService,
-            IMapper mapper, ILogger<FolderController> logger)
+        public FolderController(FileService fileService, IAuthorizationService authorizationService)
         {
             _fileService = fileService;
             _authorizationService = authorizationService;
-            _mapper = mapper;
-            _logger = logger;
         }
 
         [AllowAnonymous]

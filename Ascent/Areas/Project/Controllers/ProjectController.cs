@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +17,11 @@ namespace Ascent.Areas.Project.Controllers
 
         private readonly IAuthorizationService _authorizationService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<ProjectController> _logger;
 
         public ProjectController(PersonService personService, ProjectService projectService,
-            IAuthorizationService authorizationService, IMapper mapper, ILogger<ProjectController> logger)
+            IAuthorizationService authorizationService, AppMapper mapper, ILogger<ProjectController> logger)
         {
             _personService = personService;
             _projectService = projectService;
@@ -69,7 +68,7 @@ namespace Ascent.Areas.Project.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var project = _mapper.Map<Models.Project>(input);
+            var project = _mapper.Map(input);
             _projectService.AddProject(project);
             _logger.LogInformation("{user} created project {project}", User.GetName(), project.Id);
 
@@ -88,7 +87,7 @@ namespace Ascent.Areas.Project.Controllers
 
             ViewBag.Project = project;
 
-            return View(_mapper.Map<ProjectInputModel>(project));
+            return View(_mapper.Map(project));
         }
 
         [HttpPost]

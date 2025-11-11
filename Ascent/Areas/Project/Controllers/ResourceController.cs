@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +17,11 @@ namespace Ascent.Areas.Project.Controllers
 
         private readonly IAuthorizationService _authorizationService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<ResourceController> _logger;
 
         public ResourceController(FileService fileService, ProjectService projectService,
-            IAuthorizationService authorizationService, IMapper mapper, ILogger<ResourceController> logger)
+            IAuthorizationService authorizationService, AppMapper mapper, ILogger<ResourceController> logger)
         {
             _fileService = fileService;
             _projectService = projectService;
@@ -68,7 +67,7 @@ namespace Ascent.Areas.Project.Controllers
             if (!authResult.Succeeded)
                 return Forbid();
 
-            var resource = _mapper.Map<ProjectResource>(input);
+            var resource = _mapper.Map(input);
             if (resource.Type == ResourceType.File && uploadedFile != null)
             {
                 var file = await _fileService.UploadFileAsync(null, uploadedFile, false);
@@ -95,7 +94,7 @@ namespace Ascent.Areas.Project.Controllers
 
             ViewBag.Resource = resource;
 
-            return View(_mapper.Map<ProjectResourceInputModel>(resource));
+            return View(_mapper.Map(resource));
         }
 
         public async Task<IActionResult> DeleteAsync(int id)

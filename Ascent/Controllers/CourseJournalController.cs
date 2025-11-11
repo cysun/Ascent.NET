@@ -3,7 +3,6 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +13,11 @@ namespace Ascent.Controllers
         private readonly CourseService _courseService;
         private readonly CourseJournalService _courseJournalService;
 
-        private readonly IMapper _mapper;
+        private readonly AppMapper _mapper;
         private readonly ILogger<CourseJournalController> _logger;
 
         public CourseJournalController(CourseService courseService, CourseJournalService courseJournalService,
-            IMapper mapper, ILogger<CourseJournalController> logger)
+            AppMapper mapper, ILogger<CourseJournalController> logger)
         {
             _courseService = courseService;
             _courseJournalService = courseJournalService;
@@ -54,7 +53,7 @@ namespace Ascent.Controllers
         {
             if (!ModelState.IsValid) return View(input);
 
-            var courseJournal = _mapper.Map<CourseJournal>(input);
+            var courseJournal = _mapper.Map(input);
             courseJournal = _courseJournalService.AddOrUpdateCourseJournal(courseJournal);
             _logger.LogInformation("{user} added/updated course journal {journal} for {course}",
                 User.GetName(), courseJournal.Id, courseJournal.CourseId);
@@ -70,7 +69,7 @@ namespace Ascent.Controllers
             if (courseJournal == null) return NotFound();
 
             ViewBag.CourseJournal = courseJournal;
-            return View(_mapper.Map<CourseJournalInputModel>(courseJournal));
+            return View(_mapper.Map(courseJournal));
         }
 
         [HttpPost]
