@@ -215,6 +215,7 @@ public partial class AppMapper
     public partial SurveyInputModel Map(Survey src);
 
     [MapperIgnoreTarget(nameof(Survey.TimePublished))]
+    [MapProperty(nameof(SurveyInputModel.TimeClosed), nameof(Survey.TimeClosed), Use = nameof(MapToUniversalTime))]
     private partial void MapWithoutTimePublished(SurveyInputModel src, Survey dest);
 
     [UserMapping(Default = true)]
