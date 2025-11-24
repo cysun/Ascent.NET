@@ -153,18 +153,20 @@ if (!environment.IsDevelopment())
 }
 
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
-app.UseStaticFiles();
+app.MapStaticAssets();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 // Run App
 
