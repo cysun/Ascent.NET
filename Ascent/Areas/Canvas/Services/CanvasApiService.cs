@@ -104,7 +104,7 @@ public class CanvasApiService
     }
 
     public async Task<List<Assignment>> GetAssignments(int courseId) =>
-        await _httpClient.GetFromJsonAsync<List<Assignment>>($"courses/{courseId}/assignments");
+        await GetAll<Assignment>($"courses/{courseId}/assignments");
 
     public async Task<Assignment> GetAssignment(int courseId, int assignmentId) =>
         await _httpClient.GetFromJsonAsync<Assignment>($"courses/{courseId}/assignments/{assignmentId}");
