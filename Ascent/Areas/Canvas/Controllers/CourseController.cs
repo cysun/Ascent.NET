@@ -54,10 +54,12 @@ namespace Ascent.Areas.Canvas.Controllers
             }
             ViewBag.LastImportTimes = lastImportTimes;
 
-            var hasNoRubric = (await _canvasApiService.GetRubrics(id)).Count == 0;
-            ViewBag.HasNoRubric = hasNoRubric;
-            if (hasNoRubric)
-                ViewBag.CourseTemplates = _courseTemplateService.GetCourseTemplates();
+            // Skip GetRibrics(courseId) as it will raise a 403 error in some cases
+            // (maybe because the user is a Co-Teacher instead of Teacher).
+            // var hasNoRubric = (await _canvasApiService.GetRubrics(id)).Count == 0;
+            // ViewBag.HasNoRubric = hasNoRubric;
+            // if (hasNoRubric)
+            //     ViewBag.CourseTemplates = _courseTemplateService.GetCourseTemplates();
 
             return View(assignments);
         }
