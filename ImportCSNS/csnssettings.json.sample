@@ -1,7 +1,0 @@
-{
-  "ConnectionStrings": {
-    "CsnsConnection": "Host=localhost;Database=csns2;Username=cysun;Password=abcd"
-  },
-  "InputDir": "C:/Users/cysun/csns2files",
-  "OutputDir": "C:/Users/cysun/Downloads/project-files"
-}
