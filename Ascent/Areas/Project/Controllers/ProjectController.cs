@@ -3,6 +3,9 @@ using Ascent.Helpers;
 using Ascent.Models;
 using Ascent.Security;
 using Ascent.Services;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.XSSF.UserModel;
@@ -174,7 +177,7 @@ namespace Ascent.Areas.Project.Controllers
         [Authorize(Policy = Constants.Policy.CanWrite)]
         public IActionResult Excel(string year)
         {
-            var academicYear = year != null ? year : _projectService.GetAcademicYear();
+            var academicYear = year ?? _projectService.GetAcademicYear();
             var projects = _projectService.GetProjects(academicYear);
 
             var workbook = new XSSFWorkbook();
@@ -206,6 +209,54 @@ namespace Ascent.Areas.Project.Controllers
 
             return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"Projects {academicYear}.xlsx");
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Word(string year)
+        {
+            var academicYear = year ?? _projectService.GetAcademicYear();
+            var projects = _projectService.GetProjects(academicYear);
+
+            using var stream = new MemoryStream();
+            using (var wordDoc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                WordUtils.AddStyles(mainPart);
+                mainPart.Document = new Document(new Body());
+                var body = mainPart.Document.Body!;
+
+                WordUtils.AddHeading1(body, $"Computer Science Senior Design Projects {academicYear}");
+
+                foreach (var project in projects)
+                {
+                    WordUtils.AddLinkedText(mainPart, project.Title,
+                        $"https://ascent.cysun.org/project/project/view/{project.Id}");
+
+                    if (!string.IsNullOrEmpty(project.Sponsor))
+                        WordUtils.AddParagraph(body, $"Sponsor: {project.Sponsor}");
+
+                    if (project.Advisors.Count > 0)
+                        WordUtils.AddParagraph(body,
+                            $"Advisor(s): {string.Join(", ", project.Advisors.Select(a => a.Person.FullName))}");
+
+                    if (project.Liaisons.Count > 0)
+                        WordUtils.AddParagraph(body,
+                            $"Liaison(s): {string.Join(", ", project.Liaisons.Select(l => l.Person.FullName))}");
+
+                    if (project.Students.Count > 0)
+                        WordUtils.AddParagraph(body,
+                            $"Students: {string.Join(", ", project.Students.Select(s => s.Person.FullName))}");
+
+                    WordUtils.AddParagraph(body, $"Description:");
+                    body.Append(new Paragraph());
+                }
+
+                mainPart.Document.Save();
+            }
+
+            return File(stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                $"Projects {academicYear}.docx");
         }
     }
 }
