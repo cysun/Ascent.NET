@@ -4,16 +4,28 @@
     ViewData["Title"] = "Projects";
 }
 <nav>
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active me-auto">Projects</li>
-        @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
-        {
-            <li>
-                <a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Project">
-                    <i class="bi bi-plus-lg"></i>
-                </a>
-            </li>
-        }
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active me-auto">Projects</li>
+    @if ((await AuthorizationService.AuthorizeAsync(User, Constants.Policy.CanWrite)).Succeeded)
+    {
+      <li>
+        <a asp-action="Excel" asp-route-year="@ViewBag.AcademicYear" class="btn btn-outline-primary btn-sm me-2"
+           title="Download To Excel">
+          <i class="bi bi-file-earmark-spreadsheet"></i>
+        </a>
+      </li>
+      <li>
+        <a asp-action="Word" asp-route-year="@ViewBag.AcademicYear" class="btn btn-outline-primary btn-sm me-2"
+           title="Download To Word">
+          <i class="bi bi-file-earmark-word"></i>
+        </a>
+      </li>
+      <li>
+        <a asp-action="Add" class="btn btn-outline-primary btn-sm" title="Add Project">
+          <i class="bi bi-plus-lg"></i>
+        </a>
+      </li>
+    }
     </ol>
 </nav>
 

@@ -9,8 +9,13 @@ public class ProjectService
 
     public ProjectService(AppDbContext db) { _db = db; }
 
+    public string GetAcademicYear() => _db.Projects.AsNoTracking()
+        .Where(p => !p.IsDeleted).Select(p => p.AcademicYear).Distinct().OrderByDescending(y => y)
+        .FirstOrDefault();
+    
     public List<string> GetAcademicYears() => _db.Projects.AsNoTracking()
-        .Where(p => !p.IsDeleted).Select(p => p.AcademicYear).Distinct().OrderByDescending(y => y).ToList();
+        .Where(p => !p.IsDeleted).Select(p => p.AcademicYear).Distinct().OrderByDescending(y => y)
+        .ToList();
 
     public List<Project> GetProjects(string academicYear) => _db.Projects.AsNoTracking()
         .Where(p => p.AcademicYear == academicYear && !p.IsDeleted)

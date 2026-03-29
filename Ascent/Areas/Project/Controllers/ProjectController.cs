@@ -5,6 +5,7 @@ using Ascent.Security;
 using Ascent.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.XSSF.UserModel;
 
 namespace Ascent.Areas.Project.Controllers
 {
@@ -168,6 +169,43 @@ namespace Ascent.Areas.Project.Controllers
             _logger.LogInformation("{user} removed member {member} from project {project}", User.GetName(), personId, id);
 
             return RedirectToAction("Members", new { id });
+        }
+
+        [Authorize(Policy = Constants.Policy.CanWrite)]
+        public IActionResult Excel(string year)
+        {
+            var academicYear = year != null ? year : _projectService.GetAcademicYear();
+            var projects = _projectService.GetProjects(academicYear);
+
+            var workbook = new XSSFWorkbook();
+            var sheet = workbook.CreateSheet("Projects");
+
+            var headerRow = sheet.CreateRow(0);
+            headerRow.CreateCell(0).SetCellValue("Year");
+            headerRow.CreateCell(1).SetCellValue("Title");
+            headerRow.CreateCell(2).SetCellValue("Sponsor");
+            headerRow.CreateCell(3).SetCellValue("Advisors");
+            headerRow.CreateCell(4).SetCellValue("Liaisons");
+            headerRow.CreateCell(5).SetCellValue("Students");
+            headerRow.CreateCell(6).SetCellValue("Description");
+
+            for (int i = 0; i < projects.Count; i++)
+            {
+                var project = projects[i];
+                var row = sheet.CreateRow(i + 1);
+                row.CreateCell(0).SetCellValue(project.AcademicYear);
+                row.CreateCell(1).SetCellValue(project.Title);
+                row.CreateCell(2).SetCellValue(project.Sponsor);
+                row.CreateCell(3).SetCellValue(string.Join(", ", project.Advisors.Select(a => a.Person.FullName)));
+                row.CreateCell(4).SetCellValue(string.Join(", ", project.Liaisons.Select(l => l.Person.FullName)));
+                row.CreateCell(5).SetCellValue(string.Join(", ", project.Students.Select(s => s.Person.FullName)));
+            }
+
+            using var stream = new MemoryStream();
+            workbook.Write(stream);
+
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Projects {academicYear}.xlsx");
         }
     }
 }
