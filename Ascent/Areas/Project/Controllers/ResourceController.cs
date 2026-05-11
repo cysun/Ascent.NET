@@ -70,7 +70,8 @@ namespace Ascent.Areas.Project.Controllers
             var resource = _mapper.Map(input);
             if (resource.Type == ResourceType.File && uploadedFile != null)
             {
-                var file = await _fileService.UploadFileAsync(null, uploadedFile, false);
+                var file = await _fileService.UploadFileAsync(parentId: null, uploadedFile: uploadedFile,
+                    isRegular: false, isUnique: true);
                 file.IsPublic = !resource.IsPrivate;
                 resource.FileId = file.Id;
             }
@@ -96,23 +97,7 @@ namespace Ascent.Areas.Project.Controllers
 
             return View(_mapper.Map(resource));
         }
-
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            var resource = _projectService.GetProjectResource(id);
-            if (resource == null) return NotFound();
-
-            var authResult = await _authorizationService.AuthorizeAsync(User, resource.ProjectId, Constants.Policy.CanManageProject);
-            if (!authResult.Succeeded)
-                return Forbid();
-
-            _projectService.RemoveProjectResource(resource);
-            _logger.LogInformation("{user} removed resource {resource} from project {project}", User.GetName(),
-                resource.Id, resource.ProjectId);
-
-            return RedirectToAction("Index", new { projectId = resource.ProjectId });
-        }
-
+        
         [HttpPost]
         public async Task<IActionResult> EditAsync(int id, ProjectResourceInputModel input, IFormFile uploadedFile)
         {
@@ -126,7 +111,8 @@ namespace Ascent.Areas.Project.Controllers
             _mapper.Map(input, resource);
             if (resource.Type == ResourceType.File && uploadedFile != null)
             {
-                var file = await _fileService.UploadFileAsync(null, uploadedFile, false);
+                var file = await _fileService.UploadFileAsync(parentId: null, uploadedFile: uploadedFile,
+                    isRegular: false, isUnique: true);
                 file.IsPublic = !resource.IsPrivate;
                 resource.FileId = file.Id;
             }
@@ -139,7 +125,7 @@ namespace Ascent.Areas.Project.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> GetAsync(int id, bool inline = false)
+        public async Task<IActionResult> GetAsync(int id, bool inline = false, int? version = null)
         {
             var resource = _projectService.GetProjectResource(id);
             if (resource == null) return NotFound();
@@ -153,19 +139,36 @@ namespace Ascent.Areas.Project.Controllers
                 case ResourceType.Url:
                     return Redirect(resource.Url);
                 case ResourceType.File:
-                    return await DownloadFileAsync((int)resource.FileId, inline);
+                    return await DownloadFileAsync((int)resource.FileId, inline, version);
                 default:
                     return BadRequest();
             }
         }
 
-        private async Task<IActionResult> DownloadFileAsync(int id, bool inline = false)
+        private async Task<IActionResult> DownloadFileAsync(int id, bool inline = false, int? version = null)
         {
             var file = _fileService.GetFile(id);
             if (file == null) return NotFound();
             if (file.IsFolder) return BadRequest();
 
-            return Redirect(await _fileService.GetDownloadUrlAsync(file, inline));
+            return Redirect(await _fileService.GetDownloadUrlAsync(file, inline, version));
+        }
+
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var resource = _projectService.GetProjectResource(id);
+            if (resource == null) return NotFound();
+
+            var authResult =
+                await _authorizationService.AuthorizeAsync(User, resource.ProjectId, Constants.Policy.CanManageProject);
+            if (!authResult.Succeeded)
+                return Forbid();
+
+            _projectService.RemoveProjectResource(resource);
+            _logger.LogInformation("{user} removed resource {resource} from project {project}", User.GetName(),
+                resource.Id, resource.ProjectId);
+
+            return RedirectToAction("Index", new { projectId = resource.ProjectId });
         }
     }
 }

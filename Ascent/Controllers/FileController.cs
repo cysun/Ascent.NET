@@ -129,13 +129,13 @@ namespace Ascent.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> ViewAsync(int id)
+        public async Task<IActionResult> ViewAsync(int id, int? version = null)
         {
-            return await DownloadAsync(id, true);
+            return await DownloadAsync(id, true, version);
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> DownloadAsync(int id, bool inline = false)
+        public async Task<IActionResult> DownloadAsync(int id, bool inline = false, int? version = null)
         {
             var file = _fileService.GetFile(id);
             if (file == null) return NotFound();
@@ -144,7 +144,7 @@ namespace Ascent.Controllers
             if (!file.IsPublic && !(await _authorizationService.AuthorizeAsync(User, Constants.Policy.CanRead)).Succeeded)
                 return Forbid();
 
-            return Redirect(await _fileService.GetDownloadUrlAsync(file, inline));
+            return Redirect(await _fileService.GetDownloadUrlAsync(file, inline, version));
         }
 
         [HttpPut("file/{id}/{field}")]

@@ -79,7 +79,7 @@ public class MinioService
         }
     }
 
-    public async Task<string> GetDownloadUrlAsync(Models.File file, bool inline = false)
+    public async Task<string> GetDownloadUrlAsync(Models.File file, bool inline = false, int? version = null)
     {
         inline = inline && !IsAttachmentType(file.Name);
         var reqParams = new Dictionary<string, string> {
@@ -87,9 +87,10 @@ public class MinioService
             {"response-content-disposition", inline ? "inline" : @$"attachment; filename=""{file.Name}"""}
         };
 
+        var fileVersion = version != null && version >= 1 && version <= file.Version ? version : file.Version;
         var args = new PresignedGetObjectArgs()
             .WithBucket(_settings.Bucket)
-            .WithObject($"{_settings.PathPrefix}{file.Id}-{file.Version}")
+            .WithObject($"{_settings.PathPrefix}{file.Id}-{fileVersion}")
             .WithExpiry(10) // Download link valid for 10 seconds
             .WithHeaders(reqParams);
 

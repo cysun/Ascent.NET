@@ -83,13 +83,15 @@ public class FileService
         return _db.Files.Where(f => f.ParentId == parentId && f.Name == name).FirstOrDefault();
     }
 
-    public async Task<Models.File> UploadFileAsync(int? parentId, IFormFile uploadedFile, bool IsRegular = true, string fileName = null)
+    public async Task<Models.File> UploadFileAsync(int? parentId, IFormFile uploadedFile, bool isRegular = true,
+        string fileName = null, bool isUnique = false)
     {
         string name = Path.GetFileName(uploadedFile.FileName);
         if (fileName != null)
             name = fileName + Path.GetExtension(name);
 
-        var file = GetFile(parentId, name);
+        // If isUnique is true, do NOT check for existing file with the same name.
+        var file = !isUnique ? GetFile(parentId, name) : null;
         if (file == null)
         {
             file = new Models.File
@@ -98,7 +100,7 @@ public class FileService
                 ContentType = uploadedFile.ContentType,
                 Size = uploadedFile.Length,
                 ParentId = parentId,
-                IsRegular = IsRegular
+                IsRegular = isRegular
             };
             if (parentId != null)
             {
@@ -126,8 +128,8 @@ public class FileService
         return file;
     }
 
-    public async Task<string> GetDownloadUrlAsync(Models.File file, bool inline = false) =>
-        await _minioService.GetDownloadUrlAsync(file, inline);
+    public async Task<string> GetDownloadUrlAsync(Models.File file, bool inline = false, int? version = null) =>
+        await _minioService.GetDownloadUrlAsync(file, inline, version);
 
     public void AddFolder(Models.File folder) => _db.Files.Add(folder);
 
