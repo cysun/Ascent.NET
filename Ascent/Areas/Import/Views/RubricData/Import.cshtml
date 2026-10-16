@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = "Import Rubric Data";
     var currentTerm = new Term();
-    var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous() };
+    var terms = new List<Term>() { currentTerm, currentTerm.Previous(), currentTerm.Previous().Previous(),
+      currentTerm.Previous().Previous().Previous(), currentTerm.Previous().Previous().Previous().Previous() };
     var rubrics = ((List<Rubric>)ViewBag.Rubrics).Select(r => new SelectListItem(r.Name, r.Id.ToString()));
 }
 <nav>
