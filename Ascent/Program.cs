@@ -134,7 +134,12 @@ services.AddScoped<AssignmentTemplateService>();
 // Services for Canvas API
 services.AddHttpContextAccessor();
 services.AddScoped<CanvasHttpMessageHandler>();
-services.AddHttpClient("CanvasAPI", client => client.BaseAddress = new Uri(canvasSettings.ApiBaseUrl))
+services.AddHttpClient("CanvasAPI", client =>
+    {
+        client.BaseAddress = new Uri(canvasSettings.ApiBaseUrl);
+        // Canvas rejects requests without a User-Agent header with HTTP 403.
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Ascent.NET/1.0 (+https://github.com/cysun/Ascent.NET)");
+    })
     .AddHttpMessageHandler<CanvasHttpMessageHandler>();
 services.AddScoped<CanvasApiService>();
 services.AddScoped<CanvasCacheService>();

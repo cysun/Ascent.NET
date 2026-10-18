@@ -40,6 +40,9 @@ public class Assignment
 
     [JsonPropertyName("rubric_settings")]
     public RubricSettings RubricSettings { get; set; }
+
+    [JsonPropertyName("rubric")]
+    public List<RubricCriterion> RubricCriteria { get; set; }
 }
 
 public class Submission
@@ -79,14 +82,14 @@ public class SubmissionRubricAssessment
 public class SubmissionRubricRating
 {
     [JsonPropertyName("points")]
-    public float Points { get; set; }
+    public float? Points { get; set; }
 
     [JsonPropertyName("comments")]
     public string Comments { get; set; }
 
     public bool HasComments => !string.IsNullOrEmpty(Comments);
 
-    public int Value => (int)Points;
+    public int? Value => Points.HasValue ? (int)Points.Value : null;
 }
 
 public class PeerReview

@@ -77,12 +77,20 @@ namespace Ascent.Areas.Canvas.Controllers
             var submissions = await _canvasApiService.GetSubmissions(input.CanvasCourseId, input.CanvasAssignmentId);
             foreach (var submission in submissions)
             {
+                var ratings = submission.RubricAssessment?.Ratings;
+                if (ratings == null || ratings.Length != criteria.Count || ratings.Any(r => r?.Points == null))
+                {
+                    _logger.LogWarning("Skipping submission Id {submissionId}: missing or incomplete rubric ratings (expected {expectedCount}, found {actualCount})",
+                        submission.Id, criteria.Count, ratings?.Count(r => r?.Points != null) ?? 0);
+                    continue;
+                }
+
                 var person = _personService.GetPersonByCanvasId(submission.UserId);
                 if (person == null) continue;
 
                 for (int i = 0; i < criteria.Count; ++i)
                 {
-                    var ratingValue = submission.RubricAssessment?.Ratings[i]?.Value;
+                    var ratingValue = ratings[i].Value;
                     if (ratingValue == null || !ratingMaps[i].ContainsKey((int)ratingValue))
                     {
                         _logger.LogWarning("Invalid/incomplete rating value: {rating}", ratingValue);
@@ -104,8 +112,8 @@ namespace Ascent.Areas.Canvas.Controllers
                         SourceId = input.CanvasAssignmentId.ToString()
                     };
 
-                    if (!string.IsNullOrWhiteSpace(submission.RubricAssessment.Ratings[i].Comments))
-                        dataPoint.Comments = submission.RubricAssessment.Ratings[i].Comments;
+                    if (!string.IsNullOrWhiteSpace(ratings[i].Comments))
+                        dataPoint.Comments = ratings[i].Comments;
 
                     _rubricDataService.AddRubricDataPoint(dataPoint);
                 }
@@ -136,7 +144,10 @@ namespace Ascent.Areas.Canvas.Controllers
             if (!submissions.Any())
                 return NotFound();
 
-            var n = submissions[0].RubricAssessment.Ratings.Length;
+            var assignment = await _canvasCacheService.GetAssignmentAsync(courseId, id);
+            var n = assignment.RubricCriteria?.Count ?? 0;
+            if (n == 0)
+                return NotFound();
             string[] cols = { "Student", "CIN" };
             cols = cols.Concat(Enumerable.Range(1, n).Select(i => $"Criterion {i}")).Concat(["Comments"]).ToArray();
 
@@ -145,12 +156,14 @@ namespace Ascent.Areas.Canvas.Controllers
             var row = sheet.CreateRow(0);
             for (var i = 0; i < cols.Length; i++) row.CreateCell(i).SetCellValue(cols[i]);
 
-            for (var i = 0; i < submissions.Count; i++)
+            var rowIndex = 1;
+            foreach (var submission in submissions)
             {
-                var submission = submissions[i];
-                if (submission.RubricAssessment == null)
+                var ratings = submission.RubricAssessment?.Ratings;
+                if (ratings == null || ratings.Length != n || ratings.Any(r => r?.Points == null))
                 {
-                    _logger.LogWarning("No rubric assessment found for submission Id {submissionId}", submission.Id);
+                    _logger.LogWarning("Skipping submission Id {submissionId}: missing or incomplete rubric ratings (expected {expectedCount}, found {actualCount})",
+                        submission.Id, n, ratings?.Count(r => r?.Points != null) ?? 0);
                     continue;
                 }
 
@@ -161,16 +174,15 @@ namespace Ascent.Areas.Canvas.Controllers
                     continue;
                 }
 
-                row = sheet.CreateRow(i + 1);
+                row = sheet.CreateRow(rowIndex++);
                 row.CreateCell(0).SetCellValue(person.FullName2);
                 row.CreateCell(1).SetCellValue(person.CampusId);
                 for (var j = 0; j < n; j++)
                 {
-                    var rating = submission.RubricAssessment.Ratings[j];
-                    row.CreateCell(j + 2).SetCellValue(rating?.Value.ToString());
+                    row.CreateCell(j + 2).SetCellValue(ratings[j].Value.ToString());
                 }
 
-                row.CreateCell(n + 2).SetCellValue(string.Join("\n", submission.RubricAssessment.Ratings
+                row.CreateCell(n + 2).SetCellValue(string.Join("\n", ratings
                     .Where(r => !string.IsNullOrWhiteSpace(r?.Comments))
                     .Select(r => r.Comments)));
             }
