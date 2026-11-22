@@ -1,12 +1,14 @@
 using Ascent.Areas.Canvas.Services;
 using Ascent.Security;
 using Ascent.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +65,16 @@ services.AddAuthentication(options =>
 
     options.Events = new OpenIdConnectEvents
     {
+        OnTokenValidated = context =>
+        {
+            // Keep the AIS ID token so the OIDC handler can identify this account at logout.
+            var idToken = context.TokenEndpointResponse?.IdToken ?? context.ProtocolMessage.IdToken;
+            if (!string.IsNullOrEmpty(idToken))
+                context.Properties.StoreTokens([
+                    new AuthenticationToken { Name = OpenIdConnectParameterNames.IdToken, Value = idToken }
+                ]);
+            return Task.CompletedTask;
+        },
         OnRemoteFailure = context =>
         {
             context.Response.Redirect("/");
